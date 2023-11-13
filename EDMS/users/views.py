@@ -1,4 +1,12 @@
-from django.contrib.auth.views import LoginView
+from django.conf import settings
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -6,7 +14,12 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import FormView, TemplateView
 
-from .forms import CustomAuthenticationForm, CustomUserCreationForm
+from .forms import (
+    CustomAuthenticationForm,
+    CustomPasswordResetForm,
+    CustomSetPasswordForm,
+    CustomUserCreationForm,
+)
 from .models import User
 from .tokens import account_activation_token
 
@@ -22,14 +35,15 @@ class UserRegisterView(FormView):
         domain = get_current_site(self.request).domain
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = account_activation_token.make_token(user)
+        from_email = settings.COMPANY_EMAIL
 
         subject = "Account Activation"
         message = render_to_string(
-            "users/account_activation_email.html",
+            "emails/account_activation_email.html",
             {"user": user, "domain": domain, "uidb64": uidb64, "token": token},
         )
 
-        user.email_user(subject=subject, message=message, from_email="EDMS@test.com")
+        user.email_user(subject=subject, message=message, from_email=from_email)
 
         return super().form_valid(form)
 
@@ -66,3 +80,30 @@ class ActivateAccountView(TemplateView):
 
         context["information"] = information
         return context
+
+
+class CustomPasswordResetView(PasswordResetView):
+    email_template_name = "emails/forgot_password_email.html"
+    form_class = CustomPasswordResetForm
+    from_email = settings.COMPANY_EMAIL
+    subject_template_name = "emails/email_subject.txt"
+    success_url = reverse_lazy("forgot_password_done")
+    template_name = "users/forgot_password.html"
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = "users/forgot_password_done.html"
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    form_class = CustomSetPasswordForm
+    success_url = reverse_lazy("forgot_password_complete")
+    template_name = "users/forgot_password_confirm.html"
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = "users/forgot_password_complete.html"
+
+
+class CustomLogoutView(LogoutView):
+    template_name = "users/logout.html"

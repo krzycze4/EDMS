@@ -35,16 +35,18 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "django_extensions",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "users.apps.UsersConfig",
-    "dashboards.apps.PanelsConfig",
 ]
+
+INSTALLED_EXTENSIONS = ["django_extensions", "users", "dashboards"]
+
+INSTALLED_APPS += INSTALLED_EXTENSIONS
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -120,7 +122,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -144,3 +145,4 @@ AUTHENTICATION_BACKENDS = [
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = "emails/"
+COMPANY_EMAIL = "EDMS@test.com"
