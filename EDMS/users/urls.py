@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     ActivateAccountView,
     CustomLoginView,
+    CustomLogoutView,
     CustomPasswordResetCompleteView,
     CustomPasswordResetConfirmView,
     CustomPasswordResetDoneView,
@@ -13,7 +14,7 @@ from .views import (
 
 urlpatterns = [
     path("register/", UserRegisterView.as_view(), name="register"),
-    path("", CustomLoginView.as_view(), name="login"),
+    path("login/", CustomLoginView.as_view(), name="login"),
     path("success-register/", SuccessRegisterView.as_view(), name="success_register"),
     path(
         "activate/<str:uidb64>/<str:token>/",
@@ -36,4 +37,5 @@ urlpatterns = [
         CustomPasswordResetCompleteView.as_view(),
         name="forgot_password_complete",
     ),
+    path("logout/", CustomLogoutView.as_view(), name="logout"),
 ]
