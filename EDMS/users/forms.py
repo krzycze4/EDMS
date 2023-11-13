@@ -81,7 +81,6 @@ class CustomUserCreationForm(BaseUserCreationForm):
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    # PROBLEM
     username = forms.EmailField(
         max_length=254,
         widget=forms.TextInput(
