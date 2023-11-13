@@ -20,7 +20,7 @@
                                     <form class="user" method="post">
                                         {% csrf_token %}
                                         {% if messages %}
-                                            {% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
+                                            {% for message in messages %}<div class="alert alert-warning">{{ message }}</div>{% endfor %}
                                         {% endif %}
                                         {% for field in form %}
                                             {% if field.errors %}
