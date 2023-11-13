@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,
@@ -56,6 +57,24 @@ class CustomLoginView(LoginView):
     template_name = "users/login.html"
     success_url = reverse_lazy("dashboard")
     form_class = CustomAuthenticationForm
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        username = form.cleaned_data.get("username")
+        try:
+            user = User.objects.get(email=username)
+        except User.DoesNotExist:
+            messages.error(
+                self.request,
+                "User does not exist. Please check your email and password.",
+            )
+        else:
+            if not user.is_active:
+                messages.error(
+                    self.request,
+                    "User is not active. Please check your email and active your account.",
+                )
+        return response
 
 
 class ActivateAccountView(TemplateView):
