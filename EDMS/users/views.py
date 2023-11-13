@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.views import (
     LoginView,
+    LogoutView,
     PasswordResetCompleteView,
     PasswordResetConfirmView,
     PasswordResetDoneView,
@@ -33,11 +35,11 @@ class UserRegisterView(FormView):
         domain = get_current_site(self.request).domain
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = account_activation_token.make_token(user)
-        from_email = "EDMS.activate.account@test.com"
+        from_email = settings.COMPANY_EMAIL
 
         subject = "Account Activation"
         message = render_to_string(
-            "users/account_activation_email.html",
+            "emails/account_activation_email.html",
             {"user": user, "domain": domain, "uidb64": uidb64, "token": token},
         )
 
@@ -81,10 +83,10 @@ class ActivateAccountView(TemplateView):
 
 
 class CustomPasswordResetView(PasswordResetView):
-    email_template_name = "users/forgot_password_email.html"
+    email_template_name = "emails/forgot_password_email.html"
     form_class = CustomPasswordResetForm
-    from_email = "EDMS.reset.password@test.com"
-    subject_template_name = "users/email_subject.txt"
+    from_email = settings.COMPANY_EMAIL
+    subject_template_name = "emails/email_subject.txt"
     success_url = reverse_lazy("forgot_password_done")
     template_name = "users/forgot_password.html"
 
@@ -101,3 +103,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = "users/forgot_password_complete.html"
+
+
+class CustomLogoutView(LogoutView):
+    template_name = "users/logout.html"
