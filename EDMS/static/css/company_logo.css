@@ -1,0 +1,4 @@
+.company-logo {
+    border-radius: 50%; /* Okrągłe logo */
+    max-width: 50%; /* Maksymalna szerokość równa szerokości kontenera */
+}
