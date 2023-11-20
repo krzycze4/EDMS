@@ -150,3 +150,7 @@ COMPANY_EMAIL = "EDMS@test.com"
 # Media settings
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+# KRS url settings
+BASE_KRS_API_URL = f"https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/"
+KRS_API_TIMEOUT = env("KRS_API_TIMEOUT")
