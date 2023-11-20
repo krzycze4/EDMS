@@ -13,3 +13,20 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = "Addresses"
+
+
+class Company(models.Model):
+    name = models.CharField(max_length=100)
+    KRS_id = models.BigIntegerField()
+    REGON_id = models.BigIntegerField()
+    NIP_id = models.BigIntegerField()
+    address = models.ForeignKey(
+        Address, default=None, on_delete=models.SET_DEFAULT, null=True
+    )
+    is_mine = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name_plural = "Companies"
