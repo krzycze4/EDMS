@@ -16,10 +16,10 @@ class Address(models.Model):
 
 
 class Company(models.Model):
-    name = models.CharField(max_length=100)
-    KRS_id = models.BigIntegerField()
-    REGON_id = models.BigIntegerField()
-    NIP_id = models.BigIntegerField()
+    name = models.CharField(max_length=100, verbose_name="Company Name")
+    KRS_id = models.BigIntegerField(verbose_name="KRS Number")
+    REGON_id = models.BigIntegerField(verbose_name="REGON Number")
+    NIP_id = models.BigIntegerField(verbose_name="NIP Number")
     address = models.ForeignKey(
         Address, default=None, on_delete=models.SET_DEFAULT, null=True
     )
