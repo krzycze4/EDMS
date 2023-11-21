@@ -153,4 +153,4 @@ MEDIA_URL = "/media/"
 
 # KRS url settings
 BASE_KRS_API_URL = f"https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/"
-KRS_API_TIMEOUT = env("KRS_API_TIMEOUT")
+KRS_API_TIMEOUT = env.int("KRS_API_TIMEOUT", 10)
