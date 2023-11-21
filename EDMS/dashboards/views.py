@@ -3,9 +3,10 @@ import os
 import requests
 from django.conf import settings
 from django.contrib import messages
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, ListView, TemplateView
 from requests import Timeout
 
 from .forms import CompanyAndAddressForm, KRSForm
@@ -111,7 +112,7 @@ class CreateCompanyView(FormView):
         postcode = form.cleaned_data["postcode"]
         country = form.cleaned_data["country"]
 
-        address = Address.objects.get(
+        address = Address.objects.filter(
             street_name=street_name,
             street_number=street_number,
             city=city,
@@ -137,3 +138,20 @@ class CreateCompanyView(FormView):
 
 class CreateCompanyDoneView(TemplateView):
     template_name = "dashboards/create_company_done.html"
+
+
+class ListCompanyView(ListView):
+    queryset = Company.objects.values("name", "KRS_id", "REGON_id", "NIP_id")
+    template_name = "dashboards/list_company.html"
+    paginate_by = 10
+    context_object_name = "companies"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        desired_columns = ["name", "KRS_id", "REGON_id", "NIP_id"]
+        columns = Company._meta.fields
+        desired_columns_name = [
+            column.verbose_name for column in columns if column.name in desired_columns
+        ]
+        context["columns_name"] = desired_columns_name
+        return context
