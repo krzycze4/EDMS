@@ -1,0 +1,156 @@
+{% extends "dashboards/dashboard.html" %}
+{% block title %}
+    Company list
+{% endblock title %}
+{% block main %}
+    <div class="container-fluid">
+        <p class="mb-4">
+            Table represents the whole list of companies added to the system. If you click the name of any company you will see its details.
+        </p>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Company list</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive-sm">
+                    <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_length" id="dataTable_length">
+                                    <label>
+                                        Show
+                                        <select name="dataTable_length"
+                                                aria-controls="dataTable"
+                                                class="custom-select custom-select-sm form-control form-control-sm">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                        entries
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <div id="dataTable_filter" class="dataTables_filter">
+                                    <label>
+                                        Search:
+                                        <input type="search"
+                                               class="form-control form-control-sm"
+                                               placeholder=""
+                                               aria-controls="dataTable">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-bordered dataTable"
+                                       id="dataTable"
+                                       width="100%"
+                                       cellspacing="0"
+                                       role="grid"
+                                       aria-describedby="dataTable_info">
+                                    <thead>
+                                        <tr class="bg-gradient-primary text-gray-100" role="row">
+                                            {% for column_name in columns_name %}
+                                                <th class="sorting"
+                                                    tabindex="0"
+                                                    aria-controls="dataTable"
+                                                    rowspan="1"
+                                                    colspan="1"
+                                                    aria-label="Position: activate to sort column ascending">
+                                                    {{ column_name }}
+                                                </th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for company in companies %}
+                                            <tr class="odd">
+                                                <th class="sorting-1">{{ company.name }}</th>
+                                                <th>{{ company.KRS_id }}</th>
+                                                <th>{{ company.REGON_id }}</th>
+                                                <th>{{ company.NIP_id }}</th>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-5">
+                                <div class="dataTables_info"
+                                     id="dataTable_info"
+                                     role="status"
+                                     aria-live="polite">
+                                    Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 d-flex align-items-center justify-content-center">
+                                <div class="dataTables_paginate paging_simple_numbers col-md-3"
+                                     id="dataTable_paginate">
+                                    <ul class="pagination">
+                                        {% if page_obj.has_previous %}
+                                            <li class="paginate_button page-item previous" id="dataTable_first">
+                                                <a href="?page=1"
+                                                   aria-controls="dataTable"
+                                                   data-dt-idx="0"
+                                                   tabindex="0"
+                                                   class="page-link">First</a>
+                                            </li>
+                                            <li class="paginate_button page-item" id="dataTable_previous">
+                                                <a href="?page={{ page_obj.previous_page_number }}"
+                                                   aria-controls="dataTable"
+                                                   data-dt-idx="0"
+                                                   tabindex="0"
+                                                   class="page-link">Previous</a>
+                                            </li>
+                                        {% endif %}
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% if page_obj.number == num %}
+                                                <li class="paginate_button page-item active">
+                                                    <a href="?page={{ num }}"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="1"
+                                                       tabindex="0"
+                                                       class="page-link">{{ num }}</a>
+                                                </li>
+                                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                                <li class="paginate_button page-item ">
+                                                    <a href="?page={{ num }}"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="2"
+                                                       tabindex="0"
+                                                       class="page-link">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if page_obj.has_next %}
+                                            <li class="paginate_button page-item" id="dataTable_next">
+                                                <a href="?page={{ page_obj.next_page_number }}"
+                                                   aria-controls="dataTable"
+                                                   data-dt-idx="7"
+                                                   tabindex="0"
+                                                   class="page-link">Next</a>
+                                            </li>
+                                            <li class="paginate_button page-item" id="dataTable_last">
+                                                <a href="?page={{ page_obj.paginator.num_pages }}"
+                                                   aria-controls="dataTable"
+                                                   data-dt-idx="4"
+                                                   tabindex="0"
+                                                   class="page-link">Last</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main %}
