@@ -5,6 +5,7 @@ from .views import (
     CreateCompanyView,
     DashboardView,
     FindCompanyView,
+    ListCompanyView,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
         CreateCompanyDoneView.as_view(),
         name="create_company_done",
     ),
+    path("company/", ListCompanyView.as_view(), name="list_company"),
 ]
