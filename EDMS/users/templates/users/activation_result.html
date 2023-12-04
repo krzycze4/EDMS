@@ -2,7 +2,7 @@
 {% block title %}
     Activation successfully!
 {% endblock title %}
-{% block content %}
+{% block content_not_authenticated_user %}
     <div class="container">
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
@@ -10,8 +10,11 @@
                     <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">Activation {{ information }}!</h1>
                     </div>
+                    <div class="text-center">
+                        <a class="small" href="{% url 'login' %}">Already have an account? Login!</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-{% endblock content %}
+{% endblock content_not_authenticated_user %}
