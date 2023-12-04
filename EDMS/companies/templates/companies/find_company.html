@@ -1,8 +1,8 @@
-{% extends "dashboards/dashboard.html" %}
+{% extends "base.html" %}
 {% block title %}
     Find Company
 {% endblock title %}
-{% block main %}
+{% block content %}
     <div class="card mb-1">
         <div class="card-header">
             <h6 class="m-0 font-weight-bold text-primary">Insert company KRS number which you want to add to the system.</h6>
@@ -10,6 +10,7 @@
         <form method="post">
             {% csrf_token %}
             <div class="card-body">
+                {#            TODO: move to base#}
                 {% if messages %}
                     {% for message in messages %}<div class="alert bg-gradient-danger text-white">{{ message }}</div>{% endfor %}
                 {% endif %}
@@ -18,4 +19,4 @@
             </div>
         </form>
     </div>
-{% endblock main %}
+{% endblock content %}

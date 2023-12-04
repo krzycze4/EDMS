@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}
+    Company Detail
+{% endblock title %}
+{% block content %}
+    <div class="card-group">
+        <div class="card shadow">
+            <div class="row card-header">
+                <h6 class="m-0 font-weight-bold text-primary">{{ company.name }}</h6>
+                <a class="btn btn-primary me-md-2"
+                   type="button"
+                   href="{{ request.META.HTTP_REFERER }}">Back to list</a>
+            </div>
+            <div class="row">
+                <div class="col p-6">
+                    <div class="col pb-4">
+                        <h5 class="m-0 font-weight-bold pt-4">Main data</h5>
+                        <hr class="border border-primary border-2 opacity-75 w-25 ml-sm-0">
+                        <div class="card-body">
+                            <p class="m-0 font-weight-bold">KRS Number: {{ company.krs }}</p>
+                            <p class="m-0 font-weight-bold">REGON Number: {{ company.regon }}</p>
+                            <p class="m-0 font-weight-bold">NIP Number: {{ company.nip }}</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5 class="m-0 font-weight-bold pt-2">Address</h5>
+                        <hr class="border border-primary border-2 opacity-75 w-25 ml-sm-0">
+                        <div class="card-body">
+                            <p class="m-0 font-weight-bold">Street name: {{ company.address.street_name }}</p>
+                            <p class="m-0 font-weight-bold">Street number: {{ company.address.street_number }}</p>
+                            <p class="m-0 font-weight-bold">City: {{ company.address.city }}</p>
+                            <p class="m-0 font-weight-bold">Postcode: {{ company.address.postcode }}</p>
+                            <p class="m-0 font-weight-bold">Country: {{ company.address.country }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

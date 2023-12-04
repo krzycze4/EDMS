@@ -1,8 +1,8 @@
-{% extends "dashboards/dashboard.html" %}
+{% extends "base.html" %}
 {% block title %}
     Create Company
 {% endblock title %}
-{% block main %}
+{% block content %}
     <div class="card mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
@@ -28,4 +28,4 @@
             <a class="btn btn-primary" href="{% url "find_company" %}">Back to KRS searchbar</a>
         </div>
     </div>
-{% endblock main %}
+{% endblock content %}

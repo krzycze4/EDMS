@@ -1,8 +1,8 @@
-{% extends "dashboards/dashboard.html" %}
+{% extends "base.html" %}
 {% block title %}
     Company created
 {% endblock title %}
-{% block main %}
+{% block content %}
     <div class="card mb-4">
         <div class="card-header">
             <h6 class="m-0 font-weight-bold text-primary">Company created successfully!</h6>
@@ -11,4 +11,4 @@
             <a class="btn btn-primary" href="{% url "find_company" %}">Add next company to the system</a>
         </div>
     </div>
-{% endblock main %}
+{% endblock content %}

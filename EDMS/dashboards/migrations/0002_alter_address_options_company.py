@@ -28,9 +28,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("name", models.CharField(max_length=100)),
-                ("KRS_id", models.BigIntegerField()),
-                ("REGON_id", models.BigIntegerField()),
-                ("NIP_id", models.BigIntegerField()),
+                ("krs", models.BigIntegerField()),
+                ("regon", models.BigIntegerField()),
+                ("nip", models.BigIntegerField()),
                 ("is_mine", models.BooleanField(default=False)),
                 (
                     "address",

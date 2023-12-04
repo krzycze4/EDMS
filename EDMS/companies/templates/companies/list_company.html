@@ -1,8 +1,8 @@
-{% extends "dashboards/dashboard.html" %}
+{% extends "base.html" %}
 {% block title %}
     Company list
 {% endblock title %}
-{% block main %}
+{% block content %}
     <div class="container-fluid">
         <p class="mb-4">
             Table represents the whole list of companies added to the system. If you click the name of any company you will see its details.
@@ -53,25 +53,49 @@
                                        aria-describedby="dataTable_info">
                                     <thead>
                                         <tr class="bg-gradient-primary text-gray-100" role="row">
-                                            {% for column_name in columns_name %}
-                                                <th class="sorting"
-                                                    tabindex="0"
-                                                    aria-controls="dataTable"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="Position: activate to sort column ascending">
-                                                    {{ column_name }}
-                                                </th>
-                                            {% endfor %}
+                                            <th class="sorting"
+                                                tabindex="0"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">
+                                                Company Name
+                                            </th>
+                                            <th class="sorting"
+                                                tabindex="0"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">
+                                                KRS Number
+                                            </th>
+                                            <th class="sorting"
+                                                tabindex="0"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">
+                                                REGON Number
+                                            </th>
+                                            <th class="sorting"
+                                                tabindex="0"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">
+                                                NIP Number
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for company in companies %}
                                             <tr class="odd">
-                                                <th class="sorting-1">{{ company.name }}</th>
-                                                <th>{{ company.KRS_id }}</th>
-                                                <th>{{ company.REGON_id }}</th>
-                                                <th>{{ company.NIP_id }}</th>
+                                                <th class="sorting-1">
+                                                    <a href="{% url 'detail_company' company.id %}">{{ company.name }}</a>
+                                                </th>
+                                                <th>{{ company.krs }}</th>
+                                                <th>{{ company.regon }}</th>
+                                                <th>{{ company.nip }}</th>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -153,4 +177,4 @@
             </div>
         </div>
     </div>
-{% endblock main %}
+{% endblock content %}
