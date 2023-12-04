@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 import environ
+from django.urls import reverse_lazy
 
 from .env import env
 
@@ -43,7 +44,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
-INSTALLED_EXTENSIONS = ["django_extensions", "users", "dashboards"]
+INSTALLED_EXTENSIONS = [
+    "django_extensions",
+    "users",
+    "dashboards",
+    "companies",
+]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
@@ -134,7 +140,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Login settings
-LOGIN_REDIRECT_URL = "dashboard/"
+LOGIN_REDIRECT_URL = reverse_lazy("dashboard")
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
@@ -153,4 +159,4 @@ MEDIA_URL = "/media/"
 
 # KRS url settings
 BASE_KRS_API_URL = f"https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/"
-KRS_API_TIMEOUT = env.int("KRS_API_TIMEOUT", 10)
+KRS_API_TIMEOUT = env("KRS_API_TIMEOUT")
