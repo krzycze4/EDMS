@@ -9,6 +9,7 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.contrib.sites.shortcuts import get_current_site
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
@@ -29,6 +30,12 @@ class UserRegisterView(FormView):
     form_class = CustomUserCreationForm
     template_name = "users/register.html"
     success_url = reverse_lazy("success_register")
+    redirect_authenticated_user = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.redirect_authenticated_user and self.request.user.is_authenticated:
+            return redirect("dashboard")
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = form.save()
@@ -55,8 +62,8 @@ class SuccessRegisterView(TemplateView):
 
 class CustomLoginView(LoginView):
     template_name = "users/login.html"
-    success_url = reverse_lazy("dashboard")
     form_class = CustomAuthenticationForm
+    redirect_authenticated_user = True
 
     def form_invalid(self, form):
         response = super().form_invalid(form)
@@ -70,10 +77,12 @@ class CustomLoginView(LoginView):
             )
         else:
             if not user.is_active:
-                messages.error(
+                messages.warning(
                     self.request,
                     "User is not active. Please check your email and active your account.",
                 )
+            else:
+                messages.warning(self.request, message="Incorrect password!")
         return response
 
 

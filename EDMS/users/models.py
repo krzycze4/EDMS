@@ -48,14 +48,9 @@ class CustomUserManager(UserManager):
 
 
 class User(AbstractUser):
-    # phone_number = models.CharField(max_length=50, null=True)
-    # birthday = models.DateField(null=True)
-    # # address = models.ForeignKey(Address, null=True)
-    # gross_salary = models.DecimalField(max_digits=6, decimal_places=2)
-    # holidays_days = models.PositiveSmallIntegerField(default=26)
-    email = models.EmailField(_("email address"), blank=True, unique=True)
     username_validator = None
     username = None
+    email = models.EmailField(_("email address"), unique=True)
     is_active = models.BooleanField(
         _("active"),
         default=False,
@@ -64,6 +59,14 @@ class User(AbstractUser):
             "Unselect this instead of deleting accounts."
         ),
     )
+    # TODO: do it when Contract and Agreement models will be created
+    # phone_number = models.CharField(max_length=50, null=True)
+    # position = models.CharField(max_length=30)
+    # salary = models.DecimalField(max_digits=6, decimal_places=2)
+    # holidays_days = models.PositiveSmallIntegerField(default=26)
+    # contract = models.ManyToManyField(Contract, null=True)
+    # address = models.ForeignKey(Address, null=True)
+    # agreement = models.ForeignKey(Agreement, null=True
 
     objects = CustomUserManager()
 
@@ -82,6 +85,10 @@ class User(AbstractUser):
 
     @classmethod
     def normalize_username(cls, email):
+        return unicodedata.normalize("NFKC", email) if isinstance(email, str) else email
+
+    @classmethod
+    def normalize_email(cls, email):
         return unicodedata.normalize("NFKC", email) if isinstance(email, str) else email
 
     def __str__(self):
