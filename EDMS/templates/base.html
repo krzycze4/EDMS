@@ -27,6 +27,9 @@
         <link rel="stylesheet"
               type="text/css"
               href="{% static 'css/company_logo.css' %}">
+        <!-- Tables-->
+        <link href="{% static 'css/dataTables.bootstrap4.min.css' %}"
+              rel="stylesheet">
     </head>
     <body class="bg-gradient-primary" id="page-top">
         {% if not user.is_authenticated %}
@@ -43,6 +46,9 @@
                     <div id="content">
                         {% include "topbar.html" %}
                         <!-- Begin Page Content -->
+                        {% if messages %}
+                            {% for message in messages %}<div class="alert bg-gradient-danger text-white">{{ message }}</div>{% endfor %}
+                        {% endif %}
                         {% block content %}
                         {% endblock content %}
                         <!-- End of Page Content -->
@@ -96,5 +102,23 @@
         <script src="{% static "js/jquery.easing.min.js" %}"></script>
         <!-- Custom scripts for all pages-->
         <script src="{% static "js/sb-admin-2.min.js" %}"></script>
+        <!-- Page level plugins -->
+        <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
+        <script src="{% static "js/dataTables.bootstrap4.min.js" %}"></script>
+        <!-- Dodaj DataTables do tabeli, umożliwiając sortowanie kolumn -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Inicjalizacja DataTables
+                $('#dataTable').DataTable({
+                    "order": [[0, 'asc']],  // Sortowanie rosnące dla pierwszej kolumny (Company Name)
+                    "columnDefs": [
+                        { "orderable": false, "targets": [1, 2, 3] }  // Wyłączenie sortowania dla kolumn 1, 2, 3 (indeksowane od 0)
+                    ],
+                    "paging": false,  // Wyłączenie nawigacji po stronach
+                    "searching": false,  // Wyłączenie pola do wyszukiwania
+                    "info": false  // Wyłączenie wyświetlania informacji o liczbie wpisów
+                });
+            });
+        </script>
     </body>
 </html>

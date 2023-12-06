@@ -15,40 +15,46 @@
                 <div class="table-responsive-sm">
                     <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
                         <div class="row">
-                            <div class="col-sm-12 col-md-6">
-                                <div class="dataTables_length" id="dataTable_length">
-                                    <label>
-                                        Show
-                                        <select name="dataTable_length"
-                                                aria-controls="dataTable"
-                                                class="custom-select custom-select-sm form-control form-control-sm">
-                                            <option value="10">10</option>
-                                            <option value="25">25</option>
-                                            <option value="50">50</option>
-                                            <option value="100">100</option>
-                                        </select>
-                                        entries
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6">
-                                <div id="dataTable_filter" class="dataTables_filter">
-                                    <label>
-                                        Search:
-                                        <input type="search"
-                                               class="form-control form-control-sm"
-                                               placeholder=""
-                                               aria-controls="dataTable">
-                                    </label>
+                            <div class="col-sm-12">
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Accordion -->
+                                    <a href="#collapseCardExample"
+                                       class="d-block card-header py-3"
+                                       data-toggle="collapse"
+                                       role="button"
+                                       aria-expanded="true"
+                                       aria-controls="collapseCardExample">
+                                        <h6 class="m-0 font-weight-bold text-primary">Searching panel</h6>
+                                    </a>
+                                    <!-- Card Content - Collapse -->
+                                    <div class="collapse show" id="collapseCardExample">
+                                        <div class="card-body">
+                                            <form method="get">
+                                                {% for field in filter_form %}
+                                                    {{ field.label }}
+                                                    {{ field }}
+                                                    {% if field.errors %}
+                                                        <div class="alert alert-danger">
+                                                            {% for error in field.errors %}{{ error }}{% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                                    <input type="submit" value="Search" class="btn btn-primary" />
+                                                    <a class="btn btn-primary" href="{% url 'list_company' %}">Show all companies</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="mt-3"></div>
+                        <div class="mt-3"></div>
+                        <div class="table-responsive">
                             <div class="col-sm-12">
                                 <table class="table table-bordered dataTable"
                                        id="dataTable"
-                                       width="100%"
-                                       cellspacing="0"
                                        role="grid"
                                        aria-describedby="dataTable_info">
                                     <thead>
@@ -58,27 +64,25 @@
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
+                                                aria-sort="ascending"
                                                 aria-label="Position: activate to sort column ascending">
                                                 Company Name
                                             </th>
-                                            <th class="sorting"
-                                                tabindex="0"
+                                            <th tabindex="1"
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
                                                 aria-label="Position: activate to sort column ascending">
                                                 KRS Number
                                             </th>
-                                            <th class="sorting"
-                                                tabindex="0"
+                                            <th tabindex="2"
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
                                                 aria-label="Position: activate to sort column ascending">
                                                 REGON Number
                                             </th>
-                                            <th class="sorting"
-                                                tabindex="0"
+                                            <th tabindex="3"
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
@@ -90,7 +94,7 @@
                                     <tbody>
                                         {% for company in companies %}
                                             <tr class="odd">
-                                                <th class="sorting-1">
+                                                <th>
                                                     <a href="{% url 'detail_company' company.id %}">{{ company.name }}</a>
                                                 </th>
                                                 <th>{{ company.krs }}</th>
@@ -102,75 +106,77 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12 col-md-5">
-                                <div class="dataTables_info"
-                                     id="dataTable_info"
-                                     role="status"
-                                     aria-live="polite">
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info"
+                                 id="dataTable_info"
+                                 role="status"
+                                 aria-live="polite">
+                                <p class="mb-2">
                                     Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
-                                </div>
+                                </p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-12 d-flex align-items-center justify-content-center">
-                                <div class="dataTables_paginate paging_simple_numbers col-md-3"
-                                     id="dataTable_paginate">
-                                    <ul class="pagination">
-                                        {% if page_obj.has_previous %}
-                                            <li class="paginate_button page-item previous" id="dataTable_first">
-                                                <a href="?page=1"
-                                                   aria-controls="dataTable"
-                                                   data-dt-idx="0"
-                                                   tabindex="0"
-                                                   class="page-link">First</a>
-                                            </li>
-                                            <li class="paginate_button page-item" id="dataTable_previous">
-                                                <a href="?page={{ page_obj.previous_page_number }}"
-                                                   aria-controls="dataTable"
-                                                   data-dt-idx="0"
-                                                   tabindex="0"
-                                                   class="page-link">Previous</a>
-                                            </li>
-                                        {% endif %}
-                                        {% for num in page_obj.paginator.page_range %}
-                                            {% if page_obj.number == num %}
-                                                <li class="paginate_button page-item active">
-                                                    <a href="?page={{ num }}"
+                            {% if page_obj.paginator.num_pages > 1 %}
+                                <div class="col-sm-12 d-flex align-items-center justify-content-center">
+                                    <div class="dataTables_paginate paging_simple_numbers"
+                                         id="dataTable_paginate">
+                                        <ul class="pagination">
+                                            {% if page_obj.has_previous %}
+                                                <li class="paginate_button page-item previous" id="dataTable_first">
+                                                    <a href="?page=1"
                                                        aria-controls="dataTable"
-                                                       data-dt-idx="1"
+                                                       data-dt-idx="0"
                                                        tabindex="0"
-                                                       class="page-link">{{ num }}</a>
+                                                       class="page-link">First</a>
                                                 </li>
-                                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                                <li class="paginate_button page-item ">
-                                                    <a href="?page={{ num }}"
+                                                <li class="paginate_button page-item" id="dataTable_previous">
+                                                    <a href="?page={{ page_obj.previous_page_number }}"
                                                        aria-controls="dataTable"
-                                                       data-dt-idx="2"
+                                                       data-dt-idx="0"
                                                        tabindex="0"
-                                                       class="page-link">{{ num }}</a>
+                                                       class="page-link">Previous</a>
                                                 </li>
                                             {% endif %}
-                                        {% endfor %}
-                                        {% if page_obj.has_next %}
-                                            <li class="paginate_button page-item" id="dataTable_next">
-                                                <a href="?page={{ page_obj.next_page_number }}"
-                                                   aria-controls="dataTable"
-                                                   data-dt-idx="7"
-                                                   tabindex="0"
-                                                   class="page-link">Next</a>
-                                            </li>
-                                            <li class="paginate_button page-item" id="dataTable_last">
-                                                <a href="?page={{ page_obj.paginator.num_pages }}"
-                                                   aria-controls="dataTable"
-                                                   data-dt-idx="4"
-                                                   tabindex="0"
-                                                   class="page-link">Last</a>
-                                            </li>
-                                        {% endif %}
-                                    </ul>
+                                            {% for num in page_obj.paginator.page_range %}
+                                                {% if page_obj.number == num %}
+                                                    <li class="paginate_button page-item active">
+                                                        <a href="?page={{ num }}"
+                                                           aria-controls="dataTable"
+                                                           data-dt-idx="1"
+                                                           tabindex="0"
+                                                           class="page-link">{{ num }}</a>
+                                                    </li>
+                                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a href="?page={{ num }}"
+                                                           aria-controls="dataTable"
+                                                           data-dt-idx="2"
+                                                           tabindex="0"
+                                                           class="page-link">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if page_obj.has_next %}
+                                                <li class="paginate_button page-item" id="dataTable_next">
+                                                    <a href="?page={{ page_obj.next_page_number }}"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="7"
+                                                       tabindex="0"
+                                                       class="page-link">Next</a>
+                                                </li>
+                                                <li class="paginate_button page-item" id="dataTable_last">
+                                                    <a href="?page={{ page_obj.paginator.num_pages }}"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="4"
+                                                       tabindex="0"
+                                                       class="page-link">Last</a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

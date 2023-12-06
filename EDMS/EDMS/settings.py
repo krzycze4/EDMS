@@ -49,6 +49,7 @@ INSTALLED_EXTENSIONS = [
     "users",
     "dashboards",
     "companies",
+    "django_filters",
 ]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS

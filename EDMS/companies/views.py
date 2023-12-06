@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView
 from requests import Timeout
 
+from .filters import CompanyFilter
 from .forms import CompanyAndAddressForm, KRSForm
 from .models import Address, Company
 
@@ -126,8 +127,18 @@ class CreateCompanyDoneView(TemplateView):
 class ListCompanyView(ListView):
     queryset = Company.objects.all()
     template_name = "companies/list_company.html"
-    paginate_by = 2
     context_object_name = "companies"
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = CompanyFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter_form"] = self.filterset.form
+        return context
 
 
 class DetailCompanyView(DetailView):
