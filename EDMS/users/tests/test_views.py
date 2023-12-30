@@ -51,7 +51,7 @@ class TestCaseUserRegisterView(TestCase):
 
         response = self.client.post(reverse("register"), data=form_data)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
-        self.assertRedirects(response, reverse("success_register"))
+        self.assertRedirects(response, reverse("success-register"))
         self.assertTrue(User.objects.filter(email=form_data["email"]).exists())
 
     def test_sending_email_with_token_and_uidb64_if_successfully_registration(self):
@@ -111,7 +111,7 @@ class TestCaseUserRegisterView(TestCase):
 
 class TestCaseSuccessRegisterView(TestCase):
     def test_render_page(self):
-        response = self.client.get(reverse("success_register"))
+        response = self.client.get(reverse("success-register"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/register_success.html")
 
@@ -200,7 +200,7 @@ class TestCaseActivateAccountView(TestCase):
         self.assertFalse(self.user.is_active)
         response = self.client.get(
             reverse(
-                "activate_account", kwargs={"uidb64": self.uidb64, "token": self.token}
+                "activate-account", kwargs={"uidb64": self.uidb64, "token": self.token}
             )
         )
         self.user.refresh_from_db()
@@ -212,7 +212,7 @@ class TestCaseActivateAccountView(TestCase):
     def test_user_activation_failure_uidb64(self):
         response = self.client.get(
             reverse(
-                "activate_account", kwargs={"uidb64": "invalid", "token": self.token}
+                "activate-account", kwargs={"uidb64": "invalid", "token": self.token}
             )
         )
         self.user.refresh_from_db()
@@ -224,7 +224,7 @@ class TestCaseActivateAccountView(TestCase):
     def test_user_activation_failure_token(self):
         response = self.client.get(
             reverse(
-                "activate_account", kwargs={"uidb64": self.uidb64, "token": "invalid"}
+                "activate-account", kwargs={"uidb64": self.uidb64, "token": "invalid"}
             )
         )
         self.user.refresh_from_db()
@@ -237,7 +237,7 @@ class TestCaseActivateAccountView(TestCase):
         uidb64_not_existing_user = urlsafe_base64_encode(force_bytes(2))
         response = self.client.get(
             reverse(
-                "activate_account",
+                "activate-account",
                 kwargs={"uidb64": uidb64_not_existing_user, "token": self.token},
             )
         )
@@ -258,22 +258,20 @@ class TestCaseCustomPasswordResetView(TestCase):
         )
 
     def test_render_page(self):
-        response = self.client.get(reverse("forgot_password"))
+        response = self.client.get(reverse("forgot-password"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/forgot_password.html")
 
-    # problem z przetestowaniem wysyłania emaila
     def test_redirect_if_form_is_valid(self):
         email = "email@email.com"
-        response = self.client.post(reverse("forgot_password"), data={"email": email})
-        # self.assertEqual(len(mail.outbox), 1)
+        response = self.client.post(reverse("forgot-password"), data={"email": email})
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, reverse("forgot_password_done"))
 
 
 class TestCaseCustomPasswordResetDoneView(TestCase):
     def test_status_and_template(self):
-        response = self.client.get(reverse("forgot_password_done"))
+        response = self.client.get(reverse("forgot-password-done"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/forgot_password_done.html")
 
@@ -294,7 +292,7 @@ class TestCaseCustomPasswordResetConfirmView(TestCase):
     def test_redirect_to_set_password_page(self):
         response = self.client.get(
             reverse(
-                "forgot_password_confirm",
+                "forgot-password-confirm",
                 kwargs={"uidb64": self.uidb64, "token": self.token},
             )
         )
@@ -313,7 +311,7 @@ class TestCaseCustomPasswordResetConfirmView(TestCase):
 
         response = self.client.get(
             reverse(
-                "forgot_password_confirm",
+                "forgot-password-confirm",
                 kwargs={"uidb64": self.uidb64, "token": self.token},
             )
         )
@@ -335,7 +333,7 @@ class TestCaseCustomPasswordResetConfirmView(TestCase):
 
         response = self.client.get(
             reverse(
-                "forgot_password_confirm",
+                "forgot-password-confirm",
                 kwargs={"uidb64": self.uidb64, "token": self.token},
             )
         )
@@ -350,12 +348,12 @@ class TestCaseCustomPasswordResetConfirmView(TestCase):
 
         self.assertNotEqual(password_after, password_before)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
-        self.assertRedirects(response, reverse("forgot_password_complete"))
+        self.assertRedirects(response, reverse("forgot-password-complete"))
 
 
 class TestCaseCustomPasswordResetCompleteView(TestCase):
     def test_render_forgot_password_complete(self):
-        response = self.client.get(reverse("forgot_password_complete"))
+        response = self.client.get(reverse("forgot-password-complete"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/forgot_password_complete.html")
 
@@ -370,12 +368,10 @@ class TestCaseCustomLogoutView(TestCase):
             is_active=True,
         )
 
-    # Czy to jest dobrze?
     def test_logout_user_successfully(self):
         login = self.client.login(email="email@email.com", password="edmsedms1")
         self.assertTrue(login)
         self.assertTrue("_auth_user_id" in self.client.session["user"])
-        print(self.client.session)
 
         response = self.client.get(reverse("logout"))
         self.assertFalse("_auth_user_id" in self.client.session["user"])
