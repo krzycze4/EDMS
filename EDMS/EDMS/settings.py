@@ -50,6 +50,7 @@ INSTALLED_EXTENSIONS = [
     "dashboards",
     "companies",
     "contracts",
+    "invoices",
     "django_filters",
 ]
 
@@ -98,6 +99,17 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": BASE_DIR / "db.postgresql",
+#         "USER": "postgres",
+#         "PASSWORD": "postgres",
+#         "HOST": "127.0.0.1",
+#         "PORT": "5432",
+#     }
+# }
 
 
 # Password validation
@@ -160,5 +172,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 # KRS url settings
-BASE_KRS_API_URL = f"https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/"
+BASE_KRS_API_URL = "https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/"
 KRS_API_TIMEOUT = env("KRS_API_TIMEOUT")
