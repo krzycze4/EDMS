@@ -41,7 +41,7 @@
                                                 {% endfor %}
                                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                                     <input type="submit" value="Search" class="btn btn-primary" />
-                                                    <a class="btn btn-primary" href="{% url 'list_company' %}">Show all companies</a>
+                                                    <a class="btn btn-primary" href="{% url 'list-company' %}">Show all companies</a>
                                                 </div>
                                             </form>
                                         </div>
@@ -95,7 +95,7 @@
                                         {% for company in companies %}
                                             <tr class="odd">
                                                 <th>
-                                                    <a href="{% url 'detail_company' company.id %}">{{ company.name }}</a>
+                                                    <a href="{% url 'detail-company' company.id %}">{{ company.name }}</a>
                                                 </th>
                                                 <th>{{ company.krs }}</th>
                                                 <th>{{ company.regon }}</th>
@@ -183,4 +183,19 @@
             </div>
         </div>
     </div>
+    <!-- Dodaj DataTables do tabeli, umożliwiając sortowanie kolumn -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicjalizacja DataTables
+            $('#dataTable').DataTable({
+                "order": [[0, 'asc']],  // Sortowanie rosnące dla pierwszej kolumny (Company Name)
+                "columnDefs": [
+                    { "orderable": false, "targets": [1, 2, 3] }  // Wyłączenie sortowania dla kolumn 1, 2, 3 (indeksowane od 0)
+                ],
+                "paging": false,  // Wyłączenie nawigacji po stronach
+                "searching": false,  // Wyłączenie pola do wyszukiwania
+                "info": false  // Wyłączenie wyświetlania informacji o liczbie wpisów
+            });
+        });
+    </script>
 {% endblock content %}

@@ -12,7 +12,7 @@ class CompanyFilter(django_filters.FilterSet):
             "nip": ["exact"],
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         for name, field in self.form.fields.items():
             field.widget.attrs.update({"class": "form-control"})

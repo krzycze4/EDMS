@@ -1,21 +1,49 @@
 from django.urls import path
 
-from .views import (
+from .views.views_company import (
+    CompanyAddressUpdateView,
+    CompanyCreateView,
+    CompanyDetailView,
+    CompanyFindView,
+    CompanyIdentifiersUpdateView,
+    CompanyListView,
     CreateCompanyDoneView,
-    CreateCompanyView,
-    DetailCompanyView,
-    FindCompanyView,
-    ListCompanyView,
 )
+from .views.views_contact import ContactCreateView, ContactDeleteView, ContactUpdateView
 
 urlpatterns = [
-    path("find/", FindCompanyView.as_view(), name="find_company"),
-    path("create/", CreateCompanyView.as_view(), name="create_company"),
+    path("companies/find/", CompanyFindView.as_view(), name="find-company"),
+    path("companies/create/", CompanyCreateView.as_view(), name="create-company"),
     path(
-        "create/done/",
+        "companies/create/done/",
         CreateCompanyDoneView.as_view(),
-        name="create_company_done",
+        name="create-company-done",
     ),
-    path("", ListCompanyView.as_view(), name="list_company"),
-    path("<int:pk>/", DetailCompanyView.as_view(), name="detail_company"),
+    path("companies/", CompanyListView.as_view(), name="list-company"),
+    path("companies/<int:pk>/", CompanyDetailView.as_view(), name="detail-company"),
+    path(
+        "companies/<int:pk>/update-identifiers/",
+        CompanyIdentifiersUpdateView.as_view(),
+        name="update-identifiers",
+    ),
+    path(
+        "companies/<int:pk>/update-address/",
+        CompanyAddressUpdateView.as_view(),
+        name="update-address",
+    ),
+    path(
+        "companies/<int:pk>/create-contact/",
+        ContactCreateView.as_view(),
+        name="create-contact",
+    ),
+    path(
+        "companies/<int:company_pk>/update-contact/<int:contact_pk>/",
+        ContactUpdateView.as_view(),
+        name="update-contact",
+    ),
+    path(
+        "companies/<int:company_pk>/delete-contact/<int:contact_pk>/",
+        ContactDeleteView.as_view(),
+        name="delete-contact",
+    ),
 ]

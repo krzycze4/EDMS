@@ -1,3 +1,4 @@
+from companies.models import Address, Company, Contact
 from django import forms
 
 
@@ -58,3 +59,59 @@ class CompanyAndAddressForm(forms.Form):
         max_length=50,
         widget=forms.TextInput(attrs={"readonly": "readonly", "class": "form-control"}),
     )
+
+    class Meta:
+        fields = "__all__"
+
+
+class UpdateCompanyIdentifiersForm(forms.ModelForm):
+    class Meta:
+        model = Company
+        fields = ["name", "krs", "regon", "nip"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control"
+
+
+class UpdateAddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ["street_name", "street_number", "city", "postcode", "country"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control"
+
+
+class CreateContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ["name", "email", "phone", "description", "company"]
+        widgets = {"company": forms.HiddenInput()}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control"
+
+
+class UpdateContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ["name", "email", "phone", "description", "company"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control"
+
+
+class DeleteContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ["name", "email", "phone", "description", "company"]

@@ -7,11 +7,13 @@
         <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center pointer">
                 <h6 class="m-0 font-weight-bold text-primary">{{ company.name }}</h6>
-                <a class="btn btn-primary" type="button" href="{% url "list_company" %}">Back to company list</a>
+                <div class="d-flex">
+                    <a class="btn btn-primary" type="button" href="{% url 'list-company' %}">Back to company list</a>
+                </div>
             </div>
             <div class="row p-6">
                 <div class="col">
-                    <div class="card">
+                    <div class="card my-2">
                         <div class="card-header d-flex justify-content-between align-items-center pointer"
                              data-toggle="collapse"
                              data-target="#identifiersCollapse"
@@ -24,10 +26,13 @@
                                 <p class="font-weight-bold">KRS Number: {{ company.krs }}</p>
                                 <p class="font-weight-bold">REGON Number: {{ company.regon }}</p>
                                 <p class="font-weight-bold">NIP Number: {{ company.nip }}</p>
+                                <a class="btn btn-warning mr-2"
+                                   type="button"
+                                   href="{% url 'update-identifiers' company.pk %}">Edit Identifiers</a>
                             </div>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card my-2">
                         <div class="card-header d-flex justify-content-between align-items-center pointer"
                              data-toggle="collapse"
                              data-target="#addressCollapse"
@@ -42,6 +47,59 @@
                                 <p class="font-weight-bold">City: {{ company.address.city }}</p>
                                 <p class="font-weight-bold">Postcode: {{ company.address.postcode }}</p>
                                 <p class="font-weight-bold">Country: {{ company.address.country }}</p>
+                                <a class="btn btn-warning mr-2"
+                                   type="button"
+                                   href="{% url 'update-address' company.pk %}">Edit Address</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#contactsCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Contacts</h5>
+                        </div>
+                        <div id="contactsCollapse" class="collapse show">
+                            <div class="card-body">
+                                <a type="button"
+                                   class="btn btn-primary"
+                                   href="{% url 'create-contact' company.pk %}">Create new contact</a>
+                                {% for contact in company.contacts.all %}
+                                    <hr>
+                                    <p class="font-weight-bold">Contact Name: {{ contact.name }}</p>
+                                    <p class="font-weight-bold">
+                                        Email:
+                                        {% if contact.email %}
+                                            {{ contact.email }}
+                                        {% else %}
+                                            Unknown
+                                        {% endif %}
+                                    </p>
+                                    <p class="font-weight-bold">
+                                        Phone:
+                                        {% if contact.phone %}
+                                            {{ contact.phone }}
+                                        {% else %}
+                                            Unknown
+                                        {% endif %}
+                                    </p>
+                                    <p class="font-weight-bold">
+                                        Description:
+                                        {% if contact.description %}
+                                            {{ contact.description }}
+                                        {% else %}
+                                            Unknown
+                                        {% endif %}
+                                    </p>
+                                    <a type="button"
+                                       class="btn btn-warning"
+                                       href="{% url 'update-contact' company.pk contact.pk %}">Edit</a>
+                                    <a type="button"
+                                       class="btn btn-danger"
+                                       href="{% url 'delete-contact' company.pk contact.pk %}">Delete</a>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

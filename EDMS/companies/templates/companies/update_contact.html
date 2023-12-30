@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block title %}
-    Create Company
+    Edit Contact
 {% endblock title %}
 {% block content %}
     <div class="card mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                Company data received from API KRS. Check if it's the company you are looking for.
-            </h6>
+            <h6 class="m-0 font-weight-bold text-primary">Edit contact</h6>
         </div>
         <div class="card-body">
             <form method="post">
@@ -21,11 +19,10 @@
                         </div>
                     {% endif %}
                 {% endfor %}
-                <input type="submit"
-                       class="btn btn-primary mt-2"
-                       href="{% url "dashboard" %}">
+                <input type="submit" class="btn btn-primary my-2">
             </form>
-            <a class="btn btn-primary mt-2" href="{% url "find-company" %}">Back to KRS searchbar</a>
+            <a class="btn btn-primary my-2"
+               href="{% url "detail-company" company.pk %}">Back to company details</a>
         </div>
     </div>
 {% endblock content %}
