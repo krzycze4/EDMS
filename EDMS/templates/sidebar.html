@@ -67,8 +67,8 @@
              class="collapse"
              data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="">New invoice</a>
-                <a class="collapse-item" href="">Invoice list</a>
+                <a class="collapse-item" href="{% url "create-invoice" %}">New invoice</a>
+                <a class="collapse-item" href="{% url "list-invoice" %}">Invoice list</a>
             </div>
         </div>
     </li>
@@ -90,8 +90,8 @@
                 <a class="collapse-item" href="">Employee list</a>
                 <div class="collapse-divider"></div>
                 <h6 class="collapse-header">External companies:</h6>
-                <a class="collapse-item" href="{% url "find_company" %}">New company</a>
-                <a class="collapse-item" href="{% url "list_company" %}">Company list</a>
+                <a class="collapse-item" href="{% url "find-company" %}">New company</a>
+                <a class="collapse-item" href="{% url "list-company" %}">Company list</a>
             </div>
         </div>
     </li>

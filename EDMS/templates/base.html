@@ -30,6 +30,8 @@
         <!-- Tables-->
         <link href="{% static 'css/dataTables.bootstrap4.min.css' %}"
               rel="stylesheet">
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static "media/company_logo.jpg" %}">
     </head>
     <body class="bg-gradient-primary" id="page-top">
         {% if not user.is_authenticated %}
@@ -105,20 +107,5 @@
         <!-- Page level plugins -->
         <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
         <script src="{% static "js/dataTables.bootstrap4.min.js" %}"></script>
-        <!-- Dodaj DataTables do tabeli, umożliwiając sortowanie kolumn -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Inicjalizacja DataTables
-                $('#dataTable').DataTable({
-                    "order": [[0, 'asc']],  // Sortowanie rosnące dla pierwszej kolumny (Company Name)
-                    "columnDefs": [
-                        { "orderable": false, "targets": [1, 2, 3] }  // Wyłączenie sortowania dla kolumn 1, 2, 3 (indeksowane od 0)
-                    ],
-                    "paging": false,  // Wyłączenie nawigacji po stronach
-                    "searching": false,  // Wyłączenie pola do wyszukiwania
-                    "info": false  // Wyłączenie wyświetlania informacji o liczbie wpisów
-                });
-            });
-        </script>
     </body>
 </html>
