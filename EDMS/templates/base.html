@@ -32,6 +32,9 @@
               rel="stylesheet">
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="{% static "media/company_logo.jpg" %}">
+        <!-- Select2-->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+              rel="stylesheet" />
     </head>
     <body class="bg-gradient-primary" id="page-top">
         {% if not user.is_authenticated %}
@@ -107,5 +110,13 @@
         <!-- Page level plugins -->
         <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
         <script src="{% static "js/dataTables.bootstrap4.min.js" %}"></script>
+        <!-- Select2-->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('.js-example-basic-single').select2();
+                $('.js-example-basic-multiple').select2();
+            });
+        </script>
     </body>
 </html>
