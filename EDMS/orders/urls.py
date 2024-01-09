@@ -1,17 +1,15 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-
-from .views import (
+from orders.views.views_orders import (
     OrderCreateView,
     OrderDeleteView,
     OrderDetailView,
     OrderListView,
     OrderManageInvoices,
     OrderUpdateView,
-    ProtocolCreateView,
-    ProtocolDeleteView,
 )
+from orders.views.views_protocols import ProtocolCreateView, ProtocolDeleteView
 
 urlpatterns = [
     path("orders/create/", OrderCreateView.as_view(), name="create-order"),
