@@ -38,11 +38,14 @@ class CustomUserManager(UserManager):
     def create_superuser(self, email=None, password=None, **extra_fields) -> User:
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
+        if extra_fields.get("is_active") is not True:
+            raise ValueError("Superuser must have is_active=True.")
 
         return self._create_user(email, password, **extra_fields)
 
@@ -95,4 +98,4 @@ class User(AbstractUser):
         return unicodedata.normalize("NFKC", email) if isinstance(email, str) else email
 
     def __str__(self) -> str:
-        return f"{self.email}"
+        return f"{self.first_name} {self.last_name}"
