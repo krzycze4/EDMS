@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+    Create Contact
+{% endblock title %}
+{% block content %}
+    <div class="card">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Create new contact.</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {{ field.label }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="alert alert-danger">
+                            {% for error in field.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <p class="form-control" readonly="true">{{ company }}</p>
+                <input type="submit" class="btn btn-primary my-2">
+            </form>
+            <a class="btn btn-primary my-2"
+               href="{% url 'detail-company' company.id %}">Back to company details</a>
+        </div>
+    </div>
+{% endblock content %}

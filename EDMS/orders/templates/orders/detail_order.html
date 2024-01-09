@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}
+    Order Detail
+{% endblock title %}
+{% block content %}
+    <div class="card-group">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center pointer">
+                <h6 class="m-0 font-weight-bold text-primary">Order: {{ order.name }}</h6>
+                <div class="d-flex">
+                    {% if order.status == 'open' %}
+                        <a class="btn btn-danger mr-2"
+                           type="button"
+                           href="{% url 'delete-order' order.pk %}">Delete order</a>
+                    {% endif %}
+                    <a class="btn btn-primary" type="button" href="{% url 'list-order' %}">Back to order list</a>
+                </div>
+            </div>
+            <div class="row p-6">
+                <div class="col">
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#orderCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Details</h5>
+                        </div>
+                        <div id="orderCollapse" class="collapse show">
+                            <div class="card-body">
+                                <p class="font-weight-bold">Payment: {{ order.payment }}</p>
+                                <p class="font-weight-bold">Status: {{ order.status }}</p>
+                                <p class="font-weight-bold">
+                                    Company: <a href="{% url "detail-company" order.company.pk %}">{{ order.company.name }}</a>
+                                </p>
+                                <p class="font-weight-bold">Create by: {{ order.user }}</p>
+                                <p class="font-weight-bold">Create date: {{ order.create_date }}</p>
+                                <p class="font-weight-bold">Start date: {{ order.start_date }}</p>
+                                <p class="font-weight-bold">End date: {{ order.end_date }}</p>
+                                <p class="font-weight-bold">Description: {{ order.description }}</p>
+                                <a class="btn btn-warning mr-2"
+                                   type="button"
+                                   href="{% url 'update-order' order.pk %}">Edit details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#invoiceCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Invoices</h5>
+                        </div>
+                        <div id="invoiceCollapse" class="collapse show">
+                            <div class="card-body">
+                                <div class="font-weight-bold">
+                                    <h4>Order balance: {{ order_balance }}</h4>
+                                    <a class="btn btn-success my-2"
+                                       href="{% url "manage-invoice" order.pk %}">Pin invoices</a>
+                                </div>
+                                {# Incoming Table #}
+                                <table class="table table-responsive">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Income Invoice Number</th>
+                                            {% if order.income_invoice %}<th scope="col">Net price</th>{% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            {% if order.income_invoice %}
+                                                <td>
+                                                    <a class="font-weight-bold"
+                                                       href="{% url "detail-invoice" order.income_invoice.pk %}">
+                                                        {{ order.income_invoice }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ order.income_invoice.net_price }}</td>
+                                            {% else %}
+                                                <th>Income invoice not yet pinned.</th>
+                                            {% endif %}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                {# Cost Table #}
+                                <table class="table table-responsive">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Cost Invoice Number</th>
+                                            {% if order.income_invoice %}<th scope="col">Net price</th>{% endif %}
+                                        </tr>
+                                    </thead>
+                                    {% if order.income_invoice %}
+                                        <thead class="table-dark text-light">
+                                            <tr>
+                                                <th scope="col">Sum</th>
+                                                <th scope="col">{{ cost_invoices_net_price_sum }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for cost_invoice in order.cost_invoices.all %}
+                                                <tr>
+                                                    <td>
+                                                        <a class="font-weight-bold"
+                                                           href="{% url "detail-invoice" cost_invoice.pk %}">
+                                                            {{ cost_invoice }}
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ cost_invoice.net_price }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    {% else %}
+                                        <tbody>
+                                            <tr>
+                                                <th>Cost invoices not yet pinned.</th>
+                                            </tr>
+                                        </tbody>
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Protocols-->
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#protocolsCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Protocols</h5>
+                        </div>
+                        <div id="protocolsCollapse" class="collapse show">
+                            <div class="card-body">
+                                <a type="button"
+                                   class="btn btn-primary mb-2"
+                                   href="{% url 'create-protocol' order.pk %}">Create new protocol</a>
+                                {# Protocol Table #}
+                                <table class="table table-responsive">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Scan</th>
+                                            <th scope="col">Create date</th>
+                                            <th scope="col">Create by</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for protocol in order.protocols.all %}
+                                            <tr>
+                                                <td>
+                                                    <a target="_blank" href="{{ protocol.scan.url }}">{{ protocol.name }}</a>
+                                                </td>
+                                                <td>{{ protocol.create_date }}</td>
+                                                <td>{{ protocol.user }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {#                                {% for contact in company.contacts.all %}#}
+                                {#                                    <hr>#}
+                                {#                                    <p class="font-weight-bold">Contact Name: {{ contact.name }}</p>#}
+                                {#                                    <p class="font-weight-bold">#}
+                                {#                                        Email:#}
+                                {#                                        {% if contact.email %}#}
+                                {#                                            {{ contact.email }}#}
+                                {#                                        {% else %}#}
+                                {#                                            Unknown#}
+                                {#                                        {% endif %}#}
+                                {#                                    </p>#}
+                                {#                                    <p class="font-weight-bold">#}
+                                {#                                        Phone:#}
+                                {#                                        {% if contact.phone %}#}
+                                {#                                            {{ contact.phone }}#}
+                                {#                                        {% else %}#}
+                                {#                                            Unknown#}
+                                {#                                        {% endif %}#}
+                                {#                                    </p>#}
+                                {#                                    <p class="font-weight-bold">#}
+                                {#                                        Description:#}
+                                {#                                        {% if contact.description %}#}
+                                {#                                            {{ contact.description }}#}
+                                {#                                        {% else %}#}
+                                {#                                            Unknown#}
+                                {#                                        {% endif %}#}
+                                {#                                    </p>#}
+                                {#                                    <a type="button"#}
+                                {#                                       class="btn btn-warning"#}
+                                {#                                       href="{% url 'update-contact' company.pk contact.pk %}">Edit</a>#}
+                                {#                                    <a type="button"#}
+                                {#                                       class="btn btn-danger"#}
+                                {#                                       href="{% url 'delete-contact' company.pk contact.pk %}">Delete</a>#}
+                                {#                                {% endfor %}#}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

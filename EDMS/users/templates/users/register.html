@@ -2,7 +2,7 @@
 {% block title %}
     Register
 {% endblock title %}
-{% block content %}
+{% block content_not_authenticated_user %}
     <div class="container">
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
@@ -39,7 +39,7 @@
                             </form>
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="{% url 'forgot_password' %}">Forgot Password?</a>
+                                <a class="small" href="{% url 'forgot-password' %}">Forgot Password?</a>
                             </div>
                             <div class="text-center">
                                 <a class="small" href="{% url 'login' %}">Already have an account? Login!</a>
@@ -50,4 +50,4 @@
             </div>
         </div>
     </div>
-{% endblock content %}
+{% endblock content_not_authenticated_user %}

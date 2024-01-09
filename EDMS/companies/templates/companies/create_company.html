@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+    Create Company
+{% endblock title %}
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Company data received from API KRS. Check if it's the company you are looking for.
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {% for error in field.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <input type="submit" class="btn btn-primary mt-2">
+            </form>
+            <a class="btn btn-primary mt-2" href="{% url "find-company" %}">Back to KRS searchbar</a>
+        </div>
+    </div>
+{% endblock content %}

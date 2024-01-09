@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 import environ
+from django.urls import reverse_lazy
 
 from .env import env
 
@@ -43,7 +44,16 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
-INSTALLED_EXTENSIONS = ["django_extensions", "users", "dashboards"]
+INSTALLED_EXTENSIONS = [
+    "django_extensions",
+    "users",
+    "dashboards",
+    "companies",
+    "contracts",
+    "invoices",
+    "orders",
+    "django_filters",
+]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
@@ -91,6 +101,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": BASE_DIR / "db.postgresql",
+#         "USER": "postgres",
+#         "PASSWORD": "postgres",
+#         "HOST": "127.0.0.1",
+#         "PORT": "5432",
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -134,7 +155,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Login settings
-LOGIN_REDIRECT_URL = "dashboard/"
+LOGIN_REDIRECT_URL = reverse_lazy("dashboard")
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
@@ -146,3 +167,11 @@ AUTHENTICATION_BACKENDS = [
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = "emails/"
 COMPANY_EMAIL = "EDMS@test.com"
+
+# Media settings
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
+# KRS url settings
+BASE_KRS_API_URL = "https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/"
+KRS_API_TIMEOUT = env("KRS_API_TIMEOUT")

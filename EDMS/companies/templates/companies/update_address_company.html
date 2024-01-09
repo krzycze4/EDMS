@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+    Update Company Address
+{% endblock title %}
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit the address of {{ company.name }}</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {{ field.label }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="alert alert-danger">
+                            {% for error in field.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <input type="submit"
+                       class="btn btn-primary my-2"
+                       href="{% url "dashboard" %}">
+            </form>
+            <a class="btn btn-primary my-2"
+               href="{% url "detail-company" company.pk %}">Back to company details</a>
+        </div>
+    </div>
+{% endblock content %}

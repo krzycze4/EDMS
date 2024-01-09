@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}
+    Create protocol
+{% endblock title %}
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Insert protocol of order {{ order }}</h6>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" class="form-group">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {% for error in field.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <input type="submit" class="btn btn-primary" value="Upload">
+            </form>
+            {% if order.protocols.all %}<h4>Pinned protocols:</h4>{% endif %}
+            {% for protocol in order.protocols.all %}
+                <p>
+                    <a href="{{ protocol.scan.url }}">{{ protocol }}</a>
+                </p>
+            {% endfor %}
+            <a class="btn btn-primary" href="{% url "detail-order" order.pk %}">Back to order</a>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}
+    Company created
+{% endblock title %}
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Company created successfully!</h6>
+        </div>
+        <div class="card-body">
+            <a class="btn btn-primary" href="{% url "find-company" %}">Add next company to the system</a>
+            <a class="btn btn-primary" href="{% url "list-company" %}">Go to list company</a>
+        </div>
+    </div>
+{% endblock content %}

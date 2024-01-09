@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth import authenticate, password_validation
+from django.contrib.auth import password_validation
 from django.contrib.auth.forms import (
     AuthenticationForm,
     BaseUserCreationForm,
@@ -66,13 +66,13 @@ class CustomUserCreationForm(BaseUserCreationForm):
         fields = ["first_name", "last_name", "email"]
         field_classes = {"email": EmailField}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         if self._meta.model.EMAIL_FIELD in self.fields:
             self.fields[self._meta.model.EMAIL_FIELD].widget.attrs["autofocus"] = True
 
-    def clean_email(self):
-        email = self.cleaned_data["email"]
+    def clean_email(self) -> str:
+        email: str = self.cleaned_data["email"]
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 message=f"Email '{email}' has been already used."
@@ -81,7 +81,6 @@ class CustomUserCreationForm(BaseUserCreationForm):
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    # PROBLEM
     username = forms.EmailField(
         max_length=254,
         widget=forms.TextInput(

@@ -1,4 +1,7 @@
+from typing import Dict, Union
+
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,
@@ -8,6 +11,8 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
@@ -27,18 +32,24 @@ from .tokens import account_activation_token
 class UserRegisterView(FormView):
     form_class = CustomUserCreationForm
     template_name = "users/register.html"
-    success_url = reverse_lazy("success_register")
+    success_url = reverse_lazy("success-register")
+    redirect_authenticated_user = True
 
-    def form_valid(self, form):
+    def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseRedirect:
+        if self.redirect_authenticated_user and self.request.user.is_authenticated:
+            return redirect("dashboard")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form: CustomUserCreationForm) -> HttpResponseRedirect:
         user = form.save()
 
-        domain = get_current_site(self.request).domain
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        token = account_activation_token.make_token(user)
-        from_email = settings.COMPANY_EMAIL
+        domain: str = get_current_site(self.request).domain
+        uidb64: str = urlsafe_base64_encode(force_bytes(user.pk))
+        token: str = account_activation_token.make_token(user)
+        from_email: str = settings.COMPANY_EMAIL
 
         subject = "Account Activation"
-        message = render_to_string(
+        message: str = render_to_string(
             "emails/account_activation_email.html",
             {"user": user, "domain": domain, "uidb64": uidb64, "token": token},
         )
@@ -54,22 +65,42 @@ class SuccessRegisterView(TemplateView):
 
 class CustomLoginView(LoginView):
     template_name = "users/login.html"
-    success_url = reverse_lazy("dashboard")
     form_class = CustomAuthenticationForm
+    redirect_authenticated_user = True
+
+    def form_invalid(self, form: CustomAuthenticationForm) -> HttpResponse:
+        response: HttpResponse = super().form_invalid(form)
+        username: str = form.cleaned_data.get("username")
+        try:
+            user: User = User.objects.get(email=username)
+        except User.DoesNotExist:
+            messages.error(
+                self.request,
+                "User does not exist. Please check your email and password.",
+            )
+        else:
+            if not user.is_active:
+                messages.warning(
+                    self.request,
+                    "User is not active. Please check your email and active your account.",
+                )
+            else:
+                messages.warning(self.request, message="Incorrect password!")
+        return response
 
 
 class ActivateAccountView(TemplateView):
     template_name = "users/activation_result.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        uidb64 = self.kwargs.get("uidb64")
-        token = self.kwargs.get("token")
+    def get_context_data(self, **kwargs) -> Dict[str, str]:
+        context: Dict = super().get_context_data(**kwargs)
+        uidb64: str = self.kwargs.get("uidb64")
+        token: str = self.kwargs.get("token")
         information = "failed"
 
         try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
+            uid: str = force_str(urlsafe_base64_decode(uidb64))
+            user: Union[User | None] = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
@@ -87,7 +118,7 @@ class CustomPasswordResetView(PasswordResetView):
     form_class = CustomPasswordResetForm
     from_email = settings.COMPANY_EMAIL
     subject_template_name = "emails/email_subject.txt"
-    success_url = reverse_lazy("forgot_password_done")
+    success_url = reverse_lazy("forgot-password-done")
     template_name = "users/forgot_password.html"
 
 
@@ -97,7 +128,7 @@ class CustomPasswordResetDoneView(PasswordResetDoneView):
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     form_class = CustomSetPasswordForm
-    success_url = reverse_lazy("forgot_password_complete")
+    success_url = reverse_lazy("forgot-password-complete")
     template_name = "users/forgot_password_confirm.html"
 
 
