@@ -10,6 +10,7 @@ from .views import (
     OrderManageInvoices,
     OrderUpdateView,
     ProtocolCreateView,
+    ProtocolDeleteView,
 )
 
 urlpatterns = [
@@ -27,6 +28,11 @@ urlpatterns = [
         "orders/<int:pk>/add-protocol/",
         ProtocolCreateView.as_view(),
         name="create-protocol",
+    ),
+    path(
+        "orders/protocols/<int:pk>/delete",
+        ProtocolDeleteView.as_view(),
+        name="delete-protocol",
     ),
 ]
 

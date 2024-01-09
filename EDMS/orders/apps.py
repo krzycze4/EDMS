@@ -1,3 +1,4 @@
+# ruff: noqa: F401
 from django.apps import AppConfig
 
 
@@ -6,4 +7,4 @@ class OrdersConfig(AppConfig):
     name = "orders"
 
     def ready(self):
-        pass
+        from . import signals

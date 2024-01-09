@@ -18,7 +18,7 @@ from .forms import (
     OrderUpdateForm,
     ProtocolCreateForm,
 )
-from .models import Order
+from .models import Order, Protocol
 
 
 class OrderCreateView(CreateView):
@@ -101,7 +101,6 @@ class OrderDeleteView(DeleteView):
     template_name = "orders/delete_order.html"
     model = Order
     success_url = reverse_lazy("list-order")
-    form_class = ProtocolCreateForm
 
 
 class ProtocolCreateView(CreateView):
@@ -121,3 +120,11 @@ class ProtocolCreateView(CreateView):
         form.instance.order = Order.objects.get(pk=self.kwargs["pk"])
         response = super().form_valid(form)
         return response
+
+
+class ProtocolDeleteView(DeleteView):
+    template_name = "orders/delete_protocol.html"
+    model = Protocol
+
+    def get_success_url(self) -> str:
+        return reverse("detail-order", kwargs={"pk": self.object.order.pk})
