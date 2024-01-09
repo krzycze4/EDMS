@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+    Delete Order
+{% endblock title %}
+{% block content %}
+    <div class="card">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Do you want to delete the order?</h6>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <strong>Name:</strong>
+                {{ order.name }}
+            </div>
+            <div class="mb-3">
+                <strong>Payment net price:</strong>
+                {{ order.payment }}
+            </div>
+            <div class="mb-3">
+                <strong>Company:</strong>
+                <a href="{% url "detail-company" order.company.pk %}">{{ order.company }}</a>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-danger my-2" value="Yes">
+                <a class="btn btn-primary my-2" href="{% url 'detail-order' order.pk %}">No</a>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
