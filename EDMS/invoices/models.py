@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Invoice(models.Model):
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=50, blank=False, unique=True)
     seller = models.ForeignKey(
         Company, on_delete=models.CASCADE, blank=False, related_name="seller_invoices"
     )
@@ -25,8 +25,5 @@ class Invoice(models.Model):
     payment_date = models.DateField(blank=False)
     is_paid = models.BooleanField(default=False)
 
-
-#
-# class File(models.Model):
-#     ...
-#     orginal = ...
+    def __str__(self):
+        return f"{self.name}"

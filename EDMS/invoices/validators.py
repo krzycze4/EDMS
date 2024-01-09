@@ -65,3 +65,18 @@ def payment_date_before_create_date_validator(
         raise ValidationError(
             {"payment_date": "Payment date can't be earlier than create date."}
         )
+
+
+def seller_or_buyer_must_be_my_company_validator(
+    attrs: Dict[str, Union[Decimal | date | Company]],
+) -> None:
+    buyer: Company = attrs["buyer"]
+    seller: Company = attrs["seller"]
+
+    if not buyer.is_mine and not seller.is_mine:
+        raise ValidationError(
+            {
+                "seller": "You can't add any invoice not related with our company. Change seller or...",
+                "buyer": "...change buyer to our company.",
+            },
+        )

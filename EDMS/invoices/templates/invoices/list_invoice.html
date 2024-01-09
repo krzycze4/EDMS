@@ -6,6 +6,7 @@
     <div class="container-fluid">
         <p class="mb-4">
             Table represents the whole list of invoices added to the system. If you click the name of any company you will see its details.
+            If there's not looking for invoice - create <a href="{% url "create-invoice" %}">New Invoice</a>.
         </p>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -30,7 +31,7 @@
                                     <div class="collapse show" id="collapseCardExample">
                                         <div class="card-body">
                                             <form method="get">
-                                                {% for field in filter_form %}
+                                                {% for field in form %}
                                                     {{ field.label }}
                                                     {{ field }}
                                                     {% if field.errors %}

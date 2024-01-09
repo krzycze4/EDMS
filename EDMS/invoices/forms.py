@@ -10,6 +10,7 @@ from .validators import (
     net_price_and_vat_equal_gross_validator,
     payment_date_before_create_date_validator,
     seller_different_than_buyer_validator,
+    seller_or_buyer_must_be_my_company_validator,
     vat_max_validator,
 )
 
@@ -37,11 +38,12 @@ class InvoiceForm(forms.ModelForm):
             "is_paid": forms.CheckboxInput(attrs={"class": "form-check-input ml-2"}),
         }
 
-    def clean(self):
+    def clean(self) -> Dict[str, Union[Decimal | date | Company]]:
         cleaned_data: Dict[str, Union[Decimal | date | Company]] = super().clean()
         vat_max_validator(attrs=cleaned_data)
         future_create_date_validator(attrs=cleaned_data)
         payment_date_before_create_date_validator(attrs=cleaned_data)
         net_price_and_vat_equal_gross_validator(attrs=cleaned_data)
         seller_different_than_buyer_validator(attrs=cleaned_data)
+        seller_or_buyer_must_be_my_company_validator(attrs=cleaned_data)
         return cleaned_data
