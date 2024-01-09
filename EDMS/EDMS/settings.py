@@ -51,6 +51,7 @@ INSTALLED_EXTENSIONS = [
     "companies",
     "contracts",
     "invoices",
+    "orders",
     "django_filters",
 ]
 
