@@ -161,3 +161,9 @@ cython_debug/
 
 # Media files
 media/
+
+# ruff
+.ruff_cache/
+
+# emails
+emails/
