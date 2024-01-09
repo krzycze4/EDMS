@@ -127,6 +127,11 @@ class CompanyCreateView(FormView):
         city: str = form.cleaned_data["city"]
         postcode: str = form.cleaned_data["postcode"]
         country: str = form.cleaned_data["country"]
+        shortcut: str = form.cleaned_data["shortcut"]
+        if not Company.objects.filter(is_mine=True).exists():
+            is_mine: bool = form.cleaned_data["is_mine"]
+        else:
+            is_mine = False
 
         address, created = Address.objects.get_or_create(
             street_name=street_name,
@@ -137,7 +142,13 @@ class CompanyCreateView(FormView):
         )
 
         Company.objects.create(
-            name=name, krs=krs, regon=regon, nip=nip, address=address
+            name=name,
+            krs=krs,
+            regon=regon,
+            nip=nip,
+            address=address,
+            shortcut=shortcut,
+            is_mine=is_mine,
         )
 
         return super().form_valid(form)

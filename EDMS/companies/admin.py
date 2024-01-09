@@ -8,7 +8,7 @@ class CustomAddressAdmin(admin.ModelAdmin):
 
 
 class CustomCompanyAdmin(admin.ModelAdmin):
-    list_display = ("name", "krs", "regon", "nip")
+    list_display = ("name", "krs", "regon", "nip", "is_mine")
 
 
 class CustomContactAdmin(admin.ModelAdmin):

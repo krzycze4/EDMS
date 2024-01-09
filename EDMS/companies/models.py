@@ -22,6 +22,7 @@ class Company(models.Model):
     nip = models.BigIntegerField(verbose_name="NIP Number")
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     is_mine = models.BooleanField(default=False)
+    shortcut = models.CharField(max_length=5, unique=True)
 
     def __str__(self) -> str:
         return f"{self.name}"

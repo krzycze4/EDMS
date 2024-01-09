@@ -26,6 +26,7 @@
                                 <p class="font-weight-bold">KRS Number: {{ company.krs }}</p>
                                 <p class="font-weight-bold">REGON Number: {{ company.regon }}</p>
                                 <p class="font-weight-bold">NIP Number: {{ company.nip }}</p>
+                                <p class="font-weight-bold">Shortcut: {{ company.shortcut }}</p>
                                 <a class="btn btn-warning mr-2"
                                    type="button"
                                    href="{% url 'update-identifiers' company.pk %}">Edit Identifiers</a>

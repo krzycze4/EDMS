@@ -59,15 +59,25 @@ class CompanyAndAddressForm(forms.Form):
         max_length=50,
         widget=forms.TextInput(attrs={"readonly": "readonly", "class": "form-control"}),
     )
+    shortcut = forms.CharField(
+        label="Shortcut",
+        max_length=5,
+        widget=forms.TextInput(attrs={"class": "form-control", "autofocus": True}),
+    )
 
-    class Meta:
-        fields = "__all__"
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not Company.objects.filter(is_mine=True).exists():
+            self.fields["is_mine"] = forms.BooleanField(
+                label="That's my company: ",
+                widget=forms.CheckboxInput(attrs={"class": "form-check-input ml-2"}),
+            )
 
 
 class UpdateCompanyIdentifiersForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ["name", "krs", "regon", "nip"]
+        fields = ["name", "krs", "regon", "nip", "shortcut", "is_mine"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -6,6 +6,7 @@
     <div class="container-fluid">
         <p class="mb-4">
             Table represents the whole list of companies added to the system. If you click the name of any company you will see its details.
+            If there's not looking for company - create <a href="{% url "find-company" %}">New Company</a>.
         </p>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -72,6 +73,11 @@
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
+                                                aria-label="Position: activate to sort column ascending">Shortcut</th>
+                                            <th tabindex="1"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
                                                 aria-label="Position: activate to sort column ascending">
                                                 KRS Number
                                             </th>
@@ -97,6 +103,7 @@
                                                 <th>
                                                     <a href="{% url 'detail-company' company.id %}">{{ company.name }}</a>
                                                 </th>
+                                                <th>{{ company.shortcut }}</th>
                                                 <th>{{ company.krs }}</th>
                                                 <th>{{ company.regon }}</th>
                                                 <th>{{ company.nip }}</th>

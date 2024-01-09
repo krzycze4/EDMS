@@ -10,6 +10,7 @@ class CompanyFilter(django_filters.FilterSet):
             "krs": ["exact"],
             "regon": ["exact"],
             "nip": ["exact"],
+            "shortcut": ["icontains"],
         }
 
     def __init__(self, *args, **kwargs) -> None:
