@@ -80,16 +80,12 @@ class InvoiceUpdateView(UpdateView):
     def get_form(self, form_class=None) -> InvoiceForm:
         form = super().get_form(form_class)
         if self.get_order():
-            form.fields["seller"].widget = forms.TextInput(
+            form.fields["seller"].widget = forms.HiddenInput(
                 attrs={"class": "form-control", "readonly": "readonly"}
             )
-            form.fields["buyer"].widget = forms.TextInput(
+            form.fields["seller"].label = ""
+            form.fields["buyer"].widget = forms.HiddenInput(
                 attrs={"class": "form-control", "readonly": "readonly"}
             )
+            form.fields["buyer"].label = ""
         return form
-
-    def get_initial(self):
-        initial = super().get_initial()
-        initial["seller"] = self.object.seller.name
-        initial["buyer"] = self.object.buyer.name
-        return initial
