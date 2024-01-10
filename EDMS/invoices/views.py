@@ -1,5 +1,6 @@
 from typing import Any, Dict, Union
 
+from django import forms
 from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
@@ -62,3 +63,33 @@ class InvoiceUpdateView(UpdateView):
 
     def get_success_url(self) -> str:
         return reverse("detail-invoice", kwargs={"pk": self.object.pk})
+
+    def get_context_data(self, **kwargs) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        order = self.get_order()
+        context["order"] = order
+        return context
+
+    def get_order(self) -> Union[Order, None]:
+        if self.object.seller.is_mine:
+            order = Order.objects.filter(income_invoice=self.object).first()
+        else:
+            order = Order.objects.filter(cost_invoices=self.object).first()
+        return order
+
+    def get_form(self, form_class=None) -> InvoiceForm:
+        form = super().get_form(form_class)
+        if self.get_order():
+            form.fields["seller"].widget = forms.TextInput(
+                attrs={"class": "form-control", "readonly": "readonly"}
+            )
+            form.fields["buyer"].widget = forms.TextInput(
+                attrs={"class": "form-control", "readonly": "readonly"}
+            )
+        return form
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["seller"] = self.object.seller.name
+        initial["buyer"] = self.object.buyer.name
+        return initial
