@@ -41,12 +41,19 @@ class OrderCreateForm(forms.ModelForm):
         return cleaned_data
 
 
-# TODO: czy tutaj potrzebny jest clean?
 class OrderUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ["payment", "status", "start_date", "end_date", "description"]
+        fields = [
+            "company",
+            "payment",
+            "status",
+            "start_date",
+            "end_date",
+            "description",
+        ]
         widgets = {
+            "company": forms.HiddenInput(),
             "payment": forms.NumberInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-control"}),
             "start_date": forms.DateInput(
@@ -57,6 +64,11 @@ class OrderUpdateForm(forms.ModelForm):
             ),
             "description": forms.Textarea(attrs={"class": "form-control"}),
         }
+
+    def clean(self) -> Dict[str, Any]:
+        cleaned_data = super().clean()
+        end_after_start_validator(cleaned_data=cleaned_data)
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
