@@ -30,6 +30,9 @@
                         <div id="identifiersCollapse" class="collapse show">
                             <div class="card-body">
                                 <p class="font-weight-bold">
+                                    Scan: <a target="_blank" href="{{ invoice.scan.url }}">{{ invoice }}</a>
+                                </p>
+                                <p class="font-weight-bold">
                                     Seller: <a href="{% url 'detail-company' invoice.seller.id %}">{{ invoice.seller.name }}</a>
                                 </p>
                                 <p class="font-weight-bold">

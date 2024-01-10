@@ -24,6 +24,7 @@ class Invoice(models.Model):
     service_date = models.DateField(blank=False)
     payment_date = models.DateField(blank=False)
     is_paid = models.BooleanField(default=False)
+    scan = models.FileField(upload_to="invoices/")
 
     def __str__(self):
         return f"{self.name}"

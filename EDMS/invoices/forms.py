@@ -21,11 +21,15 @@ class InvoiceForm(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "seller": forms.Select(attrs={"class": "form-control"}),
-            "buyer": forms.Select(attrs={"class": "form-control"}),
-            "net_price": forms.TextInput(attrs={"class": "form-control"}),
-            "vat": forms.TextInput(attrs={"class": "form-control"}),
-            "gross": forms.TextInput(attrs={"class": "form-control"}),
+            "seller": forms.Select(
+                attrs={"class": "form-control js-example-basic-single"}
+            ),
+            "buyer": forms.Select(
+                attrs={"class": "form-control js-example-basic-single"}
+            ),
+            "net_price": forms.NumberInput(attrs={"class": "form-control"}),
+            "vat": forms.NumberInput(attrs={"class": "form-control"}),
+            "gross": forms.NumberInput(attrs={"class": "form-control"}),
             "create_date": forms.DateInput(
                 attrs={"class": "form-control", "type": "date"}
             ),
@@ -36,6 +40,7 @@ class InvoiceForm(forms.ModelForm):
                 attrs={"class": "form-control", "type": "date"}
             ),
             "is_paid": forms.CheckboxInput(attrs={"class": "form-check-input ml-2"}),
+            "scan": forms.FileInput(attrs={"class": "form-input"}),
         }
 
     def clean(self) -> Dict[str, Union[Decimal | date | Company]]:
