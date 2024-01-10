@@ -77,3 +77,9 @@ class Protocol(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
+            self.name = ...
+        super().save(*args, **kwargs)
