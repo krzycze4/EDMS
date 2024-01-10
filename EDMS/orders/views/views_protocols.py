@@ -8,7 +8,7 @@ from orders.models import Order, Protocol
 
 
 class ProtocolCreateView(CreateView):
-    template_name = "orders/create_protocol.html"
+    template_name = "orders/protocols/create_protocol.html"
     form_class = ProtocolCreateForm
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
@@ -27,7 +27,7 @@ class ProtocolCreateView(CreateView):
 
 
 class ProtocolDeleteView(DeleteView):
-    template_name = "orders/delete_protocol.html"
+    template_name = "orders/protocols/delete_protocol.html"
     model = Protocol
 
     def get_success_url(self) -> str:

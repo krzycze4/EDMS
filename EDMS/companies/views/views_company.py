@@ -27,7 +27,7 @@ from django.views.generic import (
 
 
 class CompanyFindView(FormView):
-    template_name = "companies/find_company.html"
+    template_name = "companies/companies/find_company.html"
     form_class = KRSForm
     success_url = reverse_lazy("create-company")
 
@@ -107,7 +107,7 @@ class CompanyFindView(FormView):
 
 
 class CompanyCreateView(FormView):
-    template_name = "companies/create_company.html"
+    template_name = "companies/companies/create_company.html"
     form_class = CompanyAndAddressForm
     success_url = reverse_lazy("create-company-done")
 
@@ -155,12 +155,12 @@ class CompanyCreateView(FormView):
 
 
 class CreateCompanyDoneView(TemplateView):
-    template_name = "companies/create_company_done.html"
+    template_name = "companies/companies/create_company_done.html"
 
 
 class CompanyListView(ListView):
     queryset = Company.objects.all()
-    template_name = "companies/list_company.html"
+    template_name = "companies/companies/list_company.html"
     context_object_name = "companies"
     paginate_by = 10
     filter_set = None
@@ -178,13 +178,13 @@ class CompanyListView(ListView):
 
 class CompanyDetailView(DetailView):
     model = Company
-    template_name = "companies/detail_company.html"
+    template_name = "companies/companies/detail_company.html"
 
 
 class CompanyIdentifiersUpdateView(UpdateView):
     model = Company
     form_class = UpdateCompanyIdentifiersForm
-    template_name = "companies/update_identifiers_company.html"
+    template_name = "companies/companies/update_identifiers_company.html"
 
     def get_success_url(self):
         return reverse_lazy("detail-company", kwargs={"pk": self.object.pk})
@@ -193,7 +193,7 @@ class CompanyIdentifiersUpdateView(UpdateView):
 class CompanyAddressUpdateView(UpdateView):
     model = Address
     form_class = UpdateAddressForm
-    template_name = "companies/update_address_company.html"
+    template_name = "companies/companies/update_address_company.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

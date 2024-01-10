@@ -16,7 +16,7 @@ from orders.models import Order
 
 
 class OrderCreateView(CreateView):
-    template_name = "orders/create_order.html"
+    template_name = "orders/orders/create_order.html"
     form_class = OrderCreateForm
 
     def form_valid(self, form: OrderCreateForm) -> HttpResponse:
@@ -29,7 +29,7 @@ class OrderCreateView(CreateView):
 
 
 class OrderDetailView(DetailView):
-    template_name = "orders/detail_order.html"
+    template_name = "orders/orders/detail_order.html"
     model = Order
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
@@ -57,7 +57,7 @@ class OrderDetailView(DetailView):
 
 
 class OrderUpdateView(UpdateView):
-    template_name = "orders/update_order.html"
+    template_name = "orders/orders/update_order.html"
     model = Order
     form_class = OrderUpdateForm
 
@@ -66,7 +66,7 @@ class OrderUpdateView(UpdateView):
 
 
 class OrderListView(ListView):
-    template_name = "orders/list_order.html"
+    template_name = "orders/orders/list_order.html"
     queryset = Order.objects.all()
     paginate_by = 10
     context_object_name = "orders"
@@ -82,16 +82,16 @@ class OrderListView(ListView):
         return context
 
 
+class OrderDeleteView(DeleteView):
+    template_name = "orders/orders/delete_order.html"
+    model = Order
+    success_url = reverse_lazy("list-order")
+
+
 class OrderManageInvoices(UpdateView):
-    template_name = "orders/manage_invoice.html"
+    template_name = "orders/orders/manage_invoice.html"
     form_class = OrderManageInvoicesForm
     model = Order
 
     def get_success_url(self) -> str:
         return reverse("detail-order", kwargs={"pk": self.object.pk})
-
-
-class OrderDeleteView(DeleteView):
-    template_name = "orders/delete_order.html"
-    model = Order
-    success_url = reverse_lazy("list-order")
