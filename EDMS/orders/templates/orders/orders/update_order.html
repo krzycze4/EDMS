@@ -12,7 +12,7 @@
                 {% csrf_token %}
                 {% for field in form %}
                     <div class="form-group">
-                        {{ field.label }}
+                        {% if field.name != "company" %}{{ field.label }}{% endif %}
                         {{ field }}
                         {% if field.errors %}
                             <div class="alert alert-danger">
