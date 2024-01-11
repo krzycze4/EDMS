@@ -8,6 +8,11 @@
             <div class="card-header d-flex justify-content-between align-items-center pointer">
                 <h1 class="m-0 font-weight-bold text-primary">Invoice {{ invoice.name }}</h1>
                 <div class="d-flex">
+                    {% if not order or not invoice.is_paid %}
+                        <a class="btn btn-danger mr-2"
+                           type="button"
+                           href="{% url 'delete-invoice' invoice.pk %}">Delete invoice</a>
+                    {% endif %}
                     <a class="btn btn-warning mr-2"
                        type="button"
                        href="{% url 'update-invoice' invoice.pk %}">Update invoice</a>

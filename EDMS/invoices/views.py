@@ -3,7 +3,13 @@ from typing import Any, Dict, Union
 from django import forms
 from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 from orders.models import Order
 
 from .filters import InvoiceFilter
@@ -89,3 +95,9 @@ class InvoiceUpdateView(UpdateView):
             )
             form.fields["buyer"].label = ""
         return form
+
+
+class InvoiceDeleteView(DeleteView):
+    model = Invoice
+    template_name = "invoices/delete_invoice.html"
+    success_url = reverse_lazy("list-invoice")
