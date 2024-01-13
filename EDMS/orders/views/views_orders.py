@@ -71,6 +71,7 @@ class OrderListView(ListView):
     paginate_by = 10
     context_object_name = "orders"
     filter = None
+    ordering = ["create_date"]
 
     def get_queryset(self) -> QuerySet:
         self.filter = OrderFilter(self.request.GET, queryset=self.queryset)

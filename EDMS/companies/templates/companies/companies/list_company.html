@@ -195,9 +195,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Inicjalizacja DataTables
             $('#dataTable').DataTable({
-                "order": [[0, 'asc']],  // Sortowanie rosnące dla pierwszej kolumny (Company Name)
                 "columnDefs": [
-                    { "orderable": false, "targets": [1, 2, 3] }  // Wyłączenie sortowania dla kolumn 1, 2, 3 (indeksowane od 0)
+                    { "orderable": false, "targets": [2, 3, 4] }  //
                 ],
                 "paging": false,  // Wyłączenie nawigacji po stronach
                 "searching": false,  // Wyłączenie pola do wyszukiwania

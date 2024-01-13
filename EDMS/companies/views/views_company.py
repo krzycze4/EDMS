@@ -164,6 +164,7 @@ class CompanyListView(ListView):
     context_object_name = "companies"
     paginate_by = 10
     filter_set = None
+    ordering = "shortcut"
 
     def get_queryset(self) -> QuerySet[Company]:
         queryset = super().get_queryset()
