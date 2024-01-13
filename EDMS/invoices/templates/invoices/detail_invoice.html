@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}
-    Company Detail
+    Invoice Detail
 {% endblock title %}
 {% block content %}
     <div class="card-group">
         <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center pointer">
-                <h1 class="m-0 font-weight-bold text-primary">Invoice {{ invoice.name }}</h1>
+                <h6 class="m-0 font-weight-bold text-primary">Invoice {{ invoice.name }}</h6>
                 <div class="d-flex">
-                    {% if not order or not invoice.is_paid %}
+                    {% if not order and not invoice.is_paid and not invoice.linked_invoice and not child_invoices %}
                         <a class="btn btn-danger mr-2"
                            type="button"
                            href="{% url 'delete-invoice' invoice.pk %}">Delete invoice</a>
@@ -37,6 +37,7 @@
                                 <p class="font-weight-bold">
                                     Scan: <a target="_blank" href="{{ invoice.scan.url }}">{{ invoice }}</a>
                                 </p>
+                                <p class="font-weight-bold">Type: {{ invoice.type }}</p>
                                 <p class="font-weight-bold">
                                     Seller: <a href="{% url 'detail-company' invoice.seller.id %}">{{ invoice.seller.name }}</a>
                                 </p>
@@ -63,6 +64,24 @@
                                         PAID
                                     {% else %}
                                         NOT PAID
+                                    {% endif %}
+                                </p>
+                                <p class="font-weight-bold">
+                                    Parent invoice:
+                                    {% if invoice.linked_invoice %}
+                                        <a href="{% url "detail-invoice" invoice.linked_invoice.pk %}">{{ invoice.linked_invoice }}</a>
+                                    {% else %}
+                                        this invoice is parent invoice
+                                    {% endif %}
+                                </p>
+                                <p class="font-weight-bold">
+                                    {% if child_invoices %}
+                                        Child invoices:
+                                        {% for child_invoice in child_invoices %}
+                                            <li class="font-weight-bold">
+                                                <a href="{% url "detail-invoice" child_invoice.pk %}">{{ child_invoice }}</a>
+                                            </li>
+                                        {% endfor %}
                                     {% endif %}
                                 </p>
                             </div>

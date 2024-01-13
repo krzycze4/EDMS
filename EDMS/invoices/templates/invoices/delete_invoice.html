@@ -44,7 +44,8 @@
             <form method="post">
                 {% csrf_token %}
                 <input type="submit" class="btn btn-danger my-2" value="Yes">
-                <a class="btn btn-primary my-2" href="{% url 'list-invoice' %}">No</a>
+                <a class="btn btn-primary my-2"
+                   href="{% url 'detail-invoice' invoice.pk %}">No</a>
             </form>
         </div>
     </div>

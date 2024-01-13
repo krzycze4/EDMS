@@ -32,8 +32,10 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-                <input type="submit" class="btn btn-primary mt-2">
+                <input type="submit" class="btn btn-primary">
             </form>
+            <a class="btn btn-primary mt-2"
+               href="{% url 'detail-invoice' invoice.pk %}">Back to invoice details</a>
         </div>
     </div>
 {% endblock content %}

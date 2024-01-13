@@ -5,6 +5,7 @@ from typing import Dict, Union
 from companies.models import Company
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from invoices.models import Invoice
 
 
 def seller_different_than_buyer_validator(
@@ -79,4 +80,47 @@ def seller_or_buyer_must_be_my_company_validator(
                 "seller": "You can't add any invoice not related with our company. Change seller or...",
                 "buyer": "...change buyer to our company.",
             },
+        )
+
+
+def original_invoice_not_linked_to_other_invoice(
+    attrs: Dict[str, Union[Decimal | date | Company | str | Invoice]],
+) -> None:
+    invoice_type: str = attrs["type"]
+    linked_invoice: Invoice = attrs["linked_invoice"]
+    if linked_invoice and invoice_type == Invoice.ORIGINAL:
+        raise ValidationError(
+            {"parent_invoice": "Original can't be linked to any other invoice."}
+        )
+
+
+def proforma_and_duplicate_same_data_as_original_validator(
+    attrs: Dict[str, Union[str | date | Decimal | Company | Invoice]],
+) -> None:
+    invoice_type: str = attrs["type"]
+    if invoice_type in [Invoice.DUPLICATE, Invoice.PROFORMA]:
+        checked_fields = ["seller", "buyer", "net_price", "vat", "gross", "is_paid"]
+        if invoice_type == Invoice.DUPLICATE:
+            checked_fields += ["service_date", "payment_date"]
+        linked_invoice: Invoice = attrs["parent_invoice"]
+        for field in checked_fields:
+            if attrs[field] != getattr(linked_invoice, field):
+                formatted_field = " ".join(word for word in field.split("_"))
+                raise ValidationError(
+                    {
+                        field: f"{formatted_field.title()} must be the same as in the original."
+                    }
+                )
+
+
+def correcting_invoice_linked_with_original_or_duplicate_validator(
+    attrs: Dict[str, Union[str | date | Decimal | Company | Invoice]],
+) -> None:
+    invoice_type: str = attrs["type"]
+    linked_invoice: Invoice = attrs["linked_invoice"]
+    if invoice_type == Invoice.CORRECTING and linked_invoice.type == Invoice.PROFORMA:
+        raise ValidationError(
+            {
+                "linked_invoice": "Correcting invoice must be linked to duplicate or original invoice."
+            }
         )

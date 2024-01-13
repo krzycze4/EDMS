@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 
 from django import forms
 from django.db.models import QuerySet
@@ -32,8 +32,8 @@ class InvoiceDetailView(DetailView):
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        order = self.get_order()
-        context["order"] = order
+        context["order"] = self.get_order()
+        context["child_invoices"] = self.get_child_invoices()
         return context
 
     def get_order(self) -> Union[Order | None]:
@@ -42,6 +42,12 @@ class InvoiceDetailView(DetailView):
         else:
             order = Order.objects.filter(cost_invoices=self.object).first()
         return order
+
+    def get_child_invoices(self) -> Union[List[Invoice] | str]:
+        child_invoices = None
+        if self.object.type in [Invoice.ORIGINAL, Invoice.DUPLICATE]:
+            child_invoices = Invoice.objects.filter(linked_invoice=self.object)
+        return child_invoices
 
 
 class InvoiceListView(ListView):
