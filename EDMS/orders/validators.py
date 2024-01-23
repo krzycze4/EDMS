@@ -1,7 +1,11 @@
+import os.path
 from datetime import datetime
+
+# from django.utils import timezone
 from typing import Any, Dict
 
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import UploadedFile
 from humanize import naturalsize
 
 from .models import Order
@@ -44,4 +48,26 @@ def max_size_file_validator(cleaned_data: Dict[str, Any]) -> None:
     if scan_size > max_scan_size:
         raise ValidationError(
             {"scan": f"Max size file is {naturalsize(max_scan_size)}"}
+        )
+
+
+def file_extension_validator(cleaned_data: Dict[str, Any]) -> None:
+    scan: UploadedFile = cleaned_data["scan"]
+    extension = os.path.splitext(scan.name)[1]
+    valid_extensions = [
+        ".pdf",
+        ".jpg",
+        ".jpeg",
+        ".jfif",
+        ".pjpeg",
+        ".pjp",
+        ".png",
+        ".svg",
+    ]
+    if extension not in valid_extensions:
+        valid_extensions_str = ", ".join(valid_extensions)
+        raise ValidationError(
+            {
+                "scan": f"Incorrect extensions. Your file extension: {extension}. Valid extensions: {valid_extensions_str}"
+            }
         )

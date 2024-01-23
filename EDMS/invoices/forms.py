@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import Dict, Union
 
 from django import forms
+from orders.validators import file_extension_validator
 
 from .models import Company, Invoice
 from .validators import (
@@ -70,4 +71,5 @@ class InvoiceForm(forms.ModelForm):
         net_price_and_vat_equal_gross_validator(attrs=cleaned_data)
         seller_different_than_buyer_validator(attrs=cleaned_data)
         seller_or_buyer_must_be_my_company_validator(attrs=cleaned_data)
+        file_extension_validator(cleaned_data=cleaned_data)
         return cleaned_data

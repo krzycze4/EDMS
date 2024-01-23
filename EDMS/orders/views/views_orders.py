@@ -52,8 +52,7 @@ class OrderDetailView(DetailView):
         sum_net_price = 0
         for invoice in invoices:
             if (
-                invoice.type == Invoice.ORIGINAL
-                or invoice.type == Invoice.DUPLICATE
+                invoice.type in [Invoice.ORIGINAL, Invoice.DUPLICATE]
                 and invoice.linked_invoice is None
             ):
                 sum_net_price += invoice.net_price

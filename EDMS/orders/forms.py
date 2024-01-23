@@ -8,6 +8,7 @@ from invoices.models import Invoice
 from .models import Order, Protocol
 from .validators import (
     end_after_start_validator,
+    file_extension_validator,
     forbidden_future_date_validator,
     forbidden_repetition_validator,
     max_size_file_validator,
@@ -119,4 +120,5 @@ class ProtocolCreateForm(forms.ModelForm):
         cleaned_data = super().clean()
         forbidden_future_date_validator(cleaned_data=cleaned_data)
         max_size_file_validator(cleaned_data=cleaned_data)
+        file_extension_validator(cleaned_data=cleaned_data)
         return cleaned_data
