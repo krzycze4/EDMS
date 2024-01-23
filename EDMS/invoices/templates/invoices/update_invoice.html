@@ -8,21 +8,38 @@
             <h6 class="m-0 font-weight-bold text-primary">Update invoice data {{ invoice.name }}</h6>
         </div>
         <div class="card-body">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
-                    <div class="form-group">
-                        {{ field.label }}
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="alert alert-danger">
-                                {% for error in field.errors %}{{ error }}{% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
+                    {% if field.name == 'linked_invoice' and invoice.type == 'original' %}
+                        <p>Original invoice can't be linked to any other invoice.</p>
+                    {% else %}
+                        <div class="form-group">
+                            {% if field.name == 'scan' %}
+                                {% if invoice.scan %}
+                                    <p>
+                                        Current scan: <a class="font-weight-bold"
+    href="{{ invoice.scan.url }}"
+    target="_blank">{{ invoice.scan.instance }}</a>
+                                    </p>
+                                {% endif %}
+                                <p>Change scan: {{ form.scan }}</p>
+                            {% else %}
+                                {{ field.label }}
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {% for error in field.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 <input type="submit" class="btn btn-primary">
             </form>
+            <a class="btn btn-primary mt-2"
+               href="{% url 'detail-invoice' invoice.pk %}">Back to invoice details</a>
         </div>
     </div>
 {% endblock content %}

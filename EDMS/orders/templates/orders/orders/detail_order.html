@@ -57,47 +57,65 @@
                                 <div class="font-weight-bold">
                                     <h4>Order balance: {{ order_balance }}</h4>
                                     <a class="btn btn-success my-2"
-                                       href="{% url "manage-invoice" order.pk %}">Pin invoices</a>
+                                       href="{% url "manage-invoice" order.pk %}">Manage invoices</a>
                                 </div>
                                 {# Incoming Table #}
                                 <table class="table table-responsive">
                                     <thead class="table-info text-dark">
                                         <tr>
                                             <th scope="col">Income Invoice Number</th>
-                                            {% if order.income_invoice %}<th scope="col">Net price</th>{% endif %}
+                                            {% if order.income_invoices.all %}<th scope="col">Type</th>{% endif %}
+                                            {% if order.income_invoices.all %}<th scope="col">Linked to</th>{% endif %}
+                                            {% if order.income_invoices.all %}<th scope="col">Net price</th>{% endif %}
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {% if order.income_invoices.all %}
+                                        <tbody>
+                                            {% for income_invoice in order.income_invoices.all %}
+                                                <tr>
+                                                    <td>
+                                                        <a class="font-weight-bold"
+                                                           href="{% url "detail-invoice" income_invoice.pk %}">
+                                                            {{ income_invoice }}
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ income_invoice.type }}</td>
+                                                    {% if income_invoice.linked_invoice %}
+                                                        <td>
+                                                            <a href="{% url "detail-invoice" income_invoice.linked_invoice.pk %}">{{ income_invoice.linked_invoice }}</a>
+                                                        </td>
+                                                    {% else %}
+                                                        <td>Not linked</td>
+                                                    {% endif %}
+                                                    <td>{{ income_invoice.net_price }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot class="table-dark text-light">
+                                            <tr>
+                                                <th scope="col">Sum</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col">{{ income_invoices_net_price_sum }}</th>
+                                            </tr>
+                                        </tfoot>
+                                    {% else %}
                                         <tr>
-                                            {% if order.income_invoice %}
-                                                <td>
-                                                    <a class="font-weight-bold"
-                                                       href="{% url "detail-invoice" order.income_invoice.pk %}">
-                                                        {{ order.income_invoice }}
-                                                    </a>
-                                                </td>
-                                                <td>{{ order.income_invoice.net_price }}</td>
-                                            {% else %}
-                                                <th>Income invoice not yet pinned.</th>
-                                            {% endif %}
+                                            <th>Invoices not yet pinned.</th>
                                         </tr>
-                                    </tbody>
+                                    {% endif %}
                                 </table>
                                 {# Cost Table #}
                                 <table class="table table-responsive">
                                     <thead class="table-info text-dark">
                                         <tr>
                                             <th scope="col">Cost Invoice Number</th>
-                                            {% if order.income_invoice %}<th scope="col">Net price</th>{% endif %}
+                                            {% if order.cost_invoices.all %}<th scope="col">Type</th>{% endif %}
+                                            {% if order.cost_invoices.all %}<th scope="col">Linked to</th>{% endif %}
+                                            {% if order.cost_invoices.all %}<th scope="col">Net price</th>{% endif %}
                                         </tr>
                                     </thead>
-                                    {% if order.income_invoice %}
-                                        <thead class="table-dark text-light">
-                                            <tr>
-                                                <th scope="col">Sum</th>
-                                                <th scope="col">{{ cost_invoices_net_price_sum }}</th>
-                                            </tr>
-                                        </thead>
+                                    {% if order.cost_invoices.all %}
                                         <tbody>
                                             {% for cost_invoice in order.cost_invoices.all %}
                                                 <tr>
@@ -107,16 +125,30 @@
                                                             {{ cost_invoice }}
                                                         </a>
                                                     </td>
+                                                    <td>{{ cost_invoice.type }}</td>
+                                                    {% if cost_invoice.linked_invoice %}
+                                                        <td>
+                                                            <a href="{% url "detail-invoice" cost_invoice.linked_invoice.pk %}">{{ cost_invoice.linked_invoice }}</a>
+                                                        </td>
+                                                    {% else %}
+                                                        <td>Not linked</td>
+                                                    {% endif %}
                                                     <td>{{ cost_invoice.net_price }}</td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
-                                    {% else %}
-                                        <tbody>
+                                        <tfoot class="table-dark text-light">
                                             <tr>
-                                                <th>Cost invoices not yet pinned.</th>
+                                                <th scope="col">Sum</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col">{{ cost_invoices_net_price_sum }}</th>
                                             </tr>
-                                        </tbody>
+                                        </tfoot>
+                                    {% else %}
+                                        <tr>
+                                            <th>Invoices not yet pinned.</th>
+                                        </tr>
                                     {% endif %}
                                 </table>
                             </div>
@@ -134,8 +166,8 @@
                         <div id="protocolsCollapse" class="collapse show">
                             <div class="card-body">
                                 <a type="button"
-                                   class="btn btn-primary mb-2"
-                                   href="{% url 'create-protocol' order.pk %}">Create new protocol</a>
+                                   class="btn btn-success mb-2"
+                                   href="{% url 'create-protocol' order.pk %}">Manage protocols</a>
                                 {# Protocol Table #}
                                 <table class="table table-responsive">
                                     <thead class="table-info text-dark">
@@ -146,51 +178,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for protocol in order.protocols.all %}
+                                        {% if order.protocols.all %}
+                                            {% for protocol in order.protocols.all %}
+                                                <tr>
+                                                    <td>
+                                                        <a target="_blank" href="{{ protocol.scan.url }}">{{ protocol.name }}</a>
+                                                    </td>
+                                                    <td>{{ protocol.create_date }}</td>
+                                                    <td>{{ protocol.user }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
                                             <tr>
-                                                <td>
-                                                    <a target="_blank" href="{{ protocol.scan.url }}">{{ protocol.name }}</a>
-                                                </td>
-                                                <td>{{ protocol.create_date }}</td>
-                                                <td>{{ protocol.user }}</td>
+                                                <th>Protocols not yet pinned.</th>
                                             </tr>
-                                        {% endfor %}
+                                        {% endif %}
                                     </tbody>
                                 </table>
-                                {#                                {% for contact in company.contacts.all %}#}
-                                {#                                    <hr>#}
-                                {#                                    <p class="font-weight-bold">Contact Name: {{ contact.name }}</p>#}
-                                {#                                    <p class="font-weight-bold">#}
-                                {#                                        Email:#}
-                                {#                                        {% if contact.email %}#}
-                                {#                                            {{ contact.email }}#}
-                                {#                                        {% else %}#}
-                                {#                                            Unknown#}
-                                {#                                        {% endif %}#}
-                                {#                                    </p>#}
-                                {#                                    <p class="font-weight-bold">#}
-                                {#                                        Phone:#}
-                                {#                                        {% if contact.phone %}#}
-                                {#                                            {{ contact.phone }}#}
-                                {#                                        {% else %}#}
-                                {#                                            Unknown#}
-                                {#                                        {% endif %}#}
-                                {#                                    </p>#}
-                                {#                                    <p class="font-weight-bold">#}
-                                {#                                        Description:#}
-                                {#                                        {% if contact.description %}#}
-                                {#                                            {{ contact.description }}#}
-                                {#                                        {% else %}#}
-                                {#                                            Unknown#}
-                                {#                                        {% endif %}#}
-                                {#                                    </p>#}
-                                {#                                    <a type="button"#}
-                                {#                                       class="btn btn-warning"#}
-                                {#                                       href="{% url 'update-contact' company.pk contact.pk %}">Edit</a>#}
-                                {#                                    <a type="button"#}
-                                {#                                       class="btn btn-danger"#}
-                                {#                                       href="{% url 'delete-contact' company.pk contact.pk %}">Delete</a>#}
-                                {#                                {% endfor %}#}
                             </div>
                         </div>
                     </div>

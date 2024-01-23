@@ -41,12 +41,19 @@ class OrderCreateForm(forms.ModelForm):
         return cleaned_data
 
 
-# TODO: czy tutaj potrzebny jest clean?
 class OrderUpdateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ["payment", "status", "start_date", "end_date", "description"]
+        fields = [
+            "company",
+            "payment",
+            "status",
+            "start_date",
+            "end_date",
+            "description",
+        ]
         widgets = {
+            "company": forms.HiddenInput(),
             "payment": forms.NumberInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-control"}),
             "start_date": forms.DateInput(
@@ -58,9 +65,17 @@ class OrderUpdateForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"class": "form-control"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def clean(self) -> Dict[str, Any]:
+        cleaned_data: Dict[str, Any] = super().clean()
+        end_after_start_validator(cleaned_data=cleaned_data)
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        if self.instance.end_date > datetime.today().date():
+        if (
+            self.instance.end_date > datetime.today().date()
+            or not Protocol.objects.filter(order=self.instance)
+        ):
             self.fields["status"].widget = forms.TextInput(
                 attrs={"class": "form-control", "readonly": "readonly"}
             )
@@ -69,19 +84,19 @@ class OrderUpdateForm(forms.ModelForm):
 class OrderManageInvoicesForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ["income_invoice", "cost_invoices"]
+        fields = ["income_invoices", "cost_invoices"]
         widgets = {
-            "income_invoice": forms.Select(
-                attrs={"class": "form-control  js-example-basic-single"}
+            "income_invoices": forms.SelectMultiple(
+                attrs={"class": "form-control  js-example-basic-multiple", "size": 3}
             ),
             "cost_invoices": forms.SelectMultiple(
-                attrs={"class": "form-control js-example-basic-multiple", "size": 6}
+                attrs={"class": "form-control js-example-basic-multiple", "size": 3}
             ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["income_invoice"].queryset = Invoice.objects.filter(
+        self.fields["income_invoices"].queryset = Invoice.objects.filter(
             seller__is_mine=True, buyer=self.instance.company
         )
         self.fields["cost_invoices"].queryset = Invoice.objects.filter(

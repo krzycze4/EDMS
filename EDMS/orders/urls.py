@@ -1,16 +1,15 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-
-from .views import (
+from orders.views.views_orders import (
     OrderCreateView,
     OrderDeleteView,
     OrderDetailView,
     OrderListView,
     OrderManageInvoices,
     OrderUpdateView,
-    ProtocolCreateView,
 )
+from orders.views.views_protocols import ProtocolCreateView, ProtocolDeleteView
 
 urlpatterns = [
     path("orders/create/", OrderCreateView.as_view(), name="create-order"),
@@ -27,6 +26,11 @@ urlpatterns = [
         "orders/<int:pk>/add-protocol/",
         ProtocolCreateView.as_view(),
         name="create-protocol",
+    ),
+    path(
+        "orders/protocols/<int:pk>/delete",
+        ProtocolDeleteView.as_view(),
+        name="delete-protocol",
     ),
 ]
 

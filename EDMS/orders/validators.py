@@ -40,7 +40,7 @@ def forbidden_future_date_validator(cleaned_data: Dict[str, Any]) -> None:
 def max_size_file_validator(cleaned_data: Dict[str, Any]) -> None:
     scan = cleaned_data["scan"]
     scan_size = scan.size
-    max_scan_size = 10**7
+    max_scan_size = 10**7  # 10mB
     if scan_size > max_scan_size:
         raise ValidationError(
             {"scan": f"Max size file is {naturalsize(max_scan_size)}"}

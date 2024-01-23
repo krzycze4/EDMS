@@ -71,6 +71,7 @@ class CompanyAndAddressForm(forms.Form):
             self.fields["is_mine"] = forms.BooleanField(
                 label="That's my company: ",
                 widget=forms.CheckboxInput(attrs={"class": "form-check-input ml-2"}),
+                required=False,
             )
 
 

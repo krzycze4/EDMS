@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% block title %}
-    Company list
+    Order list
 {% endblock title %}
 {% block content %}
     <div class="container-fluid">
         <p class="mb-4">
-            Table represents the whole list of companies added to the system. If you click the name of any company you will see its details.
-            If there's not looking for company - create <a href="{% url "find-company" %}">New Company</a>.
+            Table represents the whole list of orders added to the system. If you click the name of any order you will see its details.
+            If there's not looking for order - create <a href="{% url "create-order" %}">New Order</a>.
         </p>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Company list</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Order list</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive-sm">
@@ -31,7 +31,7 @@
                                     <div class="collapse show" id="collapseCardExample">
                                         <div class="card-body">
                                             <form method="get">
-                                                {% for field in filter_form %}
+                                                {% for field in form %}
                                                     {{ field.label }}
                                                     {{ field }}
                                                     {% if field.errors %}
@@ -42,7 +42,7 @@
                                                 {% endfor %}
                                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                                     <input type="submit" value="Search" class="btn btn-primary" />
-                                                    <a class="btn btn-primary" href="{% url 'list-company' %}">Show all companies</a>
+                                                    <a class="btn btn-primary" href="{% url 'list-order' %}">Show all orders</a>
                                                 </div>
                                             </form>
                                         </div>
@@ -60,53 +60,69 @@
                                        aria-describedby="dataTable_info">
                                     <thead>
                                         <tr class="bg-gradient-primary text-gray-100" role="row">
-                                            <th class="sorting"
-                                                tabindex="0"
+                                            <th tabindex="0"
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
-                                                aria-sort="ascending"
                                                 aria-label="Position: activate to sort column ascending">
-                                                Company Name
+                                                Order number
                                             </th>
                                             <th tabindex="1"
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
-                                                aria-label="Position: activate to sort column ascending">Shortcut</th>
-                                            <th tabindex="1"
-                                                aria-controls="dataTable"
-                                                rowspan="1"
-                                                colspan="1"
-                                                aria-label="Position: activate to sort column ascending">
-                                                KRS Number
-                                            </th>
+                                                aria-label="Position: activate to sort column ascending">Payment</th>
                                             <th tabindex="2"
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
-                                                aria-label="Position: activate to sort column ascending">
-                                                REGON Number
-                                            </th>
+                                                aria-label="Position: activate to sort column ascending">Status</th>
                                             <th tabindex="3"
                                                 aria-controls="dataTable"
                                                 rowspan="1"
                                                 colspan="1"
+                                                aria-label="Position: activate to sort column ascending">Company</th>
+                                            <th tabindex="4"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">Create by</th>
+                                            <th tabindex="5"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
                                                 aria-label="Position: activate to sort column ascending">
-                                                NIP Number
+                                                Create date
                                             </th>
+                                            <th tabindex="6"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">
+                                                Start date
+                                            </th>
+                                            <th tabindex="7"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">End date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for company in companies %}
+                                        {% for order in orders %}
                                             <tr class="odd">
                                                 <th>
-                                                    <a href="{% url 'detail-company' company.id %}">{{ company.name }}</a>
+                                                    <a href="{% url 'detail-order' order.id %}">{{ order.name }}</a>
                                                 </th>
-                                                <th>{{ company.shortcut }}</th>
-                                                <th>{{ company.krs }}</th>
-                                                <th>{{ company.regon }}</th>
-                                                <th>{{ company.nip }}</th>
+                                                <th>{{ order.payment }}</th>
+                                                <th>{{ order.status }}</th>
+                                                <th>
+                                                    <a href="{% url 'detail-company' order.company.id %}">{{ order.company.name }}</a>
+                                                </th>
+                                                <th>{{ order.user }}</th>
+                                                <th>{{ order.create_date }}</th>
+                                                <th>{{ order.start_date }}</th>
+                                                <th>{{ order.end_date }}</th>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -190,14 +206,12 @@
             </div>
         </div>
     </div>
-    <!-- Dodaj DataTables do tabeli, umożliwiając sortowanie kolumn -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Inicjalizacja DataTables
             $('#dataTable').DataTable({
-                "order": [[0, 'asc']],  // Sortowanie rosnące dla pierwszej kolumny (Company Name)
                 "columnDefs": [
-                    { "orderable": false, "targets": [1, 2, 3] }  // Wyłączenie sortowania dla kolumn 1, 2, 3 (indeksowane od 0)
+                    { "orderable": false, "targets": [1,2,3,4] }  // Wyłączenie sortowania dla kolumn
                 ],
                 "paging": false,  // Wyłączenie nawigacji po stronach
                 "searching": false,  // Wyłączenie pola do wyszukiwania

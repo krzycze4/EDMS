@@ -6,7 +6,7 @@ from django.views.generic import CreateView, DeleteView, UpdateView
 
 class ContactCreateView(CreateView):
     model = Contact
-    template_name = "companies/create_contact.html"
+    template_name = "companies/contacts/create_contact.html"
     form_class = CreateContactForm
 
     def get_initial(self):
@@ -28,7 +28,7 @@ class ContactCreateView(CreateView):
 class ContactUpdateView(UpdateView):
     model = Contact
     form_class = UpdateContactForm
-    template_name = "companies/update_contact.html"
+    template_name = "companies/contacts/update_contact.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -55,7 +55,7 @@ class ContactUpdateView(UpdateView):
 
 class ContactDeleteView(DeleteView):
     model = Contact
-    template_name = "companies/delete_contact.html"
+    template_name = "companies/contacts/delete_contact.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

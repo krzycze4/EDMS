@@ -1,8 +1,15 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 
+from django import forms
 from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 from orders.models import Order
 
 from .filters import InvoiceFilter
@@ -25,16 +32,22 @@ class InvoiceDetailView(DetailView):
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        order = self.get_order()
-        context["order"] = order
+        context["order"] = self.get_order()
+        context["child_invoices"] = self.get_child_invoices()
         return context
 
     def get_order(self) -> Union[Order | None]:
         if self.object.seller.is_mine:
-            order = Order.objects.filter(income_invoice=self.object).first()
+            order = Order.objects.filter(income_invoices=self.object).first()
         else:
             order = Order.objects.filter(cost_invoices=self.object).first()
         return order
+
+    def get_child_invoices(self) -> Union[List[Invoice] | str]:
+        child_invoices = None
+        if self.object.type in [Invoice.ORIGINAL, Invoice.DUPLICATE]:
+            child_invoices = Invoice.objects.filter(linked_invoice=self.object)
+        return child_invoices
 
 
 class InvoiceListView(ListView):
@@ -43,6 +56,7 @@ class InvoiceListView(ListView):
     paginate_by = 10
     context_object_name = "invoices"
     filter = None
+    ordering = ["create_date"]
 
     def get_queryset(self) -> QuerySet:
         queryset: QuerySet = super().get_queryset()
@@ -62,3 +76,35 @@ class InvoiceUpdateView(UpdateView):
 
     def get_success_url(self) -> str:
         return reverse("detail-invoice", kwargs={"pk": self.object.pk})
+
+    def get_context_data(self, **kwargs) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        order = self.get_order()
+        context["order"] = order
+        return context
+
+    def get_order(self) -> Union[Order, None]:
+        if self.object.seller.is_mine:
+            order = Order.objects.filter(income_invoice=self.object).first()
+        else:
+            order = Order.objects.filter(cost_invoices=self.object).first()
+        return order
+
+    def get_form(self, form_class=None) -> InvoiceForm:
+        form = super().get_form(form_class)
+        if self.get_order():
+            form.fields["seller"].widget = forms.HiddenInput(
+                attrs={"class": "form-control", "readonly": "readonly"}
+            )
+            form.fields["seller"].label = ""
+            form.fields["buyer"].widget = forms.HiddenInput(
+                attrs={"class": "form-control", "readonly": "readonly"}
+            )
+            form.fields["buyer"].label = ""
+        return form
+
+
+class InvoiceDeleteView(DeleteView):
+    model = Invoice
+    template_name = "invoices/delete_invoice.html"
+    success_url = reverse_lazy("list-invoice")
