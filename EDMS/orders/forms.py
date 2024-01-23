@@ -66,13 +66,16 @@ class OrderUpdateForm(forms.ModelForm):
         }
 
     def clean(self) -> Dict[str, Any]:
-        cleaned_data = super().clean()
+        cleaned_data: Dict[str, Any] = super().clean()
         end_after_start_validator(cleaned_data=cleaned_data)
         return cleaned_data
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        if self.instance.end_date > datetime.today().date():
+        if (
+            self.instance.end_date > datetime.today().date()
+            or not Protocol.objects.filter(order=self.instance)
+        ):
             self.fields["status"].widget = forms.TextInput(
                 attrs={"class": "form-control", "readonly": "readonly"}
             )
@@ -81,19 +84,19 @@ class OrderUpdateForm(forms.ModelForm):
 class OrderManageInvoicesForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ["income_invoice", "cost_invoices"]
+        fields = ["income_invoices", "cost_invoices"]
         widgets = {
-            "income_invoice": forms.Select(
-                attrs={"class": "form-control  js-example-basic-single"}
+            "income_invoices": forms.SelectMultiple(
+                attrs={"class": "form-control  js-example-basic-multiple", "size": 3}
             ),
             "cost_invoices": forms.SelectMultiple(
-                attrs={"class": "form-control js-example-basic-multiple", "size": 6}
+                attrs={"class": "form-control js-example-basic-multiple", "size": 3}
             ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["income_invoice"].queryset = Invoice.objects.filter(
+        self.fields["income_invoices"].queryset = Invoice.objects.filter(
             seller__is_mine=True, buyer=self.instance.company
         )
         self.fields["cost_invoices"].queryset = Invoice.objects.filter(

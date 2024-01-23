@@ -24,12 +24,10 @@ class Order(models.Model):
     company = models.ForeignKey(
         Company, on_delete=models.SET_NULL, null=True, blank=True
     )
-    income_invoice = models.ForeignKey(
+    income_invoices = models.ManyToManyField(
         Invoice,
-        on_delete=models.SET_NULL,
-        null=True,
         blank=True,
-        related_name="income_invoice",
+        related_name="income_invoices",
     )
     cost_invoices = models.ManyToManyField(
         Invoice, blank=True, related_name="cost_invoices"
@@ -81,5 +79,5 @@ class Protocol(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             super().save(*args, **kwargs)
-            self.name = ...
+            self.name = f"protocol_{self.pk}"
         super().save(*args, **kwargs)

@@ -210,9 +210,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Inicjalizacja DataTables
             $('#dataTable').DataTable({
-                "order": [[0, 'asc']],  // Sortowanie rosnące dla kolumny
                 "columnDefs": [
-                    { "orderable": false, "targets": [1,2,3,4,5] }  // Wyłączenie sortowania dla kolumn
+                    { "orderable": false, "targets": [1,2,3,4] }  // Wyłączenie sortowania dla kolumn
                 ],
                 "paging": false,  // Wyłączenie nawigacji po stronach
                 "searching": false,  // Wyłączenie pola do wyszukiwania

@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 
 from django.db.models import QuerySet
 from django.http import HttpResponse
@@ -10,6 +10,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from invoices.models import Invoice
 from orders.filters import OrderFilter
 from orders.forms import OrderCreateForm, OrderManageInvoicesForm, OrderUpdateForm
 from orders.models import Order
@@ -34,26 +35,32 @@ class OrderDetailView(DetailView):
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        cost_invoices_net_price_sum = self.count_cost_invoices_sum()
-        order_balance = self.count_order_balance(
-            cost_invoices_net_price=cost_invoices_net_price_sum
+        income_invoices_net_price_sum = self.count_invoices_sum(
+            self.object.income_invoices.all()
         )
+        cost_invoices_net_price_sum = self.count_invoices_sum(
+            self.object.cost_invoices.all()
+        )
+        order_balance = income_invoices_net_price_sum - cost_invoices_net_price_sum
+        context["income_invoices_net_price_sum"] = income_invoices_net_price_sum
         context["cost_invoices_net_price_sum"] = cost_invoices_net_price_sum
         context["order_balance"] = order_balance
         return context
 
-    def count_cost_invoices_sum(self) -> int:
-        cost_invoices_net_price = 0
-        for cost_invoice in self.object.cost_invoices.all():
-            cost_invoices_net_price += cost_invoice.net_price
-        return cost_invoices_net_price
-
-    def count_order_balance(self, cost_invoices_net_price: Union[int | None]) -> int:
-        order_balance = 0
-        if cost_invoices_net_price:
-            income_invoice_net_price = self.object.income_invoice.net_price
-            order_balance = income_invoice_net_price - cost_invoices_net_price
-        return order_balance
+    @staticmethod
+    def count_invoices_sum(invoices: List[Union[Invoice | None]]) -> int:
+        sum_net_price = 0
+        for invoice in invoices:
+            if (
+                invoice.type == Invoice.ORIGINAL
+                or invoice.type == Invoice.DUPLICATE
+                and invoice.linked_invoice is None
+            ):
+                sum_net_price += invoice.net_price
+            elif invoice.type == Invoice.CORRECTING:
+                sum_net_price -= invoice.linked_invoice.net_price
+                sum_net_price += invoice.net_price
+        return sum_net_price
 
 
 class OrderUpdateView(UpdateView):

@@ -64,40 +64,58 @@
                                     <thead class="table-info text-dark">
                                         <tr>
                                             <th scope="col">Income Invoice Number</th>
-                                            {% if order.income_invoice %}<th scope="col">Net price</th>{% endif %}
+                                            {% if order.income_invoices.all %}<th scope="col">Type</th>{% endif %}
+                                            {% if order.income_invoices.all %}<th scope="col">Linked to</th>{% endif %}
+                                            {% if order.income_invoices.all %}<th scope="col">Net price</th>{% endif %}
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {% if order.income_invoices.all %}
+                                        <tbody>
+                                            {% for income_invoice in order.income_invoices.all %}
+                                                <tr>
+                                                    <td>
+                                                        <a class="font-weight-bold"
+                                                           href="{% url "detail-invoice" income_invoice.pk %}">
+                                                            {{ income_invoice }}
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ income_invoice.type }}</td>
+                                                    {% if income_invoice.linked_invoice %}
+                                                        <td>
+                                                            <a href="{% url "detail-invoice" income_invoice.linked_invoice.pk %}">{{ income_invoice.linked_invoice }}</a>
+                                                        </td>
+                                                    {% else %}
+                                                        <td>Not linked</td>
+                                                    {% endif %}
+                                                    <td>{{ income_invoice.net_price }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot class="table-dark text-light">
+                                            <tr>
+                                                <th scope="col">Sum</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col">{{ income_invoices_net_price_sum }}</th>
+                                            </tr>
+                                        </tfoot>
+                                    {% else %}
                                         <tr>
-                                            {% if order.income_invoice %}
-                                                <td>
-                                                    <a class="font-weight-bold"
-                                                       href="{% url "detail-invoice" order.income_invoice.pk %}">
-                                                        {{ order.income_invoice }}
-                                                    </a>
-                                                </td>
-                                                <td>{{ order.income_invoice.net_price }}</td>
-                                            {% else %}
-                                                <th>Income invoice not yet pinned.</th>
-                                            {% endif %}
+                                            <th>Invoices not yet pinned.</th>
                                         </tr>
-                                    </tbody>
+                                    {% endif %}
                                 </table>
                                 {# Cost Table #}
                                 <table class="table table-responsive">
                                     <thead class="table-info text-dark">
                                         <tr>
                                             <th scope="col">Cost Invoice Number</th>
-                                            {% if order.income_invoice %}<th scope="col">Net price</th>{% endif %}
+                                            {% if order.cost_invoices.all %}<th scope="col">Type</th>{% endif %}
+                                            {% if order.cost_invoices.all %}<th scope="col">Linked to</th>{% endif %}
+                                            {% if order.cost_invoices.all %}<th scope="col">Net price</th>{% endif %}
                                         </tr>
                                     </thead>
-                                    {% if order.income_invoice %}
-                                        <thead class="table-dark text-light">
-                                            <tr>
-                                                <th scope="col">Sum</th>
-                                                <th scope="col">{{ cost_invoices_net_price_sum }}</th>
-                                            </tr>
-                                        </thead>
+                                    {% if order.cost_invoices.all %}
                                         <tbody>
                                             {% for cost_invoice in order.cost_invoices.all %}
                                                 <tr>
@@ -107,16 +125,30 @@
                                                             {{ cost_invoice }}
                                                         </a>
                                                     </td>
+                                                    <td>{{ cost_invoice.type }}</td>
+                                                    {% if cost_invoice.linked_invoice %}
+                                                        <td>
+                                                            <a href="{% url "detail-invoice" cost_invoice.linked_invoice.pk %}">{{ cost_invoice.linked_invoice }}</a>
+                                                        </td>
+                                                    {% else %}
+                                                        <td>Not linked</td>
+                                                    {% endif %}
                                                     <td>{{ cost_invoice.net_price }}</td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
-                                    {% else %}
-                                        <tbody>
+                                        <tfoot class="table-dark text-light">
                                             <tr>
-                                                <th>Cost invoices not yet pinned.</th>
+                                                <th scope="col">Sum</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col">{{ cost_invoices_net_price_sum }}</th>
                                             </tr>
-                                        </tbody>
+                                        </tfoot>
+                                    {% else %}
+                                        <tr>
+                                            <th>Invoices not yet pinned.</th>
+                                        </tr>
                                     {% endif %}
                                 </table>
                             </div>
