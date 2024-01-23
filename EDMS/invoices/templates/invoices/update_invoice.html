@@ -11,26 +11,30 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
-                    <div class="form-group">
-                        {% if field.name == 'scan' %}
-                            {% if invoice.scan %}
-                                <p>
-                                    Current scan: <a class="font-weight-bold"
+                    {% if field.name == 'linked_invoice' and invoice.type == 'original' %}
+                        <p>Original invoice can't be linked to any other invoice.</p>
+                    {% else %}
+                        <div class="form-group">
+                            {% if field.name == 'scan' %}
+                                {% if invoice.scan %}
+                                    <p>
+                                        Current scan: <a class="font-weight-bold"
     href="{{ invoice.scan.url }}"
     target="_blank">{{ invoice.scan.instance }}</a>
-                                </p>
+                                    </p>
+                                {% endif %}
+                                <p>Change scan: {{ form.scan }}</p>
+                            {% else %}
+                                {{ field.label }}
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {% for error in field.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
                             {% endif %}
-                            <p>Change scan: {{ form.scan }}</p>
-                        {% else %}
-                            {{ field.label }}
-                            {{ field }}
-                            {% if field.errors %}
-                                <div class="alert alert-danger">
-                                    {% for error in field.errors %}{{ error }}{% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 <input type="submit" class="btn btn-primary">
             </form>

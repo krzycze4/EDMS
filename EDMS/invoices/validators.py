@@ -59,13 +59,14 @@ def future_create_date_validator(
 def payment_date_before_create_date_validator(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
-    payment_date: date = attrs["payment_date"]
-    create_date: date = attrs["create_date"]
+    if attrs["type"] not in [Invoice.DUPLICATE, Invoice.CORRECTING]:
+        payment_date: date = attrs["payment_date"]
+        create_date: date = attrs["create_date"]
 
-    if payment_date < create_date:
-        raise ValidationError(
-            {"payment_date": "Payment date can't be earlier than create date."}
-        )
+        if payment_date < create_date:
+            raise ValidationError(
+                {"payment_date": "Payment date can't be earlier than create date."}
+            )
 
 
 def seller_or_buyer_must_be_my_company_validator(
@@ -90,27 +91,28 @@ def original_invoice_not_linked_to_other_invoice(
     linked_invoice: Invoice = attrs["linked_invoice"]
     if linked_invoice and invoice_type == Invoice.ORIGINAL:
         raise ValidationError(
-            {"parent_invoice": "Original can't be linked to any other invoice."}
+            {"linked_invoice": "Original can't be linked to any other invoice."}
         )
 
 
 def proforma_and_duplicate_same_data_as_original_validator(
     attrs: Dict[str, Union[str | date | Decimal | Company | Invoice]],
 ) -> None:
-    invoice_type: str = attrs["type"]
-    if invoice_type in [Invoice.DUPLICATE, Invoice.PROFORMA]:
-        checked_fields = ["seller", "buyer", "net_price", "vat", "gross", "is_paid"]
-        if invoice_type == Invoice.DUPLICATE:
-            checked_fields += ["service_date", "payment_date"]
-        linked_invoice: Invoice = attrs["parent_invoice"]
-        for field in checked_fields:
-            if attrs[field] != getattr(linked_invoice, field):
-                formatted_field = " ".join(word for word in field.split("_"))
-                raise ValidationError(
-                    {
-                        field: f"{formatted_field.title()} must be the same as in the original."
-                    }
-                )
+    linked_invoice: Invoice = attrs["linked_invoice"]
+    if linked_invoice:
+        invoice_type: str = attrs["type"]
+        if invoice_type in [Invoice.DUPLICATE, Invoice.PROFORMA]:
+            checked_fields = ["seller", "buyer", "net_price", "vat", "gross", "is_paid"]
+            if invoice_type == Invoice.DUPLICATE:
+                checked_fields += ["service_date", "payment_date"]
+            for field in checked_fields:
+                if attrs[field] != getattr(linked_invoice, field):
+                    formatted_field = " ".join(word for word in field.split("_"))
+                    raise ValidationError(
+                        {
+                            field: f"{formatted_field.title()} must be the same as in the original."
+                        }
+                    )
 
 
 def correcting_invoice_linked_with_original_or_duplicate_validator(

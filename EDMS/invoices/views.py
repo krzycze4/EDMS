@@ -38,7 +38,7 @@ class InvoiceDetailView(DetailView):
 
     def get_order(self) -> Union[Order | None]:
         if self.object.seller.is_mine:
-            order = Order.objects.filter(income_invoice=self.object).first()
+            order = Order.objects.filter(income_invoices=self.object).first()
         else:
             order = Order.objects.filter(cost_invoices=self.object).first()
         return order
