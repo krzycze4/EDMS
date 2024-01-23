@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",
     "django_filters",
+    "django_cleanup",
 ]
 
 INSTALLED_EXTENSIONS = [
