@@ -81,4 +81,6 @@ class TestCaseUser(TestCase):
         self.assertTrue(normalized_email, expected_normalize_email)
 
     def test_str(self):
-        self.assertEqual(self.user.email, str(self.user))
+        self.assertEqual(
+            f"{self.user.first_name} {self.user.last_name}", str(self.user)
+        )

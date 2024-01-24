@@ -7,20 +7,21 @@ from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from users.forms import CustomUserCreationForm
 from users.models import User
 from users.tokens import account_activation_token
 
 
 class TestCaseUserRegisterView(TestCase):
-    def setUp(self):
-        self.password = "edmsemds1"
-        self.user = User.objects.create_user(
+    @classmethod
+    def setUpTestData(cls):
+        cls.password = "edmsemds1"
+        cls.user = User.objects.create_user(
             first_name="First",
             last_name="Last",
             email="email@email.com",
-            password=self.password,
+            password=cls.password,
         )
 
     def test_redirect_to_dashboard_for_authenticated_user(self):
@@ -69,8 +70,9 @@ class TestCaseUserRegisterView(TestCase):
         token = response.context["token"]
         self.assertEqual(len(token), 39)
 
+        self.assertEqual(User.objects.count(), 2)
         uidb64 = response.context["uidb64"]
-        self.assertEqual(uidb64, "Mg")
+        self.assertEqual(int(urlsafe_base64_decode(uidb64)), User.objects.last().pk)
 
     def test_not_create_user_if_form_is_invalid(self):
         number_users_in_database = User.objects.count()
@@ -266,7 +268,7 @@ class TestCaseCustomPasswordResetView(TestCase):
         email = "email@email.com"
         response = self.client.post(reverse("forgot-password"), data={"email": email})
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
-        self.assertRedirects(response, reverse("forgot_password_done"))
+        self.assertRedirects(response, reverse("forgot-password-done"))
 
 
 class TestCaseCustomPasswordResetDoneView(TestCase):
@@ -371,9 +373,9 @@ class TestCaseCustomLogoutView(TestCase):
     def test_logout_user_successfully(self):
         login = self.client.login(email="email@email.com", password="edmsedms1")
         self.assertTrue(login)
-        self.assertTrue("_auth_user_id" in self.client.session["user"])
+        self.assertTrue("_auth_user_id" in self.client.session)
 
-        response = self.client.get(reverse("logout"))
-        self.assertFalse("_auth_user_id" in self.client.session["user"])
+        response = self.client.post(reverse("logout"))
+        self.assertFalse("_auth_user_id" in self.client.session)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/logout.html")
