@@ -1,15 +1,16 @@
 from django.urls import path
 
-from .views import (
+from .views.views_login_logout import CustomLoginView, CustomLogoutView
+from .views.views_register import (
     ActivateAccountView,
-    CustomLoginView,
-    CustomLogoutView,
+    SuccessRegisterView,
+    UserRegisterView,
+)
+from .views.views_reset_password import (
     CustomPasswordResetCompleteView,
     CustomPasswordResetConfirmView,
     CustomPasswordResetDoneView,
     CustomPasswordResetView,
-    SuccessRegisterView,
-    UserRegisterView,
 )
 
 urlpatterns = [

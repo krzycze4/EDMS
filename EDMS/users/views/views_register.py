@@ -1,32 +1,17 @@
 from typing import Dict, Union
 
 from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.views import (
-    LoginView,
-    LogoutView,
-    PasswordResetCompleteView,
-    PasswordResetConfirmView,
-    PasswordResetDoneView,
-    PasswordResetView,
-)
 from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import FormView, TemplateView
-
-from .forms import (
-    CustomAuthenticationForm,
-    CustomPasswordResetForm,
-    CustomSetPasswordForm,
-    CustomUserCreationForm,
-)
-from .models import User
-from .tokens import account_activation_token
+from users.forms import CustomUserCreationForm
+from users.models import User
+from users.tokens import account_activation_token
 
 
 class UserRegisterView(FormView):
@@ -63,32 +48,6 @@ class SuccessRegisterView(TemplateView):
     template_name = "users/register_success.html"
 
 
-class CustomLoginView(LoginView):
-    template_name = "users/login.html"
-    form_class = CustomAuthenticationForm
-    redirect_authenticated_user = True
-
-    def form_invalid(self, form: CustomAuthenticationForm) -> HttpResponse:
-        response: HttpResponse = super().form_invalid(form)
-        username: str = form.cleaned_data.get("username")
-        try:
-            user: User = User.objects.get(email=username)
-        except User.DoesNotExist:
-            messages.error(
-                self.request,
-                "User does not exist. Please check your email and password.",
-            )
-        else:
-            if not user.is_active:
-                messages.warning(
-                    self.request,
-                    "User is not active. Please check your email and active your account.",
-                )
-            else:
-                messages.warning(self.request, message="Incorrect password!")
-        return response
-
-
 class ActivateAccountView(TemplateView):
     template_name = "users/activation_result.html"
 
@@ -111,30 +70,3 @@ class ActivateAccountView(TemplateView):
 
         context["information"] = information
         return context
-
-
-class CustomPasswordResetView(PasswordResetView):
-    email_template_name = "emails/forgot_password_email.html"
-    form_class = CustomPasswordResetForm
-    from_email = settings.COMPANY_EMAIL
-    subject_template_name = "emails/email_subject.txt"
-    success_url = reverse_lazy("forgot-password-done")
-    template_name = "users/forgot_password.html"
-
-
-class CustomPasswordResetDoneView(PasswordResetDoneView):
-    template_name = "users/forgot_password_done.html"
-
-
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    form_class = CustomSetPasswordForm
-    success_url = reverse_lazy("forgot-password-complete")
-    template_name = "users/forgot_password_confirm.html"
-
-
-class CustomPasswordResetCompleteView(PasswordResetCompleteView):
-    template_name = "users/forgot_password_complete.html"
-
-
-class CustomLogoutView(LogoutView):
-    template_name = "users/logout.html"
