@@ -1,11 +1,9 @@
 import os.path
-from datetime import datetime
-
-# from django.utils import timezone
 from typing import Any, Dict
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
+from django.utils import timezone
 from humanize import naturalsize
 
 from .models import Order
@@ -37,7 +35,7 @@ def forbidden_repetition_validator(cleaned_data: Dict[str, Any]) -> None:
 
 def forbidden_future_date_validator(cleaned_data: Dict[str, Any]) -> None:
     create_date = cleaned_data["create_date"]
-    if datetime.today().date() < create_date:
+    if timezone.now().date() < create_date:
         raise ValidationError({"create_date": "The create date can't be future date."})
 
 
