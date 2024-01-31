@@ -22,6 +22,7 @@ from .views.views_user import (
     UserAgreementDetailView,
     UserAgreementUpdateView,
     UserDetailView,
+    UserListView,
     UserUpdateView,
 )
 
@@ -85,6 +86,7 @@ urlpatterns = [
         UserAgreementDeleteView.as_view(),
         name="delete-agreement",
     ),
+    path("users/", UserListView.as_view(), name="list-user"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

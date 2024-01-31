@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}
+    User list
+{% endblock title %}
+{% block content %}
+    <div class="container-fluid">
+        <p class="mb-4">
+            Table represents the whole list of users registered to the system. If you click the name of any user you will see its details.
+        </p>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User list</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive-sm">
+                    <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Accordion -->
+                                    <a href="#collapseCardExample"
+                                       class="d-block card-header py-3"
+                                       data-toggle="collapse"
+                                       role="button"
+                                       aria-expanded="true"
+                                       aria-controls="collapseCardExample">
+                                        <h6 class="m-0 font-weight-bold text-primary">Searching panel</h6>
+                                    </a>
+                                    <!-- Card Content - Collapse -->
+                                    <div class="collapse show" id="collapseCardExample">
+                                        <div class="card-body">
+                                            <form method="get">
+                                                {% for field in filter_form %}
+                                                    {{ field.label }}
+                                                    {{ field }}
+                                                    {% if field.errors %}
+                                                        <div class="alert alert-danger">
+                                                            {% for error in field.errors %}{{ error }}{% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                                    <input type="submit" value="Search" class="btn btn-primary" />
+                                                    <a class="btn btn-primary" href="{% url 'list-user' %}">Show all users</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive mt-3">
+                            <div class="col-sm-12">
+                                <table class="table table-bordered dataTable"
+                                       id="dataTable"
+                                       role="grid"
+                                       aria-describedby="dataTable_info">
+                                    <thead>
+                                        <tr class="bg-gradient-primary text-gray-100" role="row">
+                                            <th class="sorting"
+                                                tabindex="0"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-sort="ascending"
+                                                aria-label="Position: activate to sort column ascending">Name</th>
+                                            <th tabindex="1"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">Email</th>
+                                            <th tabindex="2"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">
+                                                Phone number
+                                            </th>
+                                            <th tabindex="3"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">Position</th>
+                                            <th tabindex="3"
+                                                aria-controls="dataTable"
+                                                rowspan="1"
+                                                colspan="1"
+                                                aria-label="Position: activate to sort column ascending">Employed?</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in users %}
+                                            <tr class="odd">
+                                                <th>
+                                                    <a href="{% url "detail-user" user.pk %}">{{ user }}</a>
+                                                </th>
+                                                <th>{{ user.email }}</th>
+                                                <th>{{ user.phone_number }}</th>
+                                                <th>{{ user.position }}</th>
+                                                <th>{{ user.is_active }}</th>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info"
+                                 id="dataTable_info"
+                                 role="status"
+                                 aria-live="polite">
+                                <p class="mb-2">
+                                    Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% if page_obj.paginator.num_pages > 1 %}
+                                <div class="col-sm-12 d-flex align-items-center justify-content-center">
+                                    <div class="dataTables_paginate paging_simple_numbers"
+                                         id="dataTable_paginate">
+                                        <ul class="pagination">
+                                            {% if page_obj.has_previous %}
+                                                <li class="paginate_button page-item previous" id="dataTable_first">
+                                                    <a href="?page=1"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="0"
+                                                       tabindex="0"
+                                                       class="page-link">First</a>
+                                                </li>
+                                                <li class="paginate_button page-item" id="dataTable_previous">
+                                                    <a href="?page={{ page_obj.previous_page_number }}"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="0"
+                                                       tabindex="0"
+                                                       class="page-link">Previous</a>
+                                                </li>
+                                            {% endif %}
+                                            {% for num in page_obj.paginator.page_range %}
+                                                {% if page_obj.number == num %}
+                                                    <li class="paginate_button page-item active">
+                                                        <a href="?page={{ num }}"
+                                                           aria-controls="dataTable"
+                                                           data-dt-idx="1"
+                                                           tabindex="0"
+                                                           class="page-link">{{ num }}</a>
+                                                    </li>
+                                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                                    <li class="paginate_button page-item ">
+                                                        <a href="?page={{ num }}"
+                                                           aria-controls="dataTable"
+                                                           data-dt-idx="2"
+                                                           tabindex="0"
+                                                           class="page-link">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if page_obj.has_next %}
+                                                <li class="paginate_button page-item" id="dataTable_next">
+                                                    <a href="?page={{ page_obj.next_page_number }}"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="7"
+                                                       tabindex="0"
+                                                       class="page-link">Next</a>
+                                                </li>
+                                                <li class="paginate_button page-item" id="dataTable_last">
+                                                    <a href="?page={{ page_obj.paginator.num_pages }}"
+                                                       aria-controls="dataTable"
+                                                       data-dt-idx="4"
+                                                       tabindex="0"
+                                                       class="page-link">Last</a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dodaj DataTables do tabeli, umożliwiając sortowanie kolumn -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicjalizacja DataTables
+            $('#dataTable').DataTable({
+                "columnDefs": [
+                    { "orderable": false, "targets": [1, 2, 3, 4] }  //
+                ],
+                "paging": false,  // Wyłączenie nawigacji po stronach
+                "searching": false,  // Wyłączenie pola do wyszukiwania
+                "info": false  // Wyłączenie wyświetlania informacji o liczbie wpisów
+            });
+        });
+    </script>
+{% endblock content %}

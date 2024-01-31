@@ -1,9 +1,17 @@
 from typing import Any, Dict
 
 from companies.models import Address
+from django.db.models import QuerySet
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
+from users.filters import UserFilter
 from users.forms import (
     AddressForm,
     UserAgreementCreateForm,
@@ -30,6 +38,25 @@ class UserUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse("detail-user", kwargs={"pk": self.object.pk})
+
+
+class UserListView(ListView):
+    queryset = User.objects.all()
+    template_name = "users/user_list.html"
+    paginate_by = 10
+    context_object_name = "users"
+    ordering = "last_name"
+    filter_set = None
+
+    def get_queryset(self) -> QuerySet[User]:
+        queryset = super().get_queryset()
+        self.filter_set = UserFilter(self.request.GET, queryset=queryset)
+        return self.filter_set.qs
+
+    def get_context_data(self, *args, **kwargs) -> Dict[str, Any]:
+        context = super().get_context_data(*args, **kwargs)
+        context["filter_form"] = self.filter_set.form
+        return context
 
 
 class UserAddressCreateView(CreateView):
