@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User
+from .models import Agreement, User
 
 
 class CustomUserAdmin(admin.ModelAdmin):
@@ -16,4 +16,17 @@ class CustomUserAdmin(admin.ModelAdmin):
     )
 
 
+class CustomAgreementAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "type",
+        "salary_gross",
+        "start_date",
+        "end_date",
+        "user",
+        "is_current",
+    )
+
+
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(Agreement, CustomAgreementAdmin)

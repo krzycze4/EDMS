@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 
 from .views.views_login_logout import CustomLoginView, CustomLogoutView
@@ -11,6 +13,16 @@ from .views.views_reset_password import (
     CustomPasswordResetConfirmView,
     CustomPasswordResetDoneView,
     CustomPasswordResetView,
+)
+from .views.views_user import (
+    UserAddressCreateView,
+    UserAddressUpdateView,
+    UserAgreementCreateView,
+    UserAgreementDeleteView,
+    UserAgreementDetailView,
+    UserAgreementUpdateView,
+    UserDetailView,
+    UserUpdateView,
 )
 
 urlpatterns = [
@@ -39,4 +51,40 @@ urlpatterns = [
         name="forgot-password-complete",
     ),
     path("logout/", CustomLogoutView.as_view(), name="logout"),
+    path("users/<int:pk>/", UserDetailView.as_view(), name="detail-user"),
+    path(
+        "users/<int:pk>/update/", UserUpdateView.as_view(), name="update-user-contact"
+    ),
+    path(
+        "users/<int:pk>/create-address/",
+        UserAddressCreateView.as_view(),
+        name="create-user-address",
+    ),
+    path(
+        "users/<int:pk>/update-address/",
+        UserAddressUpdateView.as_view(),
+        name="update-user-address",
+    ),
+    path(
+        "users/<int:pk>/create-agreement/",
+        UserAgreementCreateView.as_view(),
+        name="create-agreement",
+    ),
+    path(
+        "agreements/<int:pk>/",
+        UserAgreementDetailView.as_view(),
+        name="detail-agreement",
+    ),
+    path(
+        "agreements/<int:pk>/update/",
+        UserAgreementUpdateView.as_view(),
+        name="update-agreement",
+    ),
+    path(
+        "agreements/<int:pk>/delete/",
+        UserAgreementDeleteView.as_view(),
+        name="delete-agreement",
+    ),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

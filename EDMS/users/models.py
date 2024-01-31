@@ -3,6 +3,7 @@ from __future__ import annotations
 import unicodedata
 from typing import Any
 
+from companies.models import Address
 from django.apps import apps
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -56,6 +57,8 @@ class CustomUserManager(UserManager):
 class User(AbstractUser):
     username_validator = None
     username = None
+    first_name = models.CharField(_("first name"), max_length=150)
+    last_name = models.CharField(_("last name"), max_length=150)
     email = models.EmailField(_("email address"), unique=True)
     is_active = models.BooleanField(
         _("active"),
@@ -65,14 +68,13 @@ class User(AbstractUser):
             "Unselect this instead of deleting accounts."
         ),
     )
-    # TODO: do it when Contract and Agreement models will be created
-    # phone_number = models.CharField(max_length=50, null=True)
-    # position = models.CharField(max_length=30)
-    # salary = models.DecimalField(max_digits=6, decimal_places=2)
-    # holidays_days = models.PositiveSmallIntegerField(default=26)
-    # contract = models.ManyToManyField(Contract, null=True)
-    # address = models.ForeignKey(Address, null=True)
-    # agreement = models.ForeignKey(Agreement, null=True
+    phone_number = models.CharField(max_length=50, null=True)
+    position = models.CharField(max_length=30, null=True)
+    vacation_days = models.PositiveSmallIntegerField(default=26)
+    address = models.ForeignKey(
+        Address, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    photo = models.ImageField(upload_to="photos", default="photos/undraw_profile.svg")
 
     objects = CustomUserManager()
 
@@ -99,3 +101,28 @@ class User(AbstractUser):
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+
+class Agreement(models.Model):
+    EMPLOYMENT = "employment contract"
+    COMMISSION = "commission agreement"
+    MANDATE = "contract of mandate"
+    B2B = "B2B"
+    TYPE_CHOICES = [
+        (EMPLOYMENT, EMPLOYMENT),
+        (COMMISSION, COMMISSION),
+        (MANDATE, MANDATE),
+        (B2B, B2B),
+    ]
+    name = models.CharField(max_length=25, unique=True)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    salary_gross = models.PositiveSmallIntegerField()
+    create_date = models.DateField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    scan = models.FileField(upload_to="agreements")
+    is_current = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f"{self.name}"
