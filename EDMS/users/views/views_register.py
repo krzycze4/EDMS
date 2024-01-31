@@ -16,7 +16,7 @@ from users.tokens import account_activation_token
 
 class UserRegisterView(FormView):
     form_class = CustomUserCreationForm
-    template_name = "users/register.html"
+    template_name = "users/register/register.html"
     success_url = reverse_lazy("success-register")
     redirect_authenticated_user = True
 
@@ -45,11 +45,11 @@ class UserRegisterView(FormView):
 
 
 class SuccessRegisterView(TemplateView):
-    template_name = "users/register_success.html"
+    template_name = "users/register/register_success.html"
 
 
 class ActivateAccountView(TemplateView):
-    template_name = "users/activation_result.html"
+    template_name = "users/register/activation_result.html"
 
     def get_context_data(self, **kwargs) -> Dict[str, str]:
         context: Dict = super().get_context_data(**kwargs)

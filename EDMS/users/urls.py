@@ -2,6 +2,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
+from .views.views_address import UserAddressCreateView, UserAddressUpdateView
+from .views.views_agreement import (
+    UserAgreementCreateView,
+    UserAgreementDeleteView,
+    UserAgreementDetailView,
+    UserAgreementUpdateView,
+)
 from .views.views_login_logout import CustomLoginView, CustomLogoutView
 from .views.views_register import (
     ActivateAccountView,
@@ -14,17 +21,7 @@ from .views.views_reset_password import (
     CustomPasswordResetDoneView,
     CustomPasswordResetView,
 )
-from .views.views_user import (
-    UserAddressCreateView,
-    UserAddressUpdateView,
-    UserAgreementCreateView,
-    UserAgreementDeleteView,
-    UserAgreementDetailView,
-    UserAgreementUpdateView,
-    UserDetailView,
-    UserListView,
-    UserUpdateView,
-)
+from .views.views_user import UserDetailView, UserListView, UserUpdateView
 
 urlpatterns = [
     path("register/", UserRegisterView.as_view(), name="register"),

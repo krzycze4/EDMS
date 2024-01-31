@@ -6,7 +6,7 @@ from users.models import User
 
 
 class CustomLoginView(LoginView):
-    template_name = "users/login.html"
+    template_name = "users/login_logout/login.html"
     form_class = CustomAuthenticationForm
     redirect_authenticated_user = True
 
@@ -32,4 +32,4 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
-    template_name = "users/logout.html"
+    template_name = "users/login_logout/logout.html"
