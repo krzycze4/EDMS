@@ -6,11 +6,11 @@ from invoices.models import Invoice
 
 from .models import Order, Protocol
 from .validators import (
-    end_after_start_validator,
-    file_extension_validator,
-    forbidden_future_date_validator,
-    forbidden_repetition_validator,
-    max_size_file_validator,
+    validate_end_date_after_start_date,
+    validate_file_extension,
+    validate_max_size_file,
+    validate_no_future_create_date,
+    validate_no_repetition,
 )
 
 
@@ -32,8 +32,8 @@ class OrderCreateForm(forms.ModelForm):
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
-        end_after_start_validator(cleaned_data=cleaned_data)
-        forbidden_repetition_validator(cleaned_data=cleaned_data)
+        validate_end_date_after_start_date(cleaned_data=cleaned_data)
+        validate_no_repetition(cleaned_data=cleaned_data)
         return cleaned_data
 
 
@@ -63,7 +63,7 @@ class OrderUpdateForm(forms.ModelForm):
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data: Dict[str, Any] = super().clean()
-        end_after_start_validator(cleaned_data=cleaned_data)
+        validate_end_date_after_start_date(cleaned_data=cleaned_data)
         return cleaned_data
 
     def __init__(self, *args, **kwargs) -> None:
@@ -80,9 +80,12 @@ class OrderUpdateForm(forms.ModelForm):
 class OrderManageInvoicesForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ["cost_invoices"]  # "income_invoices",
+        fields = ["cost_invoices", "income_invoices"]
         widgets = {
             "cost_invoices": forms.SelectMultiple(
+                attrs={"class": "form-control js-example-basic-multiple", "size": 3}
+            ),
+            "income_invoices": forms.SelectMultiple(
                 attrs={"class": "form-control js-example-basic-multiple", "size": 3}
             ),
         }
@@ -143,7 +146,7 @@ class ProtocolCreateForm(forms.ModelForm):
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
-        forbidden_future_date_validator(cleaned_data=cleaned_data)
-        max_size_file_validator(cleaned_data=cleaned_data)
-        file_extension_validator(cleaned_data=cleaned_data)
+        validate_no_future_create_date(cleaned_data=cleaned_data)
+        validate_max_size_file(cleaned_data=cleaned_data)
+        validate_file_extension(cleaned_data=cleaned_data)
         return cleaned_data

@@ -8,7 +8,7 @@ from django.utils import timezone
 from invoices.models import Invoice
 
 
-def seller_different_than_buyer_validator(
+def validate_seller_different_than_buyer(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
     seller: Company = attrs["seller"]
@@ -18,7 +18,7 @@ def seller_different_than_buyer_validator(
         raise ValidationError({"seller": "The buyer can't be the seller."})
 
 
-def vat_max_validator(attrs: Dict[str, Union[Decimal | date | Company]]) -> None:
+def validate_max_vat(attrs: Dict[str, Union[Decimal | date | Company]]) -> None:
     vat: Decimal = attrs["vat"]
     net_price: Decimal = attrs["net_price"]
 
@@ -31,7 +31,7 @@ def vat_max_validator(attrs: Dict[str, Union[Decimal | date | Company]]) -> None
         )
 
 
-def net_price_and_vat_equal_gross_validator(
+def validate_net_price_plus_vat_equal_gross(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
     net_price: Decimal = attrs["net_price"]
@@ -44,7 +44,7 @@ def net_price_and_vat_equal_gross_validator(
         )
 
 
-def future_create_date_validator(
+def validate_no_future_create_date(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
     today: date = timezone.now().date()
@@ -56,7 +56,7 @@ def future_create_date_validator(
         )
 
 
-def payment_date_before_create_date_validator(
+def validate_no_payment_date_before_create_date(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
     if attrs["type"] not in [Invoice.DUPLICATE, Invoice.CORRECTING]:
@@ -69,7 +69,7 @@ def payment_date_before_create_date_validator(
             )
 
 
-def seller_or_buyer_must_be_my_company_validator(
+def validate_seller_or_buyer_must_be_my_company(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
     buyer: Company = attrs["buyer"]
@@ -84,7 +84,7 @@ def seller_or_buyer_must_be_my_company_validator(
         )
 
 
-def original_invoice_not_linked_to_other_invoice(
+def validate_original_invoice_not_linked_to_other_invoice(
     attrs: Dict[str, Union[Decimal | date | Company | str | Invoice]],
 ) -> None:
     invoice_type: str = attrs["type"]
@@ -95,7 +95,7 @@ def original_invoice_not_linked_to_other_invoice(
         )
 
 
-def proforma_and_duplicate_same_data_as_original_validator(
+def validate_proforma_and_duplicate_same_data_as_original(
     attrs: Dict[str, Union[str | date | Decimal | Company | Invoice]],
 ) -> None:
     linked_invoice: Invoice = attrs["linked_invoice"]
@@ -115,7 +115,7 @@ def proforma_and_duplicate_same_data_as_original_validator(
                     )
 
 
-def correcting_invoice_linked_with_original_or_duplicate_validator(
+def validate_correcting_invoice_linked_with_original_or_duplicate(
     attrs: Dict[str, Union[str | date | Decimal | Company | Invoice]],
 ) -> None:
     invoice_type: str = attrs["type"]

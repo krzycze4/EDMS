@@ -3,19 +3,19 @@ from decimal import Decimal
 from typing import Dict, Union
 
 from django import forms
-from orders.validators import file_extension_validator
+from orders.validators import validate_file_extension
 
 from .models import Company, Invoice
 from .validators import (
-    correcting_invoice_linked_with_original_or_duplicate_validator,
-    future_create_date_validator,
-    net_price_and_vat_equal_gross_validator,
-    original_invoice_not_linked_to_other_invoice,
-    payment_date_before_create_date_validator,
-    proforma_and_duplicate_same_data_as_original_validator,
-    seller_different_than_buyer_validator,
-    seller_or_buyer_must_be_my_company_validator,
-    vat_max_validator,
+    validate_correcting_invoice_linked_with_original_or_duplicate,
+    validate_max_vat,
+    validate_net_price_plus_vat_equal_gross,
+    validate_no_future_create_date,
+    validate_no_payment_date_before_create_date,
+    validate_original_invoice_not_linked_to_other_invoice,
+    validate_proforma_and_duplicate_same_data_as_original,
+    validate_seller_different_than_buyer,
+    validate_seller_or_buyer_must_be_my_company,
 )
 
 
@@ -60,16 +60,16 @@ class InvoiceForm(forms.ModelForm):
 
     def clean(self) -> Dict[str, Union[Decimal | date | Company]]:
         cleaned_data: Dict[str, Union[Decimal | date | Company]] = super().clean()
-        original_invoice_not_linked_to_other_invoice(attrs=cleaned_data)
-        proforma_and_duplicate_same_data_as_original_validator(attrs=cleaned_data)
-        correcting_invoice_linked_with_original_or_duplicate_validator(
+        validate_original_invoice_not_linked_to_other_invoice(attrs=cleaned_data)
+        validate_proforma_and_duplicate_same_data_as_original(attrs=cleaned_data)
+        validate_correcting_invoice_linked_with_original_or_duplicate(
             attrs=cleaned_data
         )
-        vat_max_validator(attrs=cleaned_data)
-        future_create_date_validator(attrs=cleaned_data)
-        payment_date_before_create_date_validator(attrs=cleaned_data)
-        net_price_and_vat_equal_gross_validator(attrs=cleaned_data)
-        seller_different_than_buyer_validator(attrs=cleaned_data)
-        seller_or_buyer_must_be_my_company_validator(attrs=cleaned_data)
-        file_extension_validator(cleaned_data=cleaned_data)
+        validate_max_vat(attrs=cleaned_data)
+        validate_no_future_create_date(attrs=cleaned_data)
+        validate_no_payment_date_before_create_date(attrs=cleaned_data)
+        validate_net_price_plus_vat_equal_gross(attrs=cleaned_data)
+        validate_seller_different_than_buyer(attrs=cleaned_data)
+        validate_seller_or_buyer_must_be_my_company(attrs=cleaned_data)
+        validate_file_extension(cleaned_data=cleaned_data)
         return cleaned_data

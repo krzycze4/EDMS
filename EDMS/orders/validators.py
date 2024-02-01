@@ -9,7 +9,7 @@ from humanize import naturalsize
 from .models import Order
 
 
-def end_after_start_validator(cleaned_data: Dict[str, Any]) -> None:
+def validate_end_date_after_start_date(cleaned_data: Dict[str, Any]) -> None:
     start_date = cleaned_data["start_date"]
     end_date = cleaned_data["end_date"]
     if start_date > end_date:
@@ -18,7 +18,7 @@ def end_after_start_validator(cleaned_data: Dict[str, Any]) -> None:
         )
 
 
-def forbidden_repetition_validator(cleaned_data: Dict[str, Any]) -> None:
+def validate_no_repetition(cleaned_data: Dict[str, Any]) -> None:
     start_date = cleaned_data["start_date"]
     end_date = cleaned_data["end_date"]
     payment = cleaned_data["payment"]
@@ -33,13 +33,13 @@ def forbidden_repetition_validator(cleaned_data: Dict[str, Any]) -> None:
         )
 
 
-def forbidden_future_date_validator(cleaned_data: Dict[str, Any]) -> None:
+def validate_no_future_create_date(cleaned_data: Dict[str, Any]) -> None:
     create_date = cleaned_data["create_date"]
     if timezone.now().date() < create_date:
         raise ValidationError({"create_date": "The create date can't be future date."})
 
 
-def max_size_file_validator(cleaned_data: Dict[str, Any]) -> None:
+def validate_max_size_file(cleaned_data: Dict[str, Any]) -> None:
     scan = cleaned_data["scan"]
     scan_size = scan.size
     max_scan_size = 10**7  # 10mB
@@ -49,7 +49,7 @@ def max_size_file_validator(cleaned_data: Dict[str, Any]) -> None:
         )
 
 
-def file_extension_validator(cleaned_data: Dict[str, Any]) -> None:
+def validate_file_extension(cleaned_data: Dict[str, Any]) -> None:
     scan: UploadedFile = cleaned_data["scan"]
     extension = os.path.splitext(scan.name)[1]
     valid_extensions = [
