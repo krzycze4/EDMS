@@ -14,7 +14,7 @@ def validate_end_date_after_start_date(cleaned_data: Dict[str, Any]) -> None:
     end_date = cleaned_data["end_date"]
     if start_date > end_date:
         raise ValidationError(
-            {"end_date": "End date can't be earlier than start date!"}
+            {"end_date": "End end_date can't be earlier than start end_date!"}
         )
 
 
@@ -36,7 +36,9 @@ def validate_no_repetition(cleaned_data: Dict[str, Any]) -> None:
 def validate_no_future_create_date(cleaned_data: Dict[str, Any]) -> None:
     create_date = cleaned_data["create_date"]
     if timezone.now().date() < create_date:
-        raise ValidationError({"create_date": "The create date can't be future date."})
+        raise ValidationError(
+            {"create_date": "The create end_date can't be future end_date."}
+        )
 
 
 def validate_max_size_file(cleaned_data: Dict[str, Any]) -> None:

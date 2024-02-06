@@ -35,13 +35,13 @@ class InvoiceForm(forms.ModelForm):
             "vat": forms.NumberInput(attrs={"class": "form-control"}),
             "gross": forms.NumberInput(attrs={"class": "form-control"}),
             "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
             "service_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
             "payment_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
             "type": forms.Select(attrs={"class": "form-control"}),
             "scan": forms.FileInput(attrs={"class": "form-input"}),

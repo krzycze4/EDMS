@@ -21,13 +21,13 @@ class InvoiceFilter(django_filters.FilterSet):
         field_name="create_date",
         lookup_expr="gte",
         label="Date From",
-        widget=forms.TextInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.TextInput(attrs={"class": "form-control", "type": "end_date"}),
     )
     create_date__lt = django_filters.DateFilter(
         field_name="create_date",
         lookup_expr="lte",
         label="Date To",
-        widget=forms.TextInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.TextInput(attrs={"class": "form-control", "type": "end_date"}),
     )
     unpaid = django_filters.BooleanFilter(
         label="Show only unpaid postponed invoices",
@@ -47,6 +47,6 @@ class InvoiceFilter(django_filters.FilterSet):
 
     def filter_unpaid_postponed_invoices(self, queryset, name, value):
         if value:
-            today = timezone.now().date()
+            today = timezone.now().end_date()
             return queryset.filter(is_paid=False, payment_date__lt=today)
         return queryset

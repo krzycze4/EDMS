@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}
+    Termination Detail
+{% endblock title %}
+{% block content %}
+    <div class="card-group">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center pointer">
+                <h6 class="m-0 font-weight-bold text-primary">{{ termination }}</h6>
+                <div class="d-flex">
+                    <a class="btn btn-primary"
+                       type="button"
+                       href="{% url "detail-user" termination.agreement.user.pk %}">Back to user details</a>
+                </div>
+            </div>
+            <div class="row p-6">
+                <div class="col">
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#terminationCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Termination #{{ termination.name }}</h5>
+                        </div>
+                        <div id="terminationCollapse" class="collapse show">
+                            <div class="card-body">
+                                <p class="font-weight-bold">Name: {{ termination.name }}</p>
+                                <p class="font-weight-bold">Create date termination: {{ termination.create_date }}</p>
+                                <p class="font-weight-bold">
+                                    Connected agreement: <a href="{% url 'detail-agreement' termination.agreement.pk %}">{{ termination.agreement }}</a>
+                                </p>
+                                <p class="font-weight-bold">End date agreement: {{ termination.end_date }}</p>
+                                <p class="font-weight-bold">
+                                    Connected user: <a href="{% url 'detail-user' termination.agreement.user.pk %}">{{ termination.agreement.user }}</a>
+                                </p>
+                                <a class="btn btn-warning mr-2"
+                                   type="button"
+                                   href="{% url "update-termination" termination.pk %}">Edit termination</a>
+                                <a class="btn btn-danger mr-2"
+                                   type="button"
+                                   href="{% url "delete-termination" termination.pk %}">Delete termination</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

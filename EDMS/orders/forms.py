@@ -23,10 +23,10 @@ class OrderCreateForm(forms.ModelForm):
             "company": forms.Select(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
             "start_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
             "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
         }
 
@@ -53,10 +53,10 @@ class OrderUpdateForm(forms.ModelForm):
             "payment": forms.NumberInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-control"}),
             "start_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
             "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
             "description": forms.Textarea(attrs={"class": "form-control"}),
         }
@@ -140,7 +140,7 @@ class ProtocolCreateForm(forms.ModelForm):
         widgets = {
             "scan": forms.FileInput(attrs={"type": "file"}),
             "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
+                attrs={"class": "form-control", "type": "end_date"}
             ),
         }
 

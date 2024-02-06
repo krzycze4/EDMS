@@ -47,12 +47,12 @@ def validate_net_price_plus_vat_equal_gross(
 def validate_no_future_create_date(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
-    today: date = timezone.now().date()
+    today: date = timezone.now().end_date()
     create_date: date = attrs["create_date"]
 
     if today < create_date:
         raise ValidationError(
-            {"create_date": "You can't create any invoice with a future date."}
+            {"create_date": "You can't create any invoice with a future end_date."}
         )
 
 
@@ -65,7 +65,9 @@ def validate_no_payment_date_before_create_date(
 
         if payment_date < create_date:
             raise ValidationError(
-                {"payment_date": "Payment date can't be earlier than create date."}
+                {
+                    "payment_date": "Payment end_date can't be earlier than create end_date."
+                }
             )
 
 

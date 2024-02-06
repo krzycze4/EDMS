@@ -8,6 +8,7 @@ from django.apps import apps
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -70,7 +71,7 @@ class User(AbstractUser):
     )
     phone_number = models.CharField(max_length=50, null=True)
     position = models.CharField(max_length=30, null=True)
-    vacation_days = models.PositiveSmallIntegerField(default=26)
+    vacation_days_per_year = models.PositiveSmallIntegerField(default=26)
     address = models.ForeignKey(
         Address, on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -120,9 +121,154 @@ class Agreement(models.Model):
     create_date = models.DateField()
     start_date = models.DateField()
     end_date = models.DateField()
+    end_date_actual = models.DateField()
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     scan = models.FileField(upload_to="agreements")
     is_current = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.end_date_actual = self.end_date
+        else:
+            has_termination_or_addendum = (
+                Termination.objects.filter(agreement=self).exists()
+                or self.addendum_set.exists()
+            )
+            if not has_termination_or_addendum:
+                self.end_date_actual = self.end_date
+
+        if self.end_date_actual < timezone.now().date():
+            self.is_current = False
+        else:
+            self.is_current = True
+        super().save(*args, **kwargs)
+
+
+class Termination(models.Model):
+    name = models.CharField(max_length=25)
+    agreement = models.OneToOneField(Agreement, on_delete=models.CASCADE)
+    create_date = models.DateField()
+    end_date = models.DateField()
+    scan = models.FileField(upload_to="terminations/")
+
+    def __str__(self) -> str:
+        return f"Termination #{self.name}"
+
+    def update_agreement_end_date(self):
+        last_addendum = (
+            Addendum.objects.filter(agreement=self.agreement)
+            .order_by("create_date")
+            .last()
+        )
+        if self.agreement.termination:
+            self.agreement.end_date_actual = self.agreement.termination.end_date
+        elif last_addendum:
+            self.agreement.end_date_actual = last_addendum.end_date
+        else:
+            self.agreement.end_date_actual = self.agreement.end_date
+
+    def update_agreement_is_current(self):
+        if self.agreement.end_date_actual < timezone.now().date():
+            self.agreement.is_current = False
+        else:
+            self.agreement.is_current = True
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_agreement_end_date()
+        self.update_agreement_is_current()
+        self.agreement.save()
+
+    def delete(self, *args, **kwargs):
+        agreement = self.agreement
+        super().delete(*args, **kwargs)
+        last_addendum = (
+            Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
+        )
+        if last_addendum:
+            agreement.end_date_actual = last_addendum.end_date
+        else:
+            agreement.end_date_actual = agreement.end_date
+        self.update_agreement_is_current()
+        agreement.save()
+
+
+class Addendum(models.Model):
+    name = models.CharField(max_length=25)
+    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE)
+    create_date = models.DateField()
+    end_date = models.DateField()
+    salary_gross = models.PositiveSmallIntegerField()
+    scan = models.FileField(upload_to="addenda")
+
+    class Meta:
+        verbose_name_plural = "Addenda"
+
+    def __str__(self):
+        return f"Addendum #{self.name}"
+
+    def update_agreement_end_date(self):
+        last_addendum = (
+            Addendum.objects.filter(agreement=self.agreement)
+            .order_by("create_date")
+            .last()
+        )
+        if last_addendum:
+            self.agreement.end_date_actual = last_addendum.end_date
+        else:
+            self.agreement.end_date_actual = self.agreement.end_date
+
+    def update_agreement_is_current(self):
+        if self.agreement.end_date_actual < timezone.now().date():
+            self.agreement.is_current = False
+        else:
+            self.agreement.is_current = True
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_agreement_end_date()
+        self.update_agreement_is_current()
+        self.agreement.save()
+
+    def delete(self, *args, **kwargs):
+        agreement = self.agreement
+        super().delete(*args, **kwargs)
+        last_addendum = (
+            Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
+        )
+        if last_addendum:
+            agreement.end_date_actual = last_addendum.end_date
+        else:
+            agreement.end_date_actual = agreement.end_date
+        self.update_agreement_is_current()
+        agreement.save()
+
+
+class Vacation(models.Model):
+    ANNUAL = "annual"
+    MATERNITY = "maternity"
+    PARENTAL = "parental"
+    CHILDCARE = "childcare"
+    SPECIAL = "special"
+    SICK = "sick"
+    UNPAID = "unpaid"
+    TYPE_CHOICES = [
+        (ANNUAL, ANNUAL),
+        (MATERNITY, MATERNITY),
+        (PARENTAL, PARENTAL),
+        (CHILDCARE, CHILDCARE),
+        (SPECIAL, SPECIAL),
+        (SICK, SICK),
+        (UNPAID, UNPAID),
+    ]
+    type = models.CharField(max_length=9, choices=TYPE_CHOICES)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    leave_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="leave_user"
+    )
+    substitute_users = models.ManyToManyField(User, related_name="substitute_users")
+    scan = models.FileField(upload_to="vacations")

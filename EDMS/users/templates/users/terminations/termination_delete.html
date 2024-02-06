@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}
+    Delete Termination
+{% endblock title %}
+{% block content %}
+    <div class="card">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Do you want to delete the termination?</h6>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <strong>Name:</strong> {{ termination.name }}
+            </div>
+            <div class="mb-3">
+                <strong>Agreement:</strong>
+                <a href="{% url "detail-agreement" termination.agreement.pk %}">{{ termination.agreement }}</a>
+            </div>
+            <div class="mb-3">
+                <strong>Create date:</strong> {{ termination.create_date }}
+            </div>
+            <div class="mb-3">
+                <strong>End date:</strong> {{ termination.end_date }}
+            </div>
+            <div class="mb-3">
+                <strong>Scan:</strong>
+                <a href="{{ termination.scan.url }}" target="_blank">Show scan in new explorer tab</a>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" class="btn btn-danger my-2" value="Yes">
+                <a class="btn btn-primary my-2"
+                   href="{% url "detail-termination" termination.pk %}">No</a>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

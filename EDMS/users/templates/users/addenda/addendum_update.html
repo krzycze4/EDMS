@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}
+    Update Addendum
+{% endblock title %}
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Edit the addendum {{ addendum.name }} of agreement {{ addendum.agreement.name }}
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label }}
+                            {{ field }}
+                            {% if field.name == 'scan' %}
+                                <p>
+                                    Current scan: <a target="_blank" href={{ current_scan.url }}>Show in another explorer tab</a>
+                                </p>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="alert alert-danger">
+                                    {% for error in field.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                </div>
+            </form>
+            <a class="btn btn-primary"
+               href="{% url "detail-addendum" addendum.pk %}">Back to addendum details</a>
+        </div>
+    </div>
+{% endblock content %}

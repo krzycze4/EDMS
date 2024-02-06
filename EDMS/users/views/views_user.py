@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView
 from users.filters import UserFilter
 from users.forms import UserContactUpdateForm
-from users.models import Agreement, User
+from users.models import Addendum, Agreement, Termination, User, Vacation
 
 
 class UserDetailView(DetailView):
@@ -15,7 +15,24 @@ class UserDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["agreements"] = Agreement.objects.filter(user=self.object)
+        context["vacations"] = Vacation.objects.filter(leave_user=self.object)
+        # context["left_vacation_days"] = self.count_left_vacation_days()
+        context["terminations"] = Termination.objects.filter(
+            agreement__user=self.object
+        )
+        context["addenda"] = Addendum.objects.filter(agreement__user=self.object)
+        context["last_addendum"] = (
+            Addendum.objects.filter(agreement__user=self.object)
+            .order_by("create_date")
+            .last()
+        )
         return context
+
+    # def count_left_vacation_days(self):
+    #     agreements = Agreement.objects.filter(
+    #         user=self.object, type=Agreement.EMPLOYMENT
+    #     )
+    #     return "left_vacation"
 
 
 class UserUpdateView(UpdateView):

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}
+    Vacation Detail
+{% endblock title %}
+{% block content %}
+    <div class="card-group">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center pointer">
+                <h6 class="m-0 font-weight-bold text-primary">{{ user }}</h6>
+                <div class="d-flex">
+                    <a class="btn btn-primary"
+                       type="button"
+                       href="{% url "detail-user" vacation.leave_user.pk %}">Back to user details</a>
+                </div>
+            </div>
+            <div class="row p-6">
+                <div class="col">
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#contactCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Vacation #{{ vacation.pk }} data of {{ vacation.leave_user }}</h5>
+                        </div>
+                        <div id="contactCollapse" class="collapse show">
+                            <div class="card-body">
+                                <p class="font-weight-bold">Type: {{ vacation.type }}</p>
+                                <p class="font-weight-bold">Start date: {{ vacation.start_date }}</p>
+                                <p class="font-weight-bold">End date: {{ vacation.end_date }}</p>
+                                <p class="font-weight-bold">
+                                    Substitution users:
+                                    {% with substitute_users=vacation.substitute_users.all %}
+                                        {% for sub_user in substitute_users %}
+                                            <a class="font-weight-bold" href="{% url "detail-user" sub_user.pk %}">{{ sub_user }}</a>
+                                            {% if not forloop.last %},{% endif %}
+                                        {% endfor %}
+                                    {% endwith %}
+                                </p>
+                                <p class="font-weight-bold">
+                                    Scan: <a target="_blank" href="{{ vacation.scan.url }}">Show scan in another explorer card</a>
+                                </p>
+                                <a class="btn btn-warning mr-2"
+                                   type="button"
+                                   href="{% url "update-vacation" vacation.pk %}">Edit vacation</a>
+                                <a class="btn btn-danger mr-2"
+                                   type="button"
+                                   href="{% url "delete-vacation" vacation.pk %}">Delete vacation</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

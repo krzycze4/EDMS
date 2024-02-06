@@ -22,7 +22,7 @@
                              data-target="#contactCollapse"
                              aria-expanded="true"
                              role="button">
-                            <h5 class="m-0 font-weight-bold">Contact data</h5>
+                            <h5 class="m-0 font-weight-bold">User data</h5>
                         </div>
                         <div id="contactCollapse" class="collapse show">
                             <div class="card-body">
@@ -35,10 +35,10 @@
                                 <p class="font-weight-bold">Last name: {{ user.last_name }}</p>
                                 <p class="font-weight-bold">E-mail: {{ user.email }}</p>
                                 <p class="font-weight-bold">Phone number: {{ user.phone_number }}</p>
-                                <p class="font-weight-bold">Vacation days: {{ user.vacation_days }}</p>
+                                <p class="font-weight-bold">Position: {{ user.position }}</p>
                                 <a class="btn btn-warning mr-2"
                                    type="button"
-                                   href="{% url "update-user-contact" user.pk %}">Edit contact</a>
+                                   href="{% url "update-user-contact" user.pk %}">Edit user data</a>
                             </div>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                                                     </td>
                                                     <td>{{ agreement.type }}</td>
                                                     <td>{{ agreement.start_date }}</td>
-                                                    <td>{{ agreement.end_date }}</td>
+                                                    <td>{{ agreement.end_date_actual }}</td>
                                                     <td>
                                                         {% if agreement.is_current %}
                                                             Yes
@@ -114,6 +114,125 @@
                                         {% else %}
                                             <tr>
                                                 <th>Agreement not pinned yet.</th>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                                <a class="btn btn-info mr-2"
+                                   type="button"
+                                   href="{% url "create-termination" user.pk %}">Add termination</a>
+                                <table class="table table-responsive my-2">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Create date</th>
+                                            <th scope="col">Connected agreement</th>
+                                            <th scope="col">End date of agreement</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if terminations %}
+                                            {% for termination in terminations %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{% url "detail-termination" termination.pk %}">{{ termination.name }}</a>
+                                                    </td>
+                                                    <td>{{ termination.create_date }}</td>
+                                                    <td>
+                                                        <a href="{% url "detail-agreement" termination.agreement.pk %}">{{ termination.agreement }}</a>
+                                                    </td>
+                                                    <td>{{ termination.end_date }}</td>
+                                                    <td>{{ agreement.end_date }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <th>Termination not pinned yet.</th>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                                <a class="btn btn-info mr-2"
+                                   type="button"
+                                   href="{% url "create-addendum" user.pk %}">Add addendum</a>
+                                <table class="table table-responsive my-2">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Create date</th>
+                                            <th scope="col">Connected agreement</th>
+                                            <th scope="col">End date of agreement</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if addenda %}
+                                            {% for addendum in addenda %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{% url "detail-addendum" addendum.pk %}">{{ addendum.name }}</a>
+                                                    </td>
+                                                    <td>{{ addendum.create_date }}</td>
+                                                    <td>
+                                                        <a href="{% url "detail-agreement" addendum.agreement.pk %}">{{ addendum.agreement }}</a>
+                                                    </td>
+                                                    <td>{{ addendum.end_date }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <th>Addendum not pinned yet.</th>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#vacationsCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Vacation</h5>
+                        </div>
+                        <div id="vacationsCollapse" class="collapse show">
+                            <div class="card-body">
+                                <p class="font-weight-bold">Vacation days left: {{ user.left_vacation_days }}</p>
+                                <a class="btn btn-info mr-2"
+                                   type="button"
+                                   href="{% url "create-vacation" user.pk %}">Add vacation</a>
+                                <table class="table table-responsive my-2">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Start date</th>
+                                            <th scope="col">End date</th>
+                                            <th scope="col">Substitute user</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if vacations %}
+                                            {% for vacation in vacations %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{% url "detail-vacation" vacation.pk %}">{{ vacation.pk }}</a>
+                                                    </td>
+                                                    <td>{{ vacation.type }}</td>
+                                                    <td>{{ vacation.start_date }}</td>
+                                                    <td>{{ vacation.end_date }}</td>
+                                                    <td>
+                                                        {% for substitute_user in vacation.substitute_users.all %}
+                                                            <a href="{% url "detail-user" substitute_user.pk %}">{{ substitute_user }}</a>
+                                                            {% if not forloop.last %},{% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <th>Vacation not pinned yet.</th>
                                             </tr>
                                         {% endif %}
                                     </tbody>
