@@ -6,7 +6,7 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.urls import reverse_lazy
-from users.forms import CustomPasswordResetForm, CustomSetPasswordForm
+from users.forms.forms_password import CustomPasswordResetForm, CustomSetPasswordForm
 
 
 class CustomPasswordResetView(PasswordResetView):

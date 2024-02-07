@@ -1,9 +1,12 @@
 from typing import Any, Dict
 
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
-from users.forms import VacationForm
-from users.models import User, Vacation
+from employees.forms.forms_vacation import VacationForm
+from employees.models.models_vacation import Vacation
+
+User = get_user_model()
 
 
 class VacationCreateView(CreateView):
@@ -49,4 +52,4 @@ class VacationDeleteView(DeleteView):
 
     def get_success_url(self) -> str:
         print(self.object.leave_user.pk)
-        return reverse("detail-user", kwargs={"pk": self.object.leave_user.pk})
+        return reverse("detail-employee", kwargs={"pk": self.object.leave_user.pk})

@@ -1,8 +1,10 @@
 import django_filters
 from django import forms
-from users.models import User
+from django.contrib.auth import get_user_model
 
 from .models import Order
+
+User = get_user_model()
 
 
 class OrderFilter(django_filters.FilterSet):

@@ -10,7 +10,7 @@
                 <div class="d-flex">
                     <a class="btn btn-primary mr-2"
                        type="button"
-                       href="{% url "list-user" %}">Show user list</a>
+                       href="{% url "list-employee" %}">Show user list</a>
                     <a class="btn btn-primary" type="button" href="{% url "dashboard" %}">Back to home</a>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                                 <p class="font-weight-bold">Position: {{ user.position }}</p>
                                 <a class="btn btn-warning mr-2"
                                    type="button"
-                                   href="{% url "update-user-contact" user.pk %}">Edit user data</a>
+                                   href="{% url "update-employee-contact" user.pk %}">Edit user data</a>
                             </div>
                         </div>
                     </div>
@@ -60,11 +60,11 @@
                                     <p class="font-weight-bold">Country: {{ user.address.country }}</p>
                                     <a class="btn btn-warning mr-2"
                                        type="button"
-                                       href="{% url 'update-user-address' user.pk %}">Edit Address</a>
+                                       href="{% url 'update-employee-address' user.pk %}">Edit Address</a>
                                 {% else %}
                                     <a class="btn btn-info mr-2"
                                        type="button"
-                                       href="{% url 'create-user-address' user.pk %}">Add Address</a>
+                                       href="{% url 'create-employee-address' user.pk %}">Add Address</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -198,7 +198,7 @@
                         </div>
                         <div id="vacationsCollapse" class="collapse show">
                             <div class="card-body">
-                                <p class="font-weight-bold">Vacation days left: {{ user.left_vacation_days }}</p>
+                                <p class="font-weight-bold">Vacation days left: {{ user.vacation_left }}</p>
                                 <a class="btn btn-info mr-2"
                                    type="button"
                                    href="{% url "create-vacation" user.pk %}">Add vacation</a>
@@ -224,7 +224,7 @@
                                                     <td>{{ vacation.end_date }}</td>
                                                     <td>
                                                         {% for substitute_user in vacation.substitute_users.all %}
-                                                            <a href="{% url "detail-user" substitute_user.pk %}">{{ substitute_user }}</a>
+                                                            <a href="{% url "detail-employee" substitute_user.pk %}">{{ substitute_user }}</a>
                                                             {% if not forloop.last %},{% endif %}
                                                         {% endfor %}
                                                     </td>

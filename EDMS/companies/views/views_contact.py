@@ -1,4 +1,4 @@
-from companies.forms import CreateContactForm, UpdateContactForm
+from companies.forms.forms_contact import CreateContactForm, UpdateContactForm
 from companies.models import Company, Contact
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, UpdateView

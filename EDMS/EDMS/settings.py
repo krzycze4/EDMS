@@ -34,6 +34,7 @@ INSTALLED_EXTENSIONS = [
     "contracts",
     "invoices",
     "orders",
+    "employees",
 ]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS

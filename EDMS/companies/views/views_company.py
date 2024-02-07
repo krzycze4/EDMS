@@ -4,7 +4,7 @@ from typing import Callable, Dict, Union
 
 import requests
 from companies.filters import CompanyFilter
-from companies.forms import (
+from companies.forms.forms_company_and_address import (
     CompanyAndAddressForm,
     KRSForm,
     UpdateAddressForm,

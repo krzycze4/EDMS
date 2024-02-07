@@ -23,7 +23,8 @@
                 {% endfor %}
                 <input type="submit" class="btn btn-primary mt-2">
             </form>
-            <a class="btn btn-primary mt-2" href="{% url "detail-user" user.pk %}">Back to user details</a>
+            <a class="btn btn-primary mt-2"
+               href="{% url "detail-employee" user.pk %}">Back to user details</a>
         </div>
     </div>
 {% endblock content %}

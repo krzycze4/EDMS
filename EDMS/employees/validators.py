@@ -1,8 +1,12 @@
 from datetime import date
 from typing import Any, Dict
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from users.models import Agreement, User, Vacation
+from employees.models.models_agreement import Agreement
+from employees.models.models_vacation import Vacation
+
+User = get_user_model()
 
 
 def validate_create_date_not_after_start_date(cleaned_data: Dict[str, Any]) -> None:
@@ -17,7 +21,7 @@ def validate_create_date_not_after_start_date(cleaned_data: Dict[str, Any]) -> N
         )
 
 
-def validate_no_repetitions(cleaned_data: Dict[str, Any]) -> None:
+def validate_no_vacation_repetitions(cleaned_data: Dict[str, Any]) -> None:
     leave_type: str = cleaned_data["type"]
     start_date: date = cleaned_data["start_date"]
     end_date: date = cleaned_data["start_date"]
@@ -28,7 +32,7 @@ def validate_no_repetitions(cleaned_data: Dict[str, Any]) -> None:
         raise ValidationError({"scan": "Do not duplicate leaves"})
 
 
-def validate_no_overlap_dates(cleaned_data: Dict[str, Any]) -> None:
+def validate_no_overlap_vacation_dates(cleaned_data: Dict[str, Any]) -> None:
     start_date: date = cleaned_data["start_date"]
     end_date: date = cleaned_data["end_date"]
     leave_user: date = cleaned_data["leave_user"]
@@ -104,5 +108,19 @@ def validate_addendum_dates(cleaned_data: Dict[str, Any]) -> None:
         raise ValidationError(
             {
                 "end_date": "End date addendum can't be earlier than actual end date of the agreement."
+            }
+        )
+
+
+def validate_user_can_take_vacation(cleaned_data: Dict[str, Any]) -> None:
+    leave_user: User = cleaned_data["leave_user"]
+    var = Agreement.objects.filter(
+        user=leave_user, is_current=True, type=Agreement.EMPLOYMENT
+    ).exists()
+    print(var)
+    if not var:
+        raise ValidationError(
+            {
+                "scan": "You can't take vacation because you don't have current employment agreement."
             }
         )

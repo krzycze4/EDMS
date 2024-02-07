@@ -3,8 +3,9 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
-from users.forms import TerminationForm
-from users.models import Agreement, Termination
+from employees.forms.forms_termination import TerminationForm
+from employees.models.models_agreement import Agreement
+from employees.models.models_termination import Termination
 
 
 class TerminationCreateView(CreateView):
@@ -57,7 +58,7 @@ class TerminationDeleteView(DeleteView):
     template_name = "users/terminations/termination_delete.html"
 
     def get_success_url(self, user_pk: int) -> str:
-        return reverse("detail-user", kwargs={"pk": user_pk})
+        return reverse("detail-employee", kwargs={"pk": user_pk})
 
     def post(self, request, *args, **kwargs) -> HttpResponseRedirect:
         termination: Termination = Termination.objects.get(pk=self.kwargs["pk"])

@@ -12,7 +12,8 @@ from django.views.generic import (
 )
 from invoices.models import Invoice
 from orders.filters import OrderFilter
-from orders.forms import OrderCreateForm, OrderManageInvoicesForm, OrderUpdateForm
+from orders.forms.forms_manage_invoices import ManageInvoicesForm
+from orders.forms.forms_order import OrderCreateForm, OrderUpdateForm
 from orders.models import Order
 
 
@@ -97,7 +98,7 @@ class OrderDeleteView(DeleteView):
 
 class OrderManageInvoices(UpdateView):
     template_name = "orders/orders/manage_invoice.html"
-    form_class = OrderManageInvoicesForm
+    form_class = ManageInvoicesForm
     model = Order
 
     def get_success_url(self) -> str:

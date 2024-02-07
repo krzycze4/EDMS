@@ -10,7 +10,7 @@
                 <div class="d-flex">
                     <a class="btn btn-primary"
                        type="button"
-                       href="{% url "detail-user" termination.agreement.user.pk %}">Back to user details</a>
+                       href="{% url "detail-employee" termination.agreement.user.pk %}">Back to user details</a>
                 </div>
             </div>
             <div class="row p-6">
@@ -32,7 +32,7 @@
                                 </p>
                                 <p class="font-weight-bold">End date agreement: {{ termination.end_date }}</p>
                                 <p class="font-weight-bold">
-                                    Connected user: <a href="{% url 'detail-user' termination.agreement.user.pk %}">{{ termination.agreement.user }}</a>
+                                    Connected user: <a href="{% url 'detail-employee' termination.agreement.user.pk %}">{{ termination.agreement.user }}</a>
                                 </p>
                                 <a class="btn btn-warning mr-2"
                                    type="button"

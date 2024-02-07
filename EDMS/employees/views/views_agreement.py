@@ -1,9 +1,10 @@
 from typing import Any, Dict
 
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
-from users.forms import AgreementForm
-from users.models import Agreement, User
+from employees.forms.forms_agreement import AgreementForm
+from employees.models.models_agreement import Agreement
 
 
 class AgreementCreateView(CreateView):
@@ -12,11 +13,11 @@ class AgreementCreateView(CreateView):
     template_name = "users/agreements/agreement_create.html"
 
     def get_success_url(self) -> str:
-        return reverse("detail-user", kwargs={"pk": self.kwargs["pk"]})
+        return reverse("detail-employee", kwargs={"pk": self.kwargs["pk"]})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["user"] = User.objects.get(pk=self.kwargs["pk"])
+        kwargs["user"] = get_user_model().objects.get(pk=self.kwargs["pk"])
         return kwargs
 
 
@@ -44,4 +45,4 @@ class AgreementDeleteView(DeleteView):
     template_name = "users/agreements/agreement_delete.html"
 
     def get_success_url(self) -> str:
-        return reverse("detail-user", kwargs={"pk": self.object.user.pk})
+        return reverse("detail-employee", kwargs={"pk": self.object.user.pk})

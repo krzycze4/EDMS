@@ -1,8 +1,10 @@
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
-from users.forms import CustomAuthenticationForm
-from users.models import User
+from users.forms.forms_custom_authentication import CustomAuthenticationForm
+
+User = get_user_model()
 
 
 class CustomLoginView(LoginView):
@@ -18,7 +20,7 @@ class CustomLoginView(LoginView):
         except User.DoesNotExist:
             messages.error(
                 self.request,
-                "User does not exist. Please check your email and password.",
+                "Invalid email or password.",
             )
         else:
             if not user.is_active:

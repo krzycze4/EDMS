@@ -1,5 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from users.models import User
+
+User = get_user_model()
 
 
 class AccountActivationTokenGenerator(PasswordResetTokenGenerator):

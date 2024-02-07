@@ -22,12 +22,12 @@
             </div>
             <div class="mb-3">
                 <strong>Leave user:</strong>
-                <a href="{% url "detail-user" vacation.leave_user.pk %}">{{ vacation.leave_user }}</a>
+                <a href="{% url "detail-employee" vacation.leave_user.pk %}">{{ vacation.leave_user }}</a>
             </div>
             <div class="mb-3">
                 <strong>Substitution users:</strong>
                 {% for sub_user in vacation.substitute_users.all %}
-                    <a href="{% url "detail-user" sub_user.pk %}">{{ sub_user.pk }}</a>
+                    <a href="{% url "detail-employee" sub_user.pk %}">{{ sub_user.pk }}</a>
                 {% endfor %}
             </div>
             <div class="mb-3">

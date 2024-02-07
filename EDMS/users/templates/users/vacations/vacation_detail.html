@@ -10,7 +10,7 @@
                 <div class="d-flex">
                     <a class="btn btn-primary"
                        type="button"
-                       href="{% url "detail-user" vacation.leave_user.pk %}">Back to user details</a>
+                       href="{% url "detail-employee" vacation.leave_user.pk %}">Back to user details</a>
                 </div>
             </div>
             <div class="row p-6">
@@ -32,7 +32,8 @@
                                     Substitution users:
                                     {% with substitute_users=vacation.substitute_users.all %}
                                         {% for sub_user in substitute_users %}
-                                            <a class="font-weight-bold" href="{% url "detail-user" sub_user.pk %}">{{ sub_user }}</a>
+                                            <a class="font-weight-bold"
+                                               href="{% url "detail-employee" sub_user.pk %}">{{ sub_user }}</a>
                                             {% if not forloop.last %},{% endif %}
                                         {% endfor %}
                                     {% endwith %}

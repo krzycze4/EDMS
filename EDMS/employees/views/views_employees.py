@@ -1,14 +1,20 @@
 from typing import Any, Dict
 
+from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView
-from users.filters import UserFilter
-from users.forms import UserContactUpdateForm
-from users.models import Addendum, Agreement, Termination, User, Vacation
+from employees.filters import UserFilter
+from employees.forms.forms_contact import ContactForm
+from employees.models.models_addendum import Addendum
+from employees.models.models_agreement import Agreement
+from employees.models.models_termination import Termination
+from employees.models.models_vacation import Vacation
+
+User = get_user_model()
 
 
-class UserDetailView(DetailView):
+class EmployeeDetailView(DetailView):
     model = User
     template_name = "users/users/user_detail.html"
 
@@ -16,35 +22,23 @@ class UserDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["agreements"] = Agreement.objects.filter(user=self.object)
         context["vacations"] = Vacation.objects.filter(leave_user=self.object)
-        # context["left_vacation_days"] = self.count_left_vacation_days()
         context["terminations"] = Termination.objects.filter(
             agreement__user=self.object
         )
         context["addenda"] = Addendum.objects.filter(agreement__user=self.object)
-        context["last_addendum"] = (
-            Addendum.objects.filter(agreement__user=self.object)
-            .order_by("create_date")
-            .last()
-        )
         return context
 
-    # def count_left_vacation_days(self):
-    #     agreements = Agreement.objects.filter(
-    #         user=self.object, type=Agreement.EMPLOYMENT
-    #     )
-    #     return "left_vacation"
 
-
-class UserUpdateView(UpdateView):
+class EmployeeUpdateView(UpdateView):
     model = User
-    form_class = UserContactUpdateForm
+    form_class = ContactForm
     template_name = "users/users/user_update.html"
 
     def get_success_url(self):
-        return reverse("detail-user", kwargs={"pk": self.object.pk})
+        return reverse("detail-employee", kwargs={"pk": self.object.pk})
 
 
-class UserListView(ListView):
+class EmployeeListView(ListView):
     queryset = User.objects.all()
     template_name = "users/users/user_list.html"
     paginate_by = 10
