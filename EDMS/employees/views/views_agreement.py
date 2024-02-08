@@ -10,7 +10,7 @@ from employees.models.models_agreement import Agreement
 class AgreementCreateView(CreateView):
     model = Agreement
     form_class = AgreementForm
-    template_name = "users/agreements/agreement_create.html"
+    template_name = "employees/agreements/agreement_create.html"
 
     def get_success_url(self) -> str:
         return reverse("detail-employee", kwargs={"pk": self.kwargs["pk"]})
@@ -23,13 +23,13 @@ class AgreementCreateView(CreateView):
 
 class AgreementDetailView(DetailView):
     model = Agreement
-    template_name = "users/agreements/agreement_detail.html"
+    template_name = "employees/agreements/agreement_detail.html"
 
 
 class AgreementUpdateView(UpdateView):
     model = Agreement
     form_class = AgreementForm
-    template_name = "users/agreements/agreement_update.html"
+    template_name = "employees/agreements/agreement_update.html"
 
     def get_success_url(self):
         return reverse("detail-agreement", kwargs={"pk": self.object.pk})
@@ -42,7 +42,7 @@ class AgreementUpdateView(UpdateView):
 
 class AgreementDeleteView(DeleteView):
     model = Agreement
-    template_name = "users/agreements/agreement_delete.html"
+    template_name = "employees/agreements/agreement_delete.html"
 
     def get_success_url(self) -> str:
         return reverse("detail-employee", kwargs={"pk": self.object.user.pk})

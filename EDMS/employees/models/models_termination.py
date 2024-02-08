@@ -15,8 +15,6 @@ class Termination(models.Model):
         return f"Termination #{self.name}"
 
     def update_agreement_end_date(self):
-        from employees.models.models_addendum import Addendum
-
         last_addendum = (
             Addendum.objects.filter(agreement=self.agreement)
             .order_by("create_date")

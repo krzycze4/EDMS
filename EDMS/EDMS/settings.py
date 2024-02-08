@@ -28,13 +28,13 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_EXTENSIONS = [
-    "users",
+    "employees",
     "dashboards",
     "companies",
     "contracts",
     "invoices",
     "orders",
-    "employees",
+    "users",
 ]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS

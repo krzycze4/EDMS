@@ -97,7 +97,13 @@
                                                 <th>{{ user.email }}</th>
                                                 <th>{{ user.phone_number }}</th>
                                                 <th>{{ user.position }}</th>
-                                                <th>{{ user.is_active }}</th>
+                                                <th>
+                                                    {% if user.is_active %}
+                                                        Yes
+                                                    {% else %}
+                                                        No
+                                                    {% endif %}
+                                                </th>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

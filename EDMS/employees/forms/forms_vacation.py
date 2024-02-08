@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from django import forms
 from employees.models.models_vacation import Vacation
-from employees.validators import (
+from employees.validators.validators_vacation import (
     validate_no_overlap_vacation_dates,
     validate_no_vacation_repetitions,
     validate_user_can_take_vacation,
@@ -31,9 +31,9 @@ class VacationForm(forms.ModelForm):
             "leave_user_display",
             "substitute_users",
             "scan",
+            "days_off",
         ]
         widgets = {
-            # "id": forms.HiddenInput(),
             "type": forms.Select(attrs={"class": "form-control"}),
             "start_date": forms.DateInput(
                 attrs={"class": "form-control", "type": "date"}
@@ -50,6 +50,7 @@ class VacationForm(forms.ModelForm):
         labels = {
             "id": "",
             "leave_user": "",
+            "days_off": "Days off due top-down in this vacation term",
         }
 
     def __init__(self, *args, **kwargs):

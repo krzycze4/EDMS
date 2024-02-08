@@ -12,7 +12,7 @@ User = get_user_model()
 class VacationCreateView(CreateView):
     model = Vacation
     form_class = VacationForm
-    template_name = "users/vacations/vacation_create.html"
+    template_name = "employees/vacations/vacation_create.html"
 
     def get_success_url(self) -> None:
         return reverse("detail-vacation", kwargs={"pk": self.object.pk})
@@ -27,13 +27,13 @@ class VacationCreateView(CreateView):
 
 class VacationDetailView(DetailView):
     model = Vacation
-    template_name = "users/vacations/vacation_detail.html"
+    template_name = "employees/vacations/vacation_detail.html"
 
 
 class VacationUpdateView(UpdateView):
     model = Vacation
     form_class = VacationForm
-    template_name = "users/vacations/vacation_update.html"
+    template_name = "employees/vacations/vacation_update.html"
 
     def get_success_url(self) -> str:
         return reverse("detail-vacation", kwargs={"pk": self.object.pk})
@@ -48,8 +48,7 @@ class VacationUpdateView(UpdateView):
 
 class VacationDeleteView(DeleteView):
     model = Vacation
-    template_name = "users/vacations/vacation_delete.html"
+    template_name = "employees/vacations/vacation_delete.html"
 
     def get_success_url(self) -> str:
-        print(self.object.leave_user.pk)
         return reverse("detail-employee", kwargs={"pk": self.object.leave_user.pk})

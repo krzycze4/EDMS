@@ -11,7 +11,7 @@ User = get_user_model()
 class AddressCreateView(CreateView):
     model = Address
     form_class = AddressForm
-    template_name = "users/address/address_update.html"
+    template_name = "employees/address/address_update.html"
 
     def get_success_url(self) -> str:
         return reverse("detail-employee", kwargs={"pk": self.kwargs["pk"]})
@@ -27,7 +27,7 @@ class AddressCreateView(CreateView):
 class AddressUpdateView(UpdateView):
     model = Address
     form_class = AddressForm
-    template_name = "users/address/address_update.html"
+    template_name = "employees/address/address_update.html"
 
     def get_success_url(self) -> str:
         return reverse("detail-employee", kwargs={"pk": self.kwargs["pk"]})

@@ -29,3 +29,4 @@ class Vacation(models.Model):
     )
     substitute_users = models.ManyToManyField(User, related_name="substitute_users")
     scan = models.FileField(upload_to="vacations")
+    days_off = models.PositiveSmallIntegerField()

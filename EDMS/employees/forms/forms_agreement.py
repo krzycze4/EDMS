@@ -2,7 +2,9 @@ from collections import OrderedDict
 
 from django import forms
 from employees.models.models_agreement import Agreement
-from employees.validators import validate_create_date_not_after_start_date
+from employees.validators.validators_agreement import (
+    validate_create_date_not_after_start_date,
+)
 from orders.validators import (
     validate_end_date_after_start_date,
     validate_file_extension,

@@ -8,7 +8,7 @@ class Addendum(models.Model):
     agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE)
     create_date = models.DateField()
     end_date = models.DateField()
-    salary_gross = models.PositiveSmallIntegerField()
+    salary_gross = models.IntegerField()
     scan = models.FileField(upload_to="addenda")
 
     class Meta:

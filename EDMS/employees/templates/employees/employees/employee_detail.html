@@ -10,7 +10,7 @@
                 <div class="d-flex">
                     <a class="btn btn-primary mr-2"
                        type="button"
-                       href="{% url "list-employee" %}">Show user list</a>
+                       href="{% url "list-employee" %}">Show employee list</a>
                     <a class="btn btn-primary" type="button" href="{% url "dashboard" %}">Back to home</a>
                 </div>
             </div>
@@ -22,7 +22,7 @@
                              data-target="#contactCollapse"
                              aria-expanded="true"
                              role="button">
-                            <h5 class="m-0 font-weight-bold">User data</h5>
+                            <h5 class="m-0 font-weight-bold">Employee data</h5>
                         </div>
                         <div id="contactCollapse" class="collapse show">
                             <div class="card-body">
@@ -198,7 +198,7 @@
                         </div>
                         <div id="vacationsCollapse" class="collapse show">
                             <div class="card-body">
-                                <p class="font-weight-bold">Vacation days left: {{ user.vacation_left }}</p>
+                                <p class="font-weight-bold">Vacation days left: {{ vacations_left }}</p>
                                 <a class="btn btn-info mr-2"
                                    type="button"
                                    href="{% url "create-vacation" user.pk %}">Add vacation</a>

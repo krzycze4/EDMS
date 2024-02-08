@@ -1,7 +1,7 @@
 from django import forms
 from employees.models.models_agreement import Agreement
 from employees.models.models_termination import Termination
-from employees.validators import validate_termination_dates
+from employees.validators.validators_termination import validate_termination_dates
 
 
 class TerminationForm(forms.ModelForm):

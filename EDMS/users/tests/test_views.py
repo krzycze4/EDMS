@@ -35,7 +35,7 @@ class TestCaseUserRegisterView(TestCase):
     def test_access_for_unauthenticated_user(self):
         response = self.client.get(reverse("register"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/register.html")
+        self.assertTemplateUsed(response, "employees/register.html")
 
     def test_display_form(self):
         response = self.client.get(reverse("register"))
@@ -88,7 +88,7 @@ class TestCaseUserRegisterView(TestCase):
 
         response = self.client.post(reverse("register"), data=invalid_form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/register.html")
+        self.assertTemplateUsed(response, "employees/register.html")
 
         number_users_in_database = User.objects.count()
         self.assertEqual(number_users_in_database, 1)
@@ -107,7 +107,7 @@ class TestCaseUserRegisterView(TestCase):
 
         response = self.client.post(reverse("register"), data=form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/register.html")
+        self.assertTemplateUsed(response, "employees/register.html")
         self.assertRaises(forms.ValidationError)
 
 
@@ -115,7 +115,7 @@ class TestCaseSuccessRegisterView(TestCase):
     def test_render_page(self):
         response = self.client.get(reverse("success-register"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/register_success.html")
+        self.assertTemplateUsed(response, "employees/register_success.html")
 
 
 class TestCaseCustomLoginView(TestCase):
@@ -130,7 +130,7 @@ class TestCaseCustomLoginView(TestCase):
     def test_render_if_user_not_logged_in(self):
         response = self.client.get(reverse("login"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/login.html")
+        self.assertTemplateUsed(response, "employees/login.html")
 
     def test_redirect_if_user_is_logged_in(self):
         login = self.client.login(email="email@email.com", password="edmsedms1")
@@ -144,7 +144,7 @@ class TestCaseCustomLoginView(TestCase):
         form_data = {"username": "email@email.com", "password": "edmsedms1"}
         response = self.client.post(reverse("login"), data=form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/login.html")
+        self.assertTemplateUsed(response, "employees/login.html")
 
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(
@@ -168,7 +168,7 @@ class TestCaseCustomLoginView(TestCase):
         self.assertTrue(User.objects.get(email=self.user.email).is_active)
         response = self.client.post(reverse("login"), data=form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/login.html")
+        self.assertTemplateUsed(response, "employees/login.html")
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Incorrect password!")
 
@@ -179,7 +179,7 @@ class TestCaseCustomLoginView(TestCase):
         }
         response = self.client.post(reverse("login"), data=form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/login.html")
+        self.assertTemplateUsed(response, "employees/login.html")
 
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(
@@ -207,7 +207,7 @@ class TestCaseActivateAccountView(TestCase):
         )
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/activation_result.html")
+        self.assertTemplateUsed(response, "employees/activation_result.html")
         self.assertEqual(response.context["information"], "successfully")
         self.assertTrue(self.user.is_active)
 
@@ -219,7 +219,7 @@ class TestCaseActivateAccountView(TestCase):
         )
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/activation_result.html")
+        self.assertTemplateUsed(response, "employees/activation_result.html")
         self.assertEqual(response.context["information"], "failed")
         self.assertFalse(self.user.is_active)
 
@@ -231,7 +231,7 @@ class TestCaseActivateAccountView(TestCase):
         )
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/activation_result.html")
+        self.assertTemplateUsed(response, "employees/activation_result.html")
         self.assertEqual(response.context["information"], "failed")
         self.assertFalse(self.user.is_active)
 
@@ -245,7 +245,7 @@ class TestCaseActivateAccountView(TestCase):
         )
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/activation_result.html")
+        self.assertTemplateUsed(response, "employees/activation_result.html")
         self.assertEqual(response.context["information"], "failed")
         self.assertFalse(self.user.is_active)
 
@@ -262,7 +262,7 @@ class TestCaseCustomPasswordResetView(TestCase):
     def test_render_page(self):
         response = self.client.get(reverse("forgot-password"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/forgot_password.html")
+        self.assertTemplateUsed(response, "employees/forgot_password.html")
 
     def test_redirect_if_form_is_valid(self):
         email = "email@email.com"
@@ -275,7 +275,7 @@ class TestCaseCustomPasswordResetDoneView(TestCase):
     def test_status_and_template(self):
         response = self.client.get(reverse("forgot-password-done"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/forgot_password_done.html")
+        self.assertTemplateUsed(response, "employees/forgot_password_done.html")
 
 
 class TestCaseCustomPasswordResetConfirmView(TestCase):
@@ -303,7 +303,7 @@ class TestCaseCustomPasswordResetConfirmView(TestCase):
 
     def test_render_set_password_page(self):
         response = self.client.get(f"/forgot-password/{self.uidb64}/set-password/")
-        self.assertTemplateUsed(response, "users/forgot_password_confirm.html")
+        self.assertTemplateUsed(response, "employees/forgot_password_confirm.html")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_change_password_with_different_new_passwords(self):
@@ -357,7 +357,7 @@ class TestCaseCustomPasswordResetCompleteView(TestCase):
     def test_render_forgot_password_complete(self):
         response = self.client.get(reverse("forgot-password-complete"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/forgot_password_complete.html")
+        self.assertTemplateUsed(response, "employees/forgot_password_complete.html")
 
 
 class TestCaseCustomLogoutView(TestCase):
@@ -378,4 +378,4 @@ class TestCaseCustomLogoutView(TestCase):
         response = self.client.post(reverse("logout"))
         self.assertFalse("_auth_user_id" in self.client.session)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, "users/logout.html")
+        self.assertTemplateUsed(response, "employees/logout.html")

@@ -21,8 +21,10 @@ class Agreement(models.Model):
     salary_gross = models.IntegerField()
     create_date = models.DateField()
     start_date = models.DateField()
-    end_date = models.DateField()
-    end_date_actual = models.DateField()
+    end_date = models.DateField(help_text="Date in agreement scan.")
+    end_date_actual = models.DateField(
+        help_text="Calculated date after adding addenda or termination. Necessary to calculate vacations for employee."
+    )
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     scan = models.FileField(upload_to="agreements")
     is_current = models.BooleanField(default=True)
@@ -33,7 +35,6 @@ class Agreement(models.Model):
     def save(self, *args, **kwargs):
         self.set_end_date_actual()
         self.set_is_current()
-        self.set_vacation_left()
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -45,8 +46,7 @@ class Agreement(models.Model):
         if not self.pk:
             self.end_date_actual = self.end_date
         else:
-            has_termination_or_addendum = self.termination or self.addendum_set.exists()
-            if not has_termination_or_addendum:
+            if not (self.addendum_set.exists() or hasattr(self, "termination")):
                 self.end_date_actual = self.end_date
 
     def set_is_current(self) -> None:
@@ -54,21 +54,3 @@ class Agreement(models.Model):
             self.is_current = False
         else:
             self.is_current = True
-
-    def set_vacation_left(self) -> None:
-        if self.type == self.EMPLOYMENT:
-            current_year = timezone.now().year
-            if (
-                self.start_date.year == current_year
-                and self.end_date_actual.year == current_year
-            ):
-                months_in_year = 12
-                work_month_current_year = (
-                    self.end_date_actual.month - self.start_date.month + 1
-                )
-                self.user.vacation_left = (
-                    work_month_current_year
-                    * self.user.vacation_days_per_year
-                    / months_in_year
-                )
-                self.user.save()

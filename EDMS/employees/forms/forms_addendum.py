@@ -1,7 +1,7 @@
 from django import forms
 from employees.models.models_addendum import Addendum
 from employees.models.models_agreement import Agreement
-from employees.validators import validate_addendum_dates
+from employees.validators.validators_addendum import validate_addendum_dates
 
 
 class AddendumForm(forms.ModelForm):
