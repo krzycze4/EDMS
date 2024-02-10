@@ -1,10 +1,8 @@
-from math import ceil
 from typing import Any, Dict
 
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import DetailView, ListView, UpdateView
 from employees.filters import UserFilter
 from employees.forms.forms_contact import ContactForm
@@ -28,51 +26,57 @@ class EmployeeDetailView(DetailView):
             agreement__user=self.object
         )
         context["addenda"] = Addendum.objects.filter(agreement__user=self.object)
-        context["vacations_left"] = (
-            self.count_granted_vacation_from_agreement() - self.count_used_vacation()
-        )
+        # context["vacations_left"] = (
+        #     self.count_vacation_left()
+        # )
         return context
 
-    def count_granted_vacation_from_agreement(self) -> int:
-        vacation_from_agreement = 0
-        current_agreement = Agreement.objects.get(
-            user=self.object, is_current=True, type=Agreement.EMPLOYMENT
-        )
-        if current_agreement:
-            months_in_year = 12
-            work_months_current_year = self.count_work_months_current_year(
-                agreement=current_agreement
-            )
-            vacation_from_agreement = ceil(
-                work_months_current_year
-                * self.object.vacation_days_per_year
-                / months_in_year
-            )
-        return vacation_from_agreement
+    # def count_vacation_left(self) -> int:
+    #     vacation_left = self.count_granted_vacation_from_agreement() - self.count_used_vacation()
+    #     self.object.vacation_left = vacation_left
+    #     self.object.save()
+    #     return vacation_left
 
-    @staticmethod
-    def count_used_vacation() -> int:
-        used_vacations_days: int = 0
-        vacations = list(Vacation.objects.filter(type=Vacation.ANNUAL))
-        for vacation in vacations:
-            used_vacations_days += (
-                (vacation.end_date - vacation.start_date).days - vacation.days_off + 1
-            )
-        return used_vacations_days
+    # def count_granted_vacation_from_agreement(self) -> int:
+    #     vacation_from_agreement = 0
+    #     current_agreement = Agreement.objects.get(
+    #         user=self.object, is_current=True, type=Agreement.EMPLOYMENT
+    #     )
+    #     if current_agreement:
+    #         months_in_year = 12
+    #         work_months_current_year = self.count_work_months_current_year(
+    #             agreement=current_agreement
+    #         )
+    #         vacation_from_agreement = ceil(
+    #             work_months_current_year
+    #             * self.object.vacation_days_per_year
+    #             / months_in_year
+    #         )
+    #     return vacation_from_agreement
 
-    @staticmethod
-    def count_work_months_current_year(agreement: Agreement = None) -> int:
-        if agreement:
-            start_month = agreement.start_date.month
-            end_month = agreement.end_date_actual.month
-            if agreement.start_date.year < timezone.now().year:
-                january = 1
-                start_month = january
-            if agreement.end_date_actual.year > timezone.now().year:
-                december = 12
-                end_month = december
-            return end_month - start_month + 1
-        return 0
+    # @staticmethod
+    # def count_used_vacation() -> int:
+    #     used_vacation_days: int = 0
+    #     vacations = list(Vacation.objects.filter(type=Vacation.ANNUAL))
+    #     for vacation in vacations:
+    #         used_vacation_days += (
+    #             (vacation.end_date - vacation.start_date).days - vacation.included_days_off + 1
+    #         )
+    #     return used_vacation_days
+
+    # @staticmethod
+    # def count_work_months_current_year(agreement: Agreement = None) -> int:
+    #     if agreement:
+    #         start_month = agreement.start_date.month
+    #         end_month = agreement.end_date_actual.month
+    #         if agreement.start_date.year < timezone.now().year:
+    #             january = 1
+    #             start_month = january
+    #         if agreement.end_date_actual.year > timezone.now().year:
+    #             december = 12
+    #             end_month = december
+    #         return end_month - start_month + 1
+    #     return 0
 
 
 class EmployeeUpdateView(UpdateView):

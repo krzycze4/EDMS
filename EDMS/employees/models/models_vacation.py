@@ -29,4 +29,40 @@ class Vacation(models.Model):
     )
     substitute_users = models.ManyToManyField(User, related_name="substitute_users")
     scan = models.FileField(upload_to="vacations")
-    days_off = models.PositiveSmallIntegerField()
+    included_days_off = models.PositiveSmallIntegerField(
+        help_text="If you take vacations and there are included days off (for example weekend) then you set included_days_off as 2."
+    )
+
+    def save(self, *args, **kwargs) -> None:
+        super().save(*args, **kwargs)
+        self.count_vacation_left()
+
+    def delete(self, *args, **kwargs) -> None:
+        super().delete(*args, **kwargs)
+        self.count_vacation_left()
+
+    def count_vacation_left(self) -> None:
+        from employees.models.models_agreement import Agreement
+
+        agreement = (
+            self.leave_user.agreements.filter(type=Agreement.EMPLOYMENT)
+            .order_by("-create_date")
+            .first()
+        )
+        self.leave_user.vacation_left = (
+            agreement.count_granted_vacation_from_agreement()
+            - self.count_used_vacation()
+        )
+        self.leave_user.save()
+
+    @staticmethod
+    def count_used_vacation() -> int:
+        used_vacation_days: int = 0
+        vacations = list(Vacation.objects.filter(type=Vacation.ANNUAL))
+        for vacation in vacations:
+            used_vacation_days += (
+                (vacation.end_date - vacation.start_date).days
+                - vacation.included_days_off
+                + 1
+            )
+        return used_vacation_days

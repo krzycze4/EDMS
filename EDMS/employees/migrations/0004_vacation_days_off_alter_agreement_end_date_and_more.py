@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="vacation",
-            name="days_off",
+            name="included_days_off",
             field=models.PositiveSmallIntegerField(default=0),
             preserve_default=False,
         ),

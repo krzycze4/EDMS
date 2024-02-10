@@ -199,6 +199,7 @@
                         <div id="vacationsCollapse" class="collapse show">
                             <div class="card-body">
                                 <p class="font-weight-bold">Vacation days left: {{ vacations_left }}</p>
+                                <p class="font-weight-bold">Vacation days left: {{ user.vacation_left }}</p>
                                 <a class="btn btn-info mr-2"
                                    type="button"
                                    href="{% url "create-vacation" user.pk %}">Add vacation</a>

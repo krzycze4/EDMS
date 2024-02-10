@@ -31,7 +31,7 @@ class VacationForm(forms.ModelForm):
             "leave_user_display",
             "substitute_users",
             "scan",
-            "days_off",
+            "included_days_off",
         ]
         widgets = {
             "type": forms.Select(attrs={"class": "form-control"}),
@@ -50,7 +50,7 @@ class VacationForm(forms.ModelForm):
         labels = {
             "id": "",
             "leave_user": "",
-            "days_off": "Days off due top-down in this vacation term",
+            "included_days_off": "Days off due top-down in this vacation term",
         }
 
     def __init__(self, *args, **kwargs):

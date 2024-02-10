@@ -1,6 +1,9 @@
+from math import ceil
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
+from employees.models.models_vacation import Vacation
 
 User = get_user_model()
 
@@ -25,7 +28,9 @@ class Agreement(models.Model):
     end_date_actual = models.DateField(
         help_text="Calculated date after adding addenda or termination. Necessary to calculate vacations for employee."
     )
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="agreements"
+    )
     scan = models.FileField(upload_to="agreements")
     is_current = models.BooleanField(default=True)
 
@@ -54,3 +59,36 @@ class Agreement(models.Model):
             self.is_current = False
         else:
             self.is_current = True
+
+    def count_vacation_left(self) -> None:
+        self.user.vacation_left = (
+            self.count_granted_vacation_from_agreement()
+            - Vacation.count_used_vacation()
+        )
+        self.user.save()
+
+    def count_granted_vacation_from_agreement(self) -> int:
+        vacation_from_agreement = 0
+        current_agreement = Agreement.objects.get(
+            user=self.user, is_current=True, type=self.EMPLOYMENT
+        )
+        if current_agreement:
+            months_in_year = 12
+            work_months_current_year = self.count_work_months_current_year()
+            vacation_from_agreement = ceil(
+                work_months_current_year
+                * self.user.vacation_days_per_year
+                / months_in_year
+            )
+        return vacation_from_agreement
+
+    def count_work_months_current_year(self) -> int:
+        start_month = self.start_date.month
+        end_month = self.end_date_actual.month
+        if self.start_date.year < timezone.now().year:
+            january = 1
+            start_month = january
+        if self.end_date_actual.year > timezone.now().year:
+            december = 12
+            end_month = december
+        return end_month - start_month + 1
