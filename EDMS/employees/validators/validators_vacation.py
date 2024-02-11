@@ -9,17 +9,6 @@ from employees.models.models_vacation import Vacation
 User = get_user_model()
 
 
-def validate_no_vacation_repetitions(cleaned_data: Dict[str, Any]) -> None:
-    leave_type: str = cleaned_data["type"]
-    start_date: date = cleaned_data["start_date"]
-    end_date: date = cleaned_data["start_date"]
-    leave_user: User = cleaned_data["leave_user"]
-    if Vacation.objects.filter(
-        type=leave_type, start_date=start_date, end_date=end_date, leave_user=leave_user
-    ).exists():
-        raise ValidationError({"scan": "Do not duplicate leaves"})
-
-
 def validate_no_overlap_vacation_dates(cleaned_data: Dict[str, Any]) -> None:
     start_date: date = cleaned_data["start_date"]
     end_date: date = cleaned_data["end_date"]
@@ -48,9 +37,6 @@ def validate_no_overlap_vacation_dates(cleaned_data: Dict[str, Any]) -> None:
 
 def validate_user_can_take_vacation(cleaned_data: Dict[str, Any]) -> None:
     leave_user: User = cleaned_data["leave_user"]
-    start_date: User = cleaned_data["start_date"]
-    end_date: User = cleaned_data["end_date"]
-    days_off: User = cleaned_data["included_days_off"]
     if not Agreement.objects.filter(
         user=leave_user, is_current=True, type=Agreement.EMPLOYMENT
     ).exists():
@@ -59,7 +45,16 @@ def validate_user_can_take_vacation(cleaned_data: Dict[str, Any]) -> None:
                 "scan": "You can't take vacation because you don't have current employment agreement."
             }
         )
-    if leave_user.vacation_left < (end_date - start_date).days - days_off + 1:
+
+
+def validate_enough_vacation_left(cleaned_data: Dict[str, Any]) -> None:
+    vacation_left = cleaned_data["leave_user"].vacation_left
+    considered_vacation = (
+        (cleaned_data["end_date"] - cleaned_data["start_date"]).days
+        + cleaned_data["included_days_off"]
+        + 1
+    )
+    if considered_vacation > vacation_left:
         raise ValidationError(
             {
                 "scan": "You can't take vacation because you don't have enough vacation left."

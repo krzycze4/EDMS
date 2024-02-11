@@ -40,6 +40,7 @@ class Agreement(models.Model):
     def save(self, *args, **kwargs):
         self.set_end_date_actual()
         self.set_is_current()
+        self.count_vacation_left()
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

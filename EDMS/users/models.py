@@ -71,7 +71,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=50, null=True)
     position = models.CharField(max_length=30, null=True)
     vacation_days_per_year = models.PositiveSmallIntegerField(default=26)
-    vacation_left = models.PositiveSmallIntegerField(default=0)
+    vacation_left = models.SmallIntegerField(default=0)
     address = models.ForeignKey(
         Address, on_delete=models.SET_NULL, null=True, blank=True
     )

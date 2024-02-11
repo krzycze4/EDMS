@@ -1,6 +1,5 @@
 from django.contrib import admin
-from employees.models.models_addendum import Addendum
-from employees.models.models_agreement import Agreement
+from employees.models.models_addendum import Addendum, Agreement
 from employees.models.models_termination import Termination
 from employees.models.models_vacation import Vacation
 

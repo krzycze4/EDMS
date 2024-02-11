@@ -3,8 +3,8 @@ from typing import Any, Dict
 from django import forms
 from employees.models.models_vacation import Vacation
 from employees.validators.validators_vacation import (
+    validate_enough_vacation_left,
     validate_no_overlap_vacation_dates,
-    validate_no_vacation_repetitions,
     validate_user_can_take_vacation,
 )
 from orders.validators import (
@@ -27,11 +27,11 @@ class VacationForm(forms.ModelForm):
             "type",
             "start_date",
             "end_date",
+            "included_days_off",
             "leave_user",
             "leave_user_display",
             "substitute_users",
             "scan",
-            "included_days_off",
         ]
         widgets = {
             "type": forms.Select(attrs={"class": "form-control"}),
@@ -46,6 +46,7 @@ class VacationForm(forms.ModelForm):
                 attrs={"class": "form-control js-example-basic-multiple", "size": 3}
             ),
             "scan": forms.FileInput(),
+            "included_days_off": forms.NumberInput(attrs={"class": "form-control"}),
         }
         labels = {
             "id": "",
@@ -61,13 +62,14 @@ class VacationForm(forms.ModelForm):
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data: Dict[str, Any] = super().clean()
-        validate_user_can_take_vacation(cleaned_data=cleaned_data)
+        validate_user_can_take_vacation(cleaned_data=cleaned_data)  # OK
         if self.instance.pk:
             cleaned_data["id"] = self.instance.pk
-        validate_end_date_after_start_date(cleaned_data=cleaned_data)
-        validate_no_overlap_vacation_dates(cleaned_data=cleaned_data)
+        validate_end_date_after_start_date(cleaned_data=cleaned_data)  # OK
+        validate_no_overlap_vacation_dates(cleaned_data=cleaned_data)  # OK
         validate_file_extension(cleaned_data=cleaned_data)
         validate_max_size_file(cleaned_data=cleaned_data)
-        if not self.instance.pk:
-            validate_no_vacation_repetitions(cleaned_data=cleaned_data)
+        validate_enough_vacation_left(
+            cleaned_data=cleaned_data
+        )  # PROBLEM - can't see pk
         return cleaned_data
