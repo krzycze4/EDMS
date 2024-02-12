@@ -1,5 +1,5 @@
 from django.test import TestCase
-from users.forms import CustomUserCreationForm
+from users.forms.forms_custom_user_creation import CustomUserCreationForm
 from users.models import User
 
 
