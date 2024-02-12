@@ -87,13 +87,28 @@
              class="collapse"
              data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">My company:</h6>
-                <a class="collapse-item" href="">Statistics</a>
-                <a class="collapse-item" href="{% url "list-employee" %}">Employee list</a>
-                <div class="collapse-divider"></div>
-                <h6 class="collapse-header">External companies:</h6>
                 <a class="collapse-item" href="{% url "find-company" %}">New company</a>
                 <a class="collapse-item" href="{% url "list-company" %}">Company list</a>
+            </div>
+        </div>
+    </li>
+    <!-- Nav Item - My Business Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed"
+           href="#"
+           data-toggle="collapse"
+           data-target="#collapseBusiness">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>My Business</span>
+        </a>
+        <div id="collapseBusiness"
+             class="collapse"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="">Statistics</a>
+                <a class="collapse-item" href="{% url "list-employee" %}">Employee list</a>
+                <a class="collapse-item" href="{% url "create-payment" %}">New employee payment</a>
+                <a class="collapse-item" href="{% url "list-payment" %}">Employee payment list</a>
             </div>
         </div>
     </li>

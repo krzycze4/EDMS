@@ -1,31 +1,39 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from employees.views.views_addendum import (
+
+from .views.views_addendum import (
     AddendumCreateView,
     AddendumDeleteView,
     AddendumDetailView,
     AddendumUpdateView,
 )
-from employees.views.views_address import AddressCreateView, AddressUpdateView
-from employees.views.views_agreement import (
+from .views.views_address import AddressCreateView, AddressUpdateView
+from .views.views_agreement import (
     AgreementCreateView,
     AgreementDeleteView,
     AgreementDetailView,
     AgreementUpdateView,
 )
-from employees.views.views_employees import (
+from .views.views_employees import (
     EmployeeDetailView,
     EmployeeListView,
     EmployeeUpdateView,
 )
-from employees.views.views_termination import (
+from .views.views_payment import (
+    PaymentCreateView,
+    PaymentDeleteView,
+    PaymentDetailView,
+    PaymentListView,
+    PaymentUpdateView,
+)
+from .views.views_termination import (
     TerminationCreateView,
     TerminationDeleteView,
     TerminationDetailView,
     TerminationUpdateView,
 )
-from employees.views.views_vacation import (
+from .views.views_vacation import (
     VacationCreateView,
     VacationDeleteView,
     VacationDetailView,
@@ -117,6 +125,31 @@ urlpatterns = [
     ),
     path(
         "addenda/<int:pk>/delete/", AddendumDeleteView.as_view(), name="delete-addendum"
+    ),
+    path(
+        "payments/create/",
+        PaymentCreateView.as_view(),
+        name="create-payment",
+    ),
+    path(
+        "payments/create/<int:pk>/",
+        PaymentUpdateView.as_view(),
+        name="update-payment",
+    ),
+    path(
+        "payments/<int:pk>/",
+        PaymentDetailView.as_view(),
+        name="detail-payment",
+    ),
+    path(
+        "payments/<int:pk>/delete/",
+        PaymentDeleteView.as_view(),
+        name="delete-payment",
+    ),
+    path(
+        "payments/",
+        PaymentListView.as_view(),
+        name="list-payment",
     ),
 ]
 
