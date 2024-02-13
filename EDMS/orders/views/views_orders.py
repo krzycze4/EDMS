@@ -37,10 +37,10 @@ class OrderDetailView(DetailView):
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         income_invoices_net_price_sum = self.count_invoices_sum(
-            self.object.income_invoices.all()
+            self.object.income_invoice.all()
         )
         cost_invoices_net_price_sum = self.count_invoices_sum(
-            self.object.cost_invoices.all()
+            self.object.cost_invoice.all()
         )
         order_balance = income_invoices_net_price_sum - cost_invoices_net_price_sum
         context["income_invoices_net_price_sum"] = income_invoices_net_price_sum

@@ -1,6 +1,7 @@
 import re
 
 from companies.models import Company
+from contracts.models import Contract
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -15,6 +16,7 @@ class Order(models.Model):
     INVOICING = "invoicing"
     CLOSED = "closed"
     STATUS_CHOICES = [(OPEN, "open"), (INVOICING, "invoicing"), (CLOSED, "closed")]
+
     name = models.CharField(max_length=15)
     payment = models.DecimalField(
         verbose_name="Payment net price",
@@ -24,17 +26,20 @@ class Order(models.Model):
     )
     status = models.CharField(max_length=9, choices=STATUS_CHOICES, default=OPEN)
     company = models.ForeignKey(
-        Company, on_delete=models.SET_NULL, null=True, blank=True
+        Company, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders"
     )
-    income_invoices = models.ManyToManyField(
+    income_invoice = models.ManyToManyField(
         Invoice,
         blank=True,
-        related_name="income_invoices",
+        related_name="orders_from_income_invoice",
     )
-    cost_invoices = models.ManyToManyField(
-        Invoice, blank=True, related_name="cost_invoices"
+    cost_invoice = models.ManyToManyField(
+        Invoice, blank=True, related_name="orders_from_cost_invoice"
     )
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    contract = models.ForeignKey(
+        Contract, on_delete=models.SET_NULL, null=True, related_name="orders"
+    )
     create_date = models.DateField(default=timezone.now)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -70,7 +75,9 @@ class Protocol(models.Model):
     name = models.CharField(max_length=64)
     scan = models.FileField(upload_to="protocols/")
     create_date = models.DateField()
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="protocols"
+    )
     order = models.ForeignKey(
         Order, on_delete=models.SET_NULL, null=True, related_name="protocols"
     )

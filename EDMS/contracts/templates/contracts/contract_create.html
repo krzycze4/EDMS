@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+    Create Contract
+{% endblock title %}
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Create new contract</h6>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {% for error in field.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <input type="submit" class="btn btn-primary mt-2">
+            </form>
+            <a class="btn btn-primary mt-2" href="{% url "list-contract" %}">Back to contract list</a>
+        </div>
+    </div>
+{% endblock content %}

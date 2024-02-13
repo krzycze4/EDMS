@@ -64,14 +64,14 @@
                                     <thead class="table-info text-dark">
                                         <tr>
                                             <th scope="col">Income Invoice Number</th>
-                                            {% if order.income_invoices.all %}<th scope="col">Type</th>{% endif %}
-                                            {% if order.income_invoices.all %}<th scope="col">Linked to</th>{% endif %}
-                                            {% if order.income_invoices.all %}<th scope="col">Net price</th>{% endif %}
+                                            {% if order.income_invoice.all %}<th scope="col">Type</th>{% endif %}
+                                            {% if order.income_invoice.all %}<th scope="col">Linked to</th>{% endif %}
+                                            {% if order.income_invoice.all %}<th scope="col">Net price</th>{% endif %}
                                         </tr>
                                     </thead>
-                                    {% if order.income_invoices.all %}
+                                    {% if order.income_invoice.all %}
                                         <tbody>
-                                            {% for income_invoice in order.income_invoices.all %}
+                                            {% for income_invoice in order.income_invoice.all %}
                                                 <tr>
                                                     <td>
                                                         <a class="font-weight-bold"
@@ -110,14 +110,14 @@
                                     <thead class="table-info text-dark">
                                         <tr>
                                             <th scope="col">Cost Invoice Number</th>
-                                            {% if order.cost_invoices.all %}<th scope="col">Type</th>{% endif %}
-                                            {% if order.cost_invoices.all %}<th scope="col">Linked to</th>{% endif %}
-                                            {% if order.cost_invoices.all %}<th scope="col">Net price</th>{% endif %}
+                                            {% if order.cost_invoice.all %}<th scope="col">Type</th>{% endif %}
+                                            {% if order.cost_invoice.all %}<th scope="col">Linked to</th>{% endif %}
+                                            {% if order.cost_invoice.all %}<th scope="col">Net price</th>{% endif %}
                                         </tr>
                                     </thead>
-                                    {% if order.cost_invoices.all %}
+                                    {% if order.cost_invoice.all %}
                                         <tbody>
-                                            {% for cost_invoice in order.cost_invoices.all %}
+                                            {% for cost_invoice in order.cost_invoice.all %}
                                                 <tr>
                                                     <td>
                                                         <a class="font-weight-bold"

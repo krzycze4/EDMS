@@ -45,7 +45,8 @@ class InvoiceFilter(django_filters.FilterSet):
             "create_date__lt",
         ]
 
-    def filter_unpaid_postponed_invoices(self, queryset, name, value):
+    @staticmethod
+    def filter_unpaid_postponed_invoices(queryset, name, value):
         if value:
             today = timezone.now().end_date()
             return queryset.filter(is_paid=False, payment_date__lt=today)

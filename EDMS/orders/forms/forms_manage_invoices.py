@@ -6,12 +6,12 @@ from orders.models import Order
 class ManageInvoicesForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ["cost_invoices", "income_invoices"]
+        fields = ["cost_invoice", "income_invoice"]
         widgets = {
-            "cost_invoices": forms.SelectMultiple(
+            "cost_invoice": forms.SelectMultiple(
                 attrs={"class": "form-control js-example-basic-multiple", "size": 3}
             ),
-            "income_invoices": forms.SelectMultiple(
+            "income_invoice": forms.SelectMultiple(
                 attrs={"class": "form-control js-example-basic-multiple", "size": 3}
             ),
         }
@@ -19,20 +19,20 @@ class ManageInvoicesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.instance.company.is_mine:
-            self.fields.append("income_invoices")
-            self.fields["income_invoices"].widget = forms.SelectMultiple(
+            self.fields.append("income_invoice")
+            self.fields["income_invoice"].widget = forms.SelectMultiple(
                 attrs={"class": "form-control  js-example-basic-multiple", "size": 3}
             )
-            self.fields["income_invoices"].queryset = Invoice.objects.filter(
+            self.fields["income_invoice"].queryset = Invoice.objects.filter(
                 seller__is_mine=True, buyer=self.instance.company
             )
-        self.fields["cost_invoices"].queryset = Invoice.objects.filter(
+        self.fields["cost_invoice"].queryset = Invoice.objects.filter(
             buyer__is_mine=True
         )
 
     def aggregate_linked_invoices(self):
         family_income_invoices = []
-        chosen_income_invoices = list(self.cleaned_data["income_invoices"])
+        chosen_income_invoices = list(self.cleaned_data["income_invoice"])
         family_income_invoices.extend(chosen_income_invoices)
         for income_invoice in family_income_invoices:
             if (
@@ -55,5 +55,5 @@ class ManageInvoicesForm(forms.ModelForm):
         income_invoices = Invoice.objects.filter(
             pk__in=[invoice.pk for invoice in family_income_invoices]
         )
-        order.income_invoices.set(income_invoices)
+        order.income_invoice.set(income_invoices)
         return order
