@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from employees.forms.forms_vacation import VacationForm
@@ -9,7 +10,7 @@ from employees.models.models_vacation import Vacation
 User = get_user_model()
 
 
-class VacationCreateView(CreateView):
+class VacationCreateView(CreateView, LoginRequiredMixin):
     model = Vacation
     form_class = VacationForm
     template_name = "employees/vacations/vacation_create.html"
@@ -25,12 +26,12 @@ class VacationCreateView(CreateView):
         return initial
 
 
-class VacationDetailView(DetailView):
+class VacationDetailView(DetailView, LoginRequiredMixin):
     model = Vacation
     template_name = "employees/vacations/vacation_detail.html"
 
 
-class VacationUpdateView(UpdateView):
+class VacationUpdateView(UpdateView, LoginRequiredMixin):
     model = Vacation
     form_class = VacationForm
     template_name = "employees/vacations/vacation_update.html"
@@ -46,7 +47,7 @@ class VacationUpdateView(UpdateView):
         return initial
 
 
-class VacationDeleteView(DeleteView):
+class VacationDeleteView(DeleteView, LoginRequiredMixin):
     model = Vacation
     template_name = "employees/vacations/vacation_delete.html"
 

@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse
 from django.views.generic import (
@@ -15,7 +16,7 @@ from .forms import ContractForm
 from .models import Contract
 
 
-class ContractCreateView(CreateView):
+class ContractCreateView(CreateView, LoginRequiredMixin):
     model = Contract
     form_class = ContractForm
     template_name = "contracts/contract_create.html"
@@ -24,12 +25,12 @@ class ContractCreateView(CreateView):
         return reverse("detail-contract", kwargs={"pk": self.object.pk})
 
 
-class ContractDetailView(DetailView):
+class ContractDetailView(DetailView, LoginRequiredMixin):
     model = Contract
     template_name = "contracts/contract_detail.html"
 
 
-class ContractUpdateView(UpdateView):
+class ContractUpdateView(UpdateView, LoginRequiredMixin):
     model = Contract
     form_class = ContractForm
     template_name = "contracts/contract_update.html"
@@ -38,7 +39,7 @@ class ContractUpdateView(UpdateView):
         return reverse("detail-contract", kwargs={"pk": self.object.pk})
 
 
-class ContractDeleteView(DeleteView):
+class ContractDeleteView(DeleteView, LoginRequiredMixin):
     model = Contract
     template_name = "contracts/contract_delete.html"
 
@@ -46,7 +47,7 @@ class ContractDeleteView(DeleteView):
         return reverse("list-contract")
 
 
-class ContractListView(ListView):
+class ContractListView(ListView, LoginRequiredMixin):
     model = Contract
     template_name = "contracts/contract_list.html"
     paginate_by = 10

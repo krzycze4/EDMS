@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView
@@ -7,7 +8,7 @@ from orders.forms.forms_protocol import ProtocolForm
 from orders.models import Order, Protocol
 
 
-class ProtocolCreateView(CreateView):
+class ProtocolCreateView(CreateView, LoginRequiredMixin):
     template_name = "orders/protocols/create_protocol.html"
     form_class = ProtocolForm
 
@@ -26,7 +27,7 @@ class ProtocolCreateView(CreateView):
         return response
 
 
-class ProtocolDeleteView(DeleteView):
+class ProtocolDeleteView(DeleteView, LoginRequiredMixin):
     template_name = "orders/protocols/delete_protocol.html"
     model = Protocol
 

@@ -1,10 +1,11 @@
 from companies.forms.forms_contact import CreateContactForm, UpdateContactForm
 from companies.models import Company, Contact
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, UpdateView
 
 
-class ContactCreateView(CreateView):
+class ContactCreateView(CreateView, LoginRequiredMixin):
     model = Contact
     template_name = "companies/contacts/create_contact.html"
     form_class = CreateContactForm
@@ -25,7 +26,7 @@ class ContactCreateView(CreateView):
         return reverse("detail-company", kwargs={"pk": self.kwargs["pk"]})
 
 
-class ContactUpdateView(UpdateView):
+class ContactUpdateView(UpdateView, LoginRequiredMixin):
     model = Contact
     form_class = UpdateContactForm
     template_name = "companies/contacts/update_contact.html"
@@ -53,7 +54,7 @@ class ContactUpdateView(UpdateView):
         return reverse_lazy("detail-company", kwargs={"pk": self.kwargs["company_pk"]})
 
 
-class ContactDeleteView(DeleteView):
+class ContactDeleteView(DeleteView, LoginRequiredMixin):
     model = Contact
     template_name = "companies/contacts/delete_contact.html"
 

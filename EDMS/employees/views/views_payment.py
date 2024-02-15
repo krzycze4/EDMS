@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -14,7 +15,7 @@ from employees.forms.forms_payment import PaymentForm
 from employees.models.models_payment import Payment
 
 
-class PaymentCreateView(CreateView):
+class PaymentCreateView(CreateView, LoginRequiredMixin):
     model = Payment
     form_class = PaymentForm
     template_name = "employees/payments/payment_create.html"
@@ -23,12 +24,12 @@ class PaymentCreateView(CreateView):
         return reverse("detail-payment", kwargs={"pk": self.object.pk})
 
 
-class PaymentDetailView(DetailView):
+class PaymentDetailView(DetailView, LoginRequiredMixin):
     model = Payment
     template_name = "employees/payments/payment_detail.html"
 
 
-class PaymentUpdateView(UpdateView):
+class PaymentUpdateView(UpdateView, LoginRequiredMixin):
     model = Payment
     form_class = PaymentForm
     template_name = "employees/payments/payment_update.html"
@@ -37,13 +38,13 @@ class PaymentUpdateView(UpdateView):
         return reverse("detail-payment", kwargs={"pk": self.object.pk})
 
 
-class PaymentDeleteView(DeleteView):
+class PaymentDeleteView(DeleteView, LoginRequiredMixin):
     model = Payment
     template_name = "employees/payments/payment_delete.html"
     success_url = reverse_lazy("list-payment")
 
 
-class PaymentListView(ListView):
+class PaymentListView(ListView, LoginRequiredMixin):
     model = Payment
     ordering = "-date"
     paginate_by = 10

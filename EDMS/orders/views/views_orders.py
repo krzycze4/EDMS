@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Union
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
@@ -17,7 +18,7 @@ from orders.forms.forms_order import OrderCreateForm, OrderUpdateForm
 from orders.models import Order
 
 
-class OrderCreateView(CreateView):
+class OrderCreateView(CreateView, LoginRequiredMixin):
     template_name = "orders/orders/create_order.html"
     form_class = OrderCreateForm
 
@@ -30,7 +31,7 @@ class OrderCreateView(CreateView):
         return reverse("detail-order", kwargs={"pk": self.object.pk})
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(DetailView, LoginRequiredMixin):
     template_name = "orders/orders/detail_order.html"
     model = Order
 
@@ -63,7 +64,7 @@ class OrderDetailView(DetailView):
         return sum_net_price
 
 
-class OrderUpdateView(UpdateView):
+class OrderUpdateView(UpdateView, LoginRequiredMixin):
     template_name = "orders/orders/update_order.html"
     model = Order
     form_class = OrderUpdateForm
@@ -72,7 +73,7 @@ class OrderUpdateView(UpdateView):
         return reverse("detail-order", kwargs={"pk": self.object.pk})
 
 
-class OrderListView(ListView):
+class OrderListView(ListView, LoginRequiredMixin):
     template_name = "orders/orders/list_order.html"
     queryset = Order.objects.all()
     paginate_by = 10
@@ -90,13 +91,13 @@ class OrderListView(ListView):
         return context
 
 
-class OrderDeleteView(DeleteView):
+class OrderDeleteView(DeleteView, LoginRequiredMixin):
     template_name = "orders/orders/delete_order.html"
     model = Order
     success_url = reverse_lazy("list-order")
 
 
-class OrderManageInvoices(UpdateView):
+class OrderManageInvoices(UpdateView, LoginRequiredMixin):
     template_name = "orders/orders/manage_invoice.html"
     form_class = ManageInvoicesForm
     model = Order

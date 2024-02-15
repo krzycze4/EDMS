@@ -1,4 +1,5 @@
 import os.path
+from datetime import date
 from typing import Any, Dict
 
 from django.core.exceptions import ValidationError
@@ -71,3 +72,12 @@ def validate_file_extension(cleaned_data: Dict[str, Any]) -> None:
                 "scan": f"Incorrect extensions. Your file extension: {extension}. Valid extensions: {valid_extensions_str}"
             }
         )
+
+
+def validate_start_date_in_contract_period(cleaned_data: Dict[str, Any]) -> None:
+    start_date_order: date = cleaned_data["start_date"]
+    start_date_contract: date = cleaned_data["contract"].start_date
+    end_date_contract: date = cleaned_data["contract"].end_date
+
+    if not start_date_contract <= start_date_order <= end_date_contract:
+        raise ValidationError({"start_date": "Start date must be in contract period."})

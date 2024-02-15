@@ -16,3 +16,6 @@ class Contract(models.Model):
     employee = models.ManyToManyField(User, related_name="contracts")
     price = models.PositiveIntegerField()
     scan = models.FileField(upload_to="contracts/")
+
+    def __str__(self) -> str:
+        return f"{self.name}"

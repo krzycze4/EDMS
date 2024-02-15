@@ -1,13 +1,14 @@
 from typing import Any, Dict
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from employees.forms.forms_agreement import AgreementForm
 from employees.models.models_agreement import Agreement
 
 
-class AgreementCreateView(CreateView):
+class AgreementCreateView(CreateView, LoginRequiredMixin):
     model = Agreement
     form_class = AgreementForm
     template_name = "employees/agreements/agreement_create.html"
@@ -21,12 +22,12 @@ class AgreementCreateView(CreateView):
         return kwargs
 
 
-class AgreementDetailView(DetailView):
+class AgreementDetailView(DetailView, LoginRequiredMixin):
     model = Agreement
     template_name = "employees/agreements/agreement_detail.html"
 
 
-class AgreementUpdateView(UpdateView):
+class AgreementUpdateView(UpdateView, LoginRequiredMixin):
     model = Agreement
     form_class = AgreementForm
     template_name = "employees/agreements/agreement_update.html"
@@ -40,7 +41,7 @@ class AgreementUpdateView(UpdateView):
         return context
 
 
-class AgreementDeleteView(DeleteView):
+class AgreementDeleteView(DeleteView, LoginRequiredMixin):
     model = Agreement
     template_name = "employees/agreements/agreement_delete.html"
 

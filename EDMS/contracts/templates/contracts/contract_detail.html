@@ -34,8 +34,8 @@
                                 </p>
                                 <p class="font-weight-bold">
                                     Connected employees:
-                                    {% for employee in contract.employees.all %}
-                                        <a href="{% url 'detail-employee' contract.user.pk %}">{{ contract.user }}</a>
+                                    {% for employee in contract.employee.all %}
+                                        <a href="{% url 'detail-employee' employee.pk %}">{{ employee }}</a>
                                         {% if not forloop.last %},{% endif %}
                                     {% endfor %}
                                 </p>
@@ -51,6 +51,49 @@
                                    href="{% url "delete-contract" contract.pk %}">Delete contract</a>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-2">
+                <div class="card-header d-flex justify-content-between align-items-center pointer"
+                     data-toggle="collapse"
+                     data-target="#ordersCollapse"
+                     aria-expanded="true"
+                     role="button">
+                    <h5 class="m-0 font-weight-bold">Orders</h5>
+                </div>
+                <div id="ordersCollapse" class="collapse show">
+                    <div class="card-body">
+                        <table class="table table-responsive my-2">
+                            <thead class="table-info text-dark">
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Payment</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Start date</th>
+                                    <th scope="col">End date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if contract.orders %}
+                                    {% for order in contract.orders.all %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
+                                            </td>
+                                            <td>{{ order.payment }}</td>
+                                            <td>{{ order.status }}</td>
+                                            <td>{{ order.start_date }}</td>
+                                            <td>{{ order.end_date }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <th>Agreement not pinned yet.</th>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

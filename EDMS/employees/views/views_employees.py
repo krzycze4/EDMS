@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView
@@ -14,7 +15,7 @@ from employees.models.models_vacation import Vacation
 User = get_user_model()
 
 
-class EmployeeDetailView(DetailView):
+class EmployeeDetailView(DetailView, LoginRequiredMixin):
     model = User
     template_name = "employees/employees/employee_detail.html"
 
@@ -29,7 +30,7 @@ class EmployeeDetailView(DetailView):
         return context
 
 
-class EmployeeUpdateView(UpdateView):
+class EmployeeUpdateView(UpdateView, LoginRequiredMixin):
     model = User
     form_class = ContactForm
     template_name = "employees/employees/employee_update.html"
@@ -38,7 +39,7 @@ class EmployeeUpdateView(UpdateView):
         return reverse("detail-employee", kwargs={"pk": self.object.pk})
 
 
-class EmployeeListView(ListView):
+class EmployeeListView(ListView, LoginRequiredMixin):
     queryset = User.objects.all()
     template_name = "employees/employees/employee_list.html"
     paginate_by = 10

@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Union
 
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -17,7 +18,7 @@ from .forms import InvoiceForm
 from .models import Invoice
 
 
-class InvoiceCreateView(CreateView):
+class InvoiceCreateView(CreateView, LoginRequiredMixin):
     template_name = "invoices/create_invoice.html"
     model = Invoice
     form_class = InvoiceForm
@@ -26,7 +27,7 @@ class InvoiceCreateView(CreateView):
         return reverse_lazy("detail-invoice", kwargs={"pk": self.object.pk})
 
 
-class InvoiceDetailView(DetailView):
+class InvoiceDetailView(DetailView, LoginRequiredMixin):
     template_name = "invoices/detail_invoice.html"
     model = Invoice
 
@@ -50,7 +51,7 @@ class InvoiceDetailView(DetailView):
         return child_invoices
 
 
-class InvoiceListView(ListView):
+class InvoiceListView(ListView, LoginRequiredMixin):
     template_name = "invoices/list_invoice.html"
     queryset = Invoice.objects.all()
     paginate_by = 10
@@ -69,7 +70,7 @@ class InvoiceListView(ListView):
         return context
 
 
-class InvoiceUpdateView(UpdateView):
+class InvoiceUpdateView(UpdateView, LoginRequiredMixin):
     model = Invoice
     form_class = InvoiceForm
     template_name = "invoices/update_invoice.html"
@@ -104,7 +105,7 @@ class InvoiceUpdateView(UpdateView):
         return form
 
 
-class InvoiceDeleteView(DeleteView):
+class InvoiceDeleteView(DeleteView, LoginRequiredMixin):
     model = Invoice
     template_name = "invoices/delete_invoice.html"
     success_url = reverse_lazy("list-invoice")

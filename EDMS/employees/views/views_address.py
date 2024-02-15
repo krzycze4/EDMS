@@ -1,5 +1,6 @@
 from companies.models import Address
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView
@@ -8,7 +9,7 @@ from employees.forms.forms_address import AddressForm
 User = get_user_model()
 
 
-class AddressCreateView(CreateView):
+class AddressCreateView(CreateView, LoginRequiredMixin):
     model = Address
     form_class = AddressForm
     template_name = "employees/address/address_update.html"
@@ -24,7 +25,7 @@ class AddressCreateView(CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class AddressUpdateView(UpdateView):
+class AddressUpdateView(UpdateView, LoginRequiredMixin):
     model = Address
     form_class = AddressForm
     template_name = "employees/address/address_update.html"

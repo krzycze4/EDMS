@@ -13,6 +13,7 @@ from companies.forms.forms_company_and_address import (
 from companies.models import Address, Company
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -26,7 +27,7 @@ from django.views.generic import (
 )
 
 
-class CompanyFindView(FormView):
+class CompanyFindView(FormView, LoginRequiredMixin):
     template_name = "companies/companies/find_company.html"
     form_class = KRSForm
     success_url = reverse_lazy("create-company")
@@ -106,7 +107,7 @@ class CompanyFindView(FormView):
         return redirect("create-company")
 
 
-class CompanyCreateView(FormView):
+class CompanyCreateView(FormView, LoginRequiredMixin):
     template_name = "companies/companies/create_company.html"
     form_class = CompanyAndAddressForm
     success_url = reverse_lazy("create-company-done")
@@ -154,11 +155,11 @@ class CompanyCreateView(FormView):
         return super().form_valid(form)
 
 
-class CreateCompanyDoneView(TemplateView):
+class CreateCompanyDoneView(TemplateView, LoginRequiredMixin):
     template_name = "companies/companies/create_company_done.html"
 
 
-class CompanyListView(ListView):
+class CompanyListView(ListView, LoginRequiredMixin):
     queryset = Company.objects.all()
     template_name = "companies/companies/list_company.html"
     context_object_name = "companies"
@@ -177,12 +178,12 @@ class CompanyListView(ListView):
         return context
 
 
-class CompanyDetailView(DetailView):
+class CompanyDetailView(DetailView, LoginRequiredMixin):
     model = Company
     template_name = "companies/companies/detail_company.html"
 
 
-class CompanyIdentifiersUpdateView(UpdateView):
+class CompanyIdentifiersUpdateView(UpdateView, LoginRequiredMixin):
     model = Company
     form_class = UpdateCompanyIdentifiersForm
     template_name = "companies/companies/update_identifiers_company.html"
@@ -191,7 +192,7 @@ class CompanyIdentifiersUpdateView(UpdateView):
         return reverse_lazy("detail-company", kwargs={"pk": self.object.pk})
 
 
-class CompanyAddressUpdateView(UpdateView):
+class CompanyAddressUpdateView(UpdateView, LoginRequiredMixin):
     model = Address
     form_class = UpdateAddressForm
     template_name = "companies/companies/update_address_company.html"

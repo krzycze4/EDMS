@@ -37,6 +37,9 @@
                                 <p class="font-weight-bold">Create date: {{ order.create_date }}</p>
                                 <p class="font-weight-bold">Start date: {{ order.start_date }}</p>
                                 <p class="font-weight-bold">End date: {{ order.end_date }}</p>
+                                <p class="font-weight-bold">
+                                    Contract: <a href="{% url "detail-contract" order.contract.pk %}">{{ order.contract.name }}</a>
+                                </p>
                                 <p class="font-weight-bold">Description: {{ order.description }}</p>
                                 <a class="btn btn-warning mr-2"
                                    type="button"

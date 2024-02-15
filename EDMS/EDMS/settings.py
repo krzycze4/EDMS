@@ -120,6 +120,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+LOGIN_URL = reverse_lazy("login")
 LOGIN_REDIRECT_URL = reverse_lazy("dashboard")
 
 AUTHENTICATION_BACKENDS = [
@@ -136,3 +137,5 @@ MEDIA_URL = "/media/"
 
 BASE_KRS_API_URL = "https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/"
 KRS_API_TIMEOUT = env("KRS_API_TIMEOUT")
+
+SESSION_COOKIE_AGE = env("SESSION_COOKIE_AGE")
