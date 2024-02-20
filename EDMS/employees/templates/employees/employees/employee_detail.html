@@ -93,8 +93,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% if agreements %}
-                                            {% for agreement in agreements %}
+                                        {% if user.agreements.all %}
+                                            {% for agreement in user.agreements.all %}
                                                 <tr>
                                                     <td>
                                                         <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
@@ -127,22 +127,21 @@
                                             <th scope="col">Name</th>
                                             <th scope="col">Create date</th>
                                             <th scope="col">Connected agreement</th>
-                                            <th scope="col">End date of agreement</th>
+                                            <th scope="col">End date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% if terminations %}
-                                            {% for termination in terminations %}
+                                        {% if user.agreements.all and has_termination %}
+                                            {% for agreement in user.agreements.all %}
                                                 <tr>
                                                     <td>
-                                                        <a href="{% url "detail-termination" termination.pk %}">{{ termination.name }}</a>
+                                                        <a href="{% url "detail-termination" agreement.termination.pk %}">{{ agreement.termination.name }}</a>
                                                     </td>
-                                                    <td>{{ termination.create_date }}</td>
+                                                    <td>{{ agreement.termination.create_date }}</td>
                                                     <td>
-                                                        <a href="{% url "detail-agreement" termination.agreement.pk %}">{{ termination.agreement }}</a>
+                                                        <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
                                                     </td>
-                                                    <td>{{ termination.end_date }}</td>
-                                                    <td>{{ agreement.end_date }}</td>
+                                                    <td>{{ agreement.termination.end_date }}</td>
                                                 </tr>
                                             {% endfor %}
                                         {% else %}
@@ -161,22 +160,24 @@
                                             <th scope="col">Name</th>
                                             <th scope="col">Create date</th>
                                             <th scope="col">Connected agreement</th>
-                                            <th scope="col">End date of agreement</th>
+                                            <th scope="col">End date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% if addenda %}
-                                            {% for addendum in addenda %}
-                                                <tr>
-                                                    <td>
-                                                        <a href="{% url "detail-addendum" addendum.pk %}">{{ addendum.name }}</a>
-                                                    </td>
-                                                    <td>{{ addendum.create_date }}</td>
-                                                    <td>
-                                                        <a href="{% url "detail-agreement" addendum.agreement.pk %}">{{ addendum.agreement }}</a>
-                                                    </td>
-                                                    <td>{{ addendum.end_date }}</td>
-                                                </tr>
+                                        {% if user.agreements.all and has_addendum %}
+                                            {% for agreement in user.agreements.all %}
+                                                {% for addendum in agreement.addenda.all %}
+                                                    <tr>
+                                                        <td>
+                                                            <a href="{% url "detail-addendum" addendum.pk %}">{{ addendum.name }}</a>
+                                                        </td>
+                                                        <td>{{ addendum.create_date }}</td>
+                                                        <td>
+                                                            <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
+                                                        </td>
+                                                        <td>{{ addendum.end_date }}</td>
+                                                    </tr>
+                                                {% endfor %}
                                             {% endfor %}
                                         {% else %}
                                             <tr>
@@ -214,8 +215,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% if vacations %}
-                                            {% for vacation in vacations %}
+                                        {% if user.vacations.all %}
+                                            {% for vacation in user.vacations.all %}
                                                 <tr>
                                                     <td>
                                                         <a href="{% url "detail-vacation" vacation.pk %}">{{ vacation.pk }}</a>

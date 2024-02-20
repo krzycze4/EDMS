@@ -25,7 +25,7 @@ class Vacation(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     leave_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="leave_user"
+        User, on_delete=models.CASCADE, related_name="vacations"
     )
     substitute_users = models.ManyToManyField(User, related_name="substitute_users")
     scan = models.FileField(upload_to="vacations")

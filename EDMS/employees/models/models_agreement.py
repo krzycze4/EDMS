@@ -52,7 +52,7 @@ class Agreement(models.Model):
         if not self.pk:
             self.end_date_actual = self.end_date
         else:
-            if not (self.addendum_set.exists() or hasattr(self, "termination")):
+            if not (self.addenda.exists() or hasattr(self, "termination")):
                 self.end_date_actual = self.end_date
 
     def set_is_current(self) -> None:
@@ -70,10 +70,7 @@ class Agreement(models.Model):
 
     def count_granted_vacation_from_agreement(self) -> int:
         vacation_from_agreement = 0
-        current_agreement = Agreement.objects.get(
-            user=self.user, is_current=True, type=self.EMPLOYMENT
-        )
-        if current_agreement:
+        if self.is_current and self.type == self.EMPLOYMENT:
             months_in_year = 12
             work_months_current_year = self.count_work_months_current_year()
             vacation_from_agreement = ceil(

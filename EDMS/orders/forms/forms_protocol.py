@@ -16,7 +16,7 @@ class ProtocolForm(forms.ModelForm):
         widgets = {
             "scan": forms.FileInput(attrs={"type": "file"}),
             "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "end_date"}
+                attrs={"class": "form-control", "type": "date"}
             ),
         }
 

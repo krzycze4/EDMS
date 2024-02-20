@@ -2,6 +2,7 @@ from typing import Any, Dict
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView
 from orders.forms.forms_protocol import ProtocolForm
@@ -14,7 +15,7 @@ class ProtocolCreateView(CreateView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["order"] = Order.objects.get(pk=self.kwargs["pk"])
+        context["order"] = get_object_or_404(Order, pk=self.kwargs["pk"])
         return context
 
     def get_success_url(self) -> str:
@@ -22,7 +23,7 @@ class ProtocolCreateView(CreateView, LoginRequiredMixin):
 
     def form_valid(self, form: ProtocolForm) -> HttpResponse:
         form.instance.user = self.request.user
-        form.instance.order = Order.objects.get(pk=self.kwargs["pk"])
+        form.instance.order = get_object_or_404(Order, pk=self.kwargs["pk"])
         response = super().form_valid(form)
         return response
 

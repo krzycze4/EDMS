@@ -2,10 +2,13 @@ from typing import Any, Dict
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from employees.forms.forms_agreement import AgreementForm
 from employees.models.models_agreement import Agreement
+
+User = get_user_model()
 
 
 class AgreementCreateView(CreateView, LoginRequiredMixin):
@@ -18,7 +21,7 @@ class AgreementCreateView(CreateView, LoginRequiredMixin):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["user"] = get_user_model().objects.get(pk=self.kwargs["pk"])
+        kwargs["user"] = get_object_or_404(User, pk=self.kwargs["pk"])
         return kwargs
 
 

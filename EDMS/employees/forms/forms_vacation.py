@@ -69,7 +69,5 @@ class VacationForm(forms.ModelForm):
         validate_no_overlap_vacation_dates(cleaned_data=cleaned_data)  # OK
         validate_file_extension(cleaned_data=cleaned_data)
         validate_max_size_file(cleaned_data=cleaned_data)
-        validate_enough_vacation_left(
-            cleaned_data=cleaned_data
-        )  # PROBLEM - can't see pk
+        validate_enough_vacation_left(cleaned_data=cleaned_data)
         return cleaned_data

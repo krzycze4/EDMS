@@ -5,7 +5,9 @@ from employees.models.models_agreement import Agreement
 
 class Addendum(models.Model):
     name = models.CharField(max_length=25)
-    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE)
+    agreement = models.ForeignKey(
+        Agreement, on_delete=models.CASCADE, related_name="addenda"
+    )
     create_date = models.DateField()
     end_date = models.DateField()
     salary_gross = models.IntegerField()

@@ -8,9 +8,7 @@ from django.views.generic import DetailView, ListView, UpdateView
 from employees.filters import UserFilterSet
 from employees.forms.forms_contact import ContactForm
 from employees.models.models_addendum import Addendum
-from employees.models.models_agreement import Agreement
 from employees.models.models_termination import Termination
-from employees.models.models_vacation import Vacation
 
 User = get_user_model()
 
@@ -21,12 +19,12 @@ class EmployeeDetailView(DetailView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["agreements"] = Agreement.objects.filter(user=self.object)
-        context["vacations"] = Vacation.objects.filter(leave_user=self.object)
-        context["terminations"] = Termination.objects.filter(
-            agreement__user=self.object
-        )
-        context["addenda"] = Addendum.objects.filter(agreement__user=self.object)
+        context["has_termination"] = Termination.objects.filter(
+            agreement__user__id=self.kwargs["pk"]
+        ).exists()
+        context["has_addendum"] = Addendum.objects.filter(
+            agreement__user__id=self.kwargs["pk"]
+        ).exists()
         return context
 
 
