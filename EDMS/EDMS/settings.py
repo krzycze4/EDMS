@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_filters",
     "django_cleanup",
+    "django_celery_beat",
+    "django_celery_results",
 ]
 
 INSTALLED_EXTENSIONS = [
@@ -143,9 +145,6 @@ SESSION_EXPIRE_SECONDS = 1800
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 SESSION_TIMEOUT_REDIRECT = LOGIN_URL
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379"
-CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TASK_SERIALIZER = "json"
-CELERY_TIMEZONE = TIME_ZONE
 CELERY_RESULT_BACKEND = "django-db"
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"

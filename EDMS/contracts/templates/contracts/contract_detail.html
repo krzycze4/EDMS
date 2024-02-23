@@ -75,7 +75,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if contract.orders %}
+                                {% if contract.orders.all %}
                                     {% for order in contract.orders.all %}
                                         <tr>
                                             <td>
@@ -89,7 +89,7 @@
                                     {% endfor %}
                                 {% else %}
                                     <tr>
-                                        <th>Agreement not pinned yet.</th>
+                                        <th>Order not pinned yet.</th>
                                     </tr>
                                 {% endif %}
                             </tbody>
