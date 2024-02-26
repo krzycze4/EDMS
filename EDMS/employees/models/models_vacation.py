@@ -27,7 +27,7 @@ class Vacation(models.Model):
     leave_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="vacations"
     )
-    substitute_users = models.ManyToManyField(User, related_name="substitute_users")
+    substitute_users = models.ManyToManyField(User, related_name="vacation")
     scan = models.FileField(upload_to="vacations")
     included_days_off = models.PositiveSmallIntegerField(
         help_text="If you take vacations and there are included days off (for example weekend) then you set "

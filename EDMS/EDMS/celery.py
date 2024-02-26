@@ -22,6 +22,16 @@ app.conf.beat_schedule = {
         "task": "employees.tasks.set_user_vacation_left",
         "schedule": crontab(hour=0, minute=10, day_of_month="1", month_of_year="1"),
     },
+    "remind_7_days_before_start_vacation": {
+        "task": "employees.tasks.remind_vacations",
+        "args": (7,),
+        "schedule": crontab(hour=0, minute=15),
+    },
+    "remind_30_days_before_expiring_agreement": {
+        "task": "employees.tasks.remind_expiring_agreement",
+        "args": (30,),
+        "schedule": crontab(hour=0, minute=20),
+    },
 }
 
 app.autodiscover_tasks()
