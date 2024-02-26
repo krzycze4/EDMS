@@ -26,10 +26,10 @@ class CustomLoginView(LoginView):
             if not user.is_active:
                 messages.warning(
                     self.request,
-                    "User is not active. Please check your email and active your account.",
+                    "Invalid email or password.",
                 )
             else:
-                messages.warning(self.request, message="Incorrect password!")
+                messages.warning(self.request, message="Invalid email or password.")
         return response
 
 

@@ -13,7 +13,5 @@ def validate_create_date_not_after_start_date(cleaned_data: Dict[str, Any]) -> N
 
     if create_date > start_date:
         raise ValidationError(
-            {
-                "create_date": "Create end_date must be before or the same as start end_date."
-            }
+            {"create_date": "Create date must be before or the same as start date."}
         )

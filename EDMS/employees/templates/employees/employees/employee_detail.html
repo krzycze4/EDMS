@@ -133,16 +133,18 @@
                                     <tbody>
                                         {% if user.agreements.all and has_termination %}
                                             {% for agreement in user.agreements.all %}
-                                                <tr>
-                                                    <td>
-                                                        <a href="{% url "detail-termination" agreement.termination.pk %}">{{ agreement.termination.name }}</a>
-                                                    </td>
-                                                    <td>{{ agreement.termination.create_date }}</td>
-                                                    <td>
-                                                        <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
-                                                    </td>
-                                                    <td>{{ agreement.termination.end_date }}</td>
-                                                </tr>
+                                                {% if agreement.termination %}
+                                                    <tr>
+                                                        <td>
+                                                            <a href="{% url "detail-termination" agreement.termination.pk %}">{{ agreement.termination.name }}</a>
+                                                        </td>
+                                                        <td>{{ agreement.termination.create_date }}</td>
+                                                        <td>
+                                                            <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
+                                                        </td>
+                                                        <td>{{ agreement.termination.end_date }}</td>
+                                                    </tr>
+                                                {% endif %}
                                             {% endfor %}
                                         {% else %}
                                             <tr>

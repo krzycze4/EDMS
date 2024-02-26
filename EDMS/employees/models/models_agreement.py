@@ -56,7 +56,10 @@ class Agreement(models.Model):
                 self.end_date_actual = self.end_date
 
     def set_is_current(self) -> None:
-        if self.end_date_actual < timezone.now().date():
+        if (
+            timezone.now().date() < self.start_date
+            or self.end_date_actual < timezone.now().date()
+        ):
             self.is_current = False
         else:
             self.is_current = True

@@ -11,6 +11,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import FormView, TemplateView
 from users.forms.forms_custom_user_creation import CustomUserCreationForm
+from users.tasks import send_activation_email
 from users.tokens import account_activation_token
 
 User = get_user_model()
@@ -29,10 +30,6 @@ class UserRegisterView(FormView):
 
     def form_valid(self, form: CustomUserCreationForm) -> HttpResponseRedirect:
         user = form.save()
-        self._send_activation_email(user)
-        return super().form_valid(form)
-
-    def _send_activation_email(self, user: "User") -> None:
         domain: str = get_current_site(self.request).domain
         uidb64: str = urlsafe_base64_encode(force_bytes(user.pk))
         token: str = account_activation_token.make_token(user)
@@ -42,7 +39,10 @@ class UserRegisterView(FormView):
             "emails/account_activation_email.html",
             {"user": user, "domain": domain, "uidb64": uidb64, "token": token},
         )
-        user.email_user(subject=subject, message=message, from_email=from_email)
+        send_activation_email.delay(
+            user_id=user.id, subject=subject, message=message, from_email=from_email
+        )
+        return super().form_valid(form)
 
 
 class SuccessRegisterView(TemplateView):

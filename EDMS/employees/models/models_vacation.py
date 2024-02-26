@@ -30,7 +30,8 @@ class Vacation(models.Model):
     substitute_users = models.ManyToManyField(User, related_name="substitute_users")
     scan = models.FileField(upload_to="vacations")
     included_days_off = models.PositiveSmallIntegerField(
-        help_text="If you take vacations and there are included days off (for example weekend) then you set included_days_off as 2 to count properly."
+        help_text="If you take vacations and there are included days off (for example weekend) then you set "
+        "included_days_off as 2 to count properly."
     )
 
     def save(self, *args, **kwargs) -> None:
