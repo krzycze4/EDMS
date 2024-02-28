@@ -10,10 +10,10 @@ from users.forms.forms_password import CustomPasswordResetForm, CustomSetPasswor
 
 
 class CustomPasswordResetView(PasswordResetView):
-    email_template_name = "emails/forgot_password_email.html"
+    email_template_name = "email_templates/forgot_password_email.html"
     form_class = CustomPasswordResetForm
     from_email = settings.COMPANY_EMAIL
-    subject_template_name = "emails/email_subject.txt"
+    subject_template_name = "email_templates/email_subject.txt"
     success_url = reverse_lazy("forgot-password-done")
     template_name = "users/forgot_password/forgot_password.html"
 

@@ -1,0 +1,17 @@
+{# djlint:off H022 #}
+{% autoescape off %}
+    Hello {{ leave_user }},
+    We remind you that you are starting your holidays in a week!
+    Your vacation will last from {{ vacation_start_date }} to {{ vacation_end_date }}.
+    During your absence you are going to be substituted by:
+    {% for user in substitute_users %}
+        <ul>
+            {{ user }}, {{ user.email }}, {{ user.phone_number }}
+        </ul>
+    {% endfor %}
+    Please contact with them and provide necessary information
+    Enjoy your free time.
+    We will miss you.
+    Best regards,
+    Your Website Team
+{% endautoescape %}

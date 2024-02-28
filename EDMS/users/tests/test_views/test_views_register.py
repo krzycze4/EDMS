@@ -63,7 +63,9 @@ class TestCaseUserRegisterView(TestCase):
         }
         response = self.client.post(reverse("register"), data=form_data)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertTemplateUsed(response, "emails/account_activation_email.html")
+        self.assertTemplateUsed(
+            response, "email_templates/account_activation_email.html"
+        )
 
         token = response.context["token"]
         self.assertEqual(len(token), 39)

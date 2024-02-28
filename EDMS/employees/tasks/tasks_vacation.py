@@ -13,34 +13,6 @@ User = get_user_model()
 
 
 @shared_task
-def set_agreement_is_current() -> None:
-    set_agreement_is_current_for_starting_agreement()
-    set_agreement_is_current_for_ending_agreement()
-
-
-def set_agreement_is_current_for_ending_agreement() -> None:
-    for agreement in Agreement.objects.filter(
-        end_date_actual=timezone.now().date() - timezone.timedelta(days=1)
-    ):
-        agreement.is_current = False
-        agreement.save()
-
-
-def set_agreement_is_current_for_starting_agreement() -> None:
-    for agreement in Agreement.objects.filter(start_date=timezone.now().date()):
-        agreement.is_current = True
-        agreement.save()
-
-
-@shared_task
-def set_user_is_active_to_false() -> None:
-    for user in User.objects.filter(is_superuser=False):
-        if not user.agreements.filter(is_current=True).exists():
-            user.is_active = False
-            user.save()
-
-
-@shared_task
 def set_user_vacation_left() -> None:
     for user in User.objects.filter(is_superuser=False, is_active=True):
         current_employment_agreement = user.agreements.filter(
@@ -98,7 +70,7 @@ def send_mails_to_substitute_users(vacation: Vacation) -> None:
     subject_to_substitute_user = "Your co-worker is going to holidays."
     for substitute_user in vacation.substitute_users.all():
         message_to_substitute_user = render_to_string(
-            template_name="emails/substitute_user_email.html",
+            template_name="email_templates/substitute_user_email.html",
             context={
                 "substitute_user": substitute_user,
                 "leave_user": vacation.leave_user,
@@ -116,7 +88,7 @@ def send_mails_to_substitute_users(vacation: Vacation) -> None:
 def send_mail_to_leave_user(vacation: Vacation) -> None:
     subject_to_leave_user = "Holidays!"
     message_to_leave_user = render_to_string(
-        template_name="emails/leave_user_email.html",
+        template_name="email_templates/leave_user_email.html",
         context={
             "leave_user": vacation.leave_user,
             "vacation_start_date": vacation.start_date,
@@ -125,29 +97,6 @@ def send_mail_to_leave_user(vacation: Vacation) -> None:
         },
     )
     vacation.leave_user.email_user(
-        subject=subject_to_leave_user,
-        message=message_to_leave_user,
-        from_email=settings.COMPANY_EMAIL,
-    )
-
-
-@shared_task
-def remind_expiring_agreement(remind_days: int):
-    for agreement in Agreement.objects.filter(
-        end_date=timezone.now().date() + timezone.timedelta(days=remind_days)
-    ):
-        send_mail_to_user(agreement)
-
-
-def send_mail_to_user(agreement: Agreement) -> None:
-    subject_to_leave_user = "Expiring agreement!"
-    message_to_leave_user = render_to_string(
-        template_name="emails/expiring_agreement_email.html",
-        context={
-            "agreement": agreement,
-        },
-    )
-    agreement.user.email_user(
         subject=subject_to_leave_user,
         message=message_to_leave_user,
         from_email=settings.COMPANY_EMAIL,

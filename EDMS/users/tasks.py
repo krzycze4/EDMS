@@ -35,3 +35,11 @@ def send_mail_reset_password(
         to_email=to_email,
         html_email_template_name=html_email_template_name,
     )
+
+
+@shared_task
+def set_user_is_active_to_false() -> None:
+    for user in User.objects.filter(is_superuser=False):
+        if not user.agreements.filter(is_current=True).exists():
+            user.is_active = False
+            user.save()

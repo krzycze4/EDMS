@@ -1,0 +1,13 @@
+{# djlint:off H022 #}
+{% autoescape off %}
+    Hello {{ substitute_user }},
+    Your co-worker is taking days off.
+    {{ leave_user }} pointed you as a substitution.
+    The absence will last from {{ start_date }} to {{ end_date }}.
+    Contact:
+    {{ leave_user.email }}
+    {{ leave_user.phone_number }}
+    Please contact with him/her and provide necessary information.
+    Best regards,
+    Your Website Team
+{% endautoescape %}

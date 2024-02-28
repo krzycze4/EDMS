@@ -1,0 +1,8 @@
+{# djlint:off H022 #}
+{% autoescape off %}
+    Hello {{ agreement.user }},
+    We remind you that your <a href="{% url "detail-agreement" agreement.pk %}">agreement</a> is expiring in 30 days!
+    Please contact with the employers if you haven't done it yet.
+    Best regards,
+    Your Website Team
+{% endautoescape %}
