@@ -37,7 +37,7 @@ class TestCaseCustomLoginView(TestCase):
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(
             message,
-            "User is not active. Please check your email and active your account.",
+            "Invalid email or password.",
         )
 
     def test_successfully_login_activated_user(self):
@@ -58,7 +58,7 @@ class TestCaseCustomLoginView(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/login_logout/login.html")
         message = list(get_messages(response.wsgi_request))[0].message
-        self.assertEqual(message, "Incorrect password!")
+        self.assertEqual(message, "Invalid email or password.")
 
     def test_unsuccessfully_login_because_user_does_not_exist(self):
         form_data = {
