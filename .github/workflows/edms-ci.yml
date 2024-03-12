@@ -50,6 +50,6 @@ jobs:
       env:
         POSTGRES_USER: ${{ vars.POSTGRES_USER }}
         POSTGRES_NAME: ${{ vars.POSTGRES_DB }}
-        POSTGRES_PORT: ${{ vars.PORT }}
-        POSTGRES_HOST: ${{ secrets.HOST }}
+        POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
