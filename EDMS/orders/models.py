@@ -31,10 +31,10 @@ class Order(models.Model):
     income_invoice = models.ManyToManyField(
         Invoice,
         blank=True,
-        related_name="orders_from_income_invoice",
+        related_name="order_from_income_invoice",
     )
     cost_invoice = models.ManyToManyField(
-        Invoice, blank=True, related_name="orders_from_cost_invoice"
+        Invoice, blank=True, related_name="order_from_cost_invoice"
     )
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     contract = models.ForeignKey(

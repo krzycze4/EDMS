@@ -19,7 +19,7 @@ class ManageInvoicesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.instance.company.is_mine:
-            self.fields.append("income_invoice")
+            # self.fields.add("invoice")
             self.fields["income_invoice"].widget = forms.SelectMultiple(
                 attrs={"class": "form-control  js-example-basic-multiple", "size": 3}
             )

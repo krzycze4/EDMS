@@ -8,7 +8,7 @@
             <div class="card-header d-flex justify-content-between align-items-center pointer">
                 <h6 class="m-0 font-weight-bold text-primary">Invoice {{ invoice.name }}</h6>
                 <div class="d-flex">
-                    {% if not order and not invoice.is_paid and not invoice.linked_invoice and not child_invoices %}
+                    {% if not invoice.order_from_income_invoice.all and not invoice.order_from_cost_invoice.all and not invoice.is_paid and not invoice.linked_invoice and not child_invoices %}
                         <a class="btn btn-danger mr-2"
                            type="button"
                            href="{% url 'delete-invoice' invoice.pk %}">Delete invoice</a>
@@ -52,8 +52,14 @@
                                 <p class="font-weight-bold">Payment date: {{ invoice.payment_date }}</p>
                                 <p class="font-weight-bold">
                                     Order:
-                                    {% if order %}
-                                        <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
+                                    {% if invoice.order_from_income_invoice.all %}
+                                        {% for order in invoice.order_from_income_invoice.all %}
+                                            <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
+                                        {% endfor %}
+                                    {% elif invoice.order_from_cost_invoice.all %}
+                                        {% for order in invoice.order_from_cost_invoice.all %}
+                                            <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
+                                        {% endfor %}
                                     {% else %}
                                         NOT PINNED
                                     {% endif %}

@@ -26,4 +26,5 @@ urlpatterns = [
     path("", include("invoices.urls")),
     path("", include("orders.urls")),
     path("", include("employees.urls")),
+    path("django-plotly-dash/", include("django_plotly_dash.urls")),
 ]

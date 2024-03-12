@@ -33,7 +33,9 @@
                                 <p class="font-weight-bold">
                                     Company: <a href="{% url "detail-company" order.company.pk %}">{{ order.company.name }}</a>
                                 </p>
-                                <p class="font-weight-bold">Create by: {{ order.user }}</p>
+                                <p class="font-weight-bold">
+                                    Create by: <a href="{% url "detail-employee" order.user.pk %}">{{ order.user }}</a>
+                                </p>
                                 <p class="font-weight-bold">Create date: {{ order.create_date }}</p>
                                 <p class="font-weight-bold">Start date: {{ order.start_date }}</p>
                                 <p class="font-weight-bold">End date: {{ order.end_date }}</p>

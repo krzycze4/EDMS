@@ -47,7 +47,7 @@ def validate_net_price_plus_vat_equal_gross(
 def validate_no_future_create_date(
     attrs: Dict[str, Union[Decimal | date | Company]],
 ) -> None:
-    today: date = timezone.now().end_date()
+    today: date = timezone.now().date()
     create_date: date = attrs["create_date"]
 
     if today < create_date:

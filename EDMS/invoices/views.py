@@ -33,16 +33,8 @@ class InvoiceDetailView(DetailView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["order"] = self.get_order()
         context["child_invoices"] = self.get_child_invoices()
         return context
-
-    def get_order(self) -> Union[Order | None]:
-        if self.object.seller.is_mine:
-            order = Order.objects.filter(income_invoices=self.object).first()
-        else:
-            order = Order.objects.filter(cost_invoices=self.object).first()
-        return order
 
     def get_child_invoices(self) -> Union[List[Invoice] | str]:
         child_invoices = None

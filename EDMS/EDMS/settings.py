@@ -27,7 +27,21 @@ INSTALLED_APPS = [
     "django_cleanup",
     "django_celery_beat",
     "django_celery_results",
+    "django_plotly_dash",
+    "dpd_static_support",
+    "channels",
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [
+                ("127.0.0.1", 6379),
+            ],
+        },
+    },
+}
 
 INSTALLED_EXTENSIONS = [
     "employees",
@@ -51,6 +65,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_plotly_dash.middleware.BaseMiddleware",
+    "django_plotly_dash.middleware.ExternalRedirectionMiddleware",
+    "django.middleware.security.SecurityMiddleware",
 ]
 
 AUTH_USER_MODEL = "users.User"
@@ -148,3 +165,5 @@ SESSION_TIMEOUT_REDIRECT = LOGIN_URL
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
+
+X_FRAME_OPTIONS = "SAMEORIGIN"

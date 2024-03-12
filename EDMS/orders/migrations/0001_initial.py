@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "income_invoice",
+                    "invoice",
                     models.ManyToManyField(
                         blank=True,
                         related_name="orders_from_income_invoice",
