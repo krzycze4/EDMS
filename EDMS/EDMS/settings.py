@@ -92,24 +92,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "EDMS.wsgi.application"
 
-if env("ENVIRONMENT") == "ci":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": "ci_db",
-        }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_NAME"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("POSTGRES_HOST"),
+        "PORT": env("POSTGRES_PORT"),
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": "postgres",
-            "USER": env("POSTGRES_USER"),
-            "PASSWORD": env("POSTGRES_PASSWORD"),
-            "HOST": "127.0.0.1",
-            "PORT": "5432",
-        }
-    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
