@@ -15,11 +15,12 @@ from .views.views_agreement import (
     AgreementDetailView,
     AgreementUpdateView,
 )
-from .views.views_employees import (
+from .views.views_employee import (
     EmployeeDetailView,
     EmployeeListView,
     EmployeeUpdateView,
 )
+from .views.views_password import CustomPasswordChangeView
 from .views.views_payment import (
     PaymentCreateView,
     PaymentDeleteView,
@@ -150,6 +151,9 @@ urlpatterns = [
         "payments/",
         PaymentListView.as_view(),
         name="list-payment",
+    ),
+    path(
+        "change-password/", CustomPasswordChangeView.as_view(), name="change-password"
     ),
 ]
 

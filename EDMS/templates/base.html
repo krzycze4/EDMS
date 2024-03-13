@@ -53,10 +53,6 @@
                     {% if user.is_authenticated %}
                         {% include "topbar.html" %}
                     {% endif %}
-                    <!-- Begin Page Content -->
-                    {% if messages %}
-                        {% for message in messages %}<div class="alert bg-gradient-danger text-white">{{ message }}</div>{% endfor %}
-                    {% endif %}
                     {% block content %}
                     {% endblock content %}
                     <!-- End of Page Content -->
