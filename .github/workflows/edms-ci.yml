@@ -30,12 +30,17 @@ jobs:
         ports:
           - 5432:5432
       redis:
+        # Docker Hub image
         image: redis
+        # Set health checks to wait until redis has started
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v3
@@ -50,19 +55,14 @@ jobs:
     - name: Install Dependencies
       run: |
         poetry install
-      # Dodaj krok łączący się z Redisem
-    - name: Connect to Redis
-      run: redis-cli ping
-      env:
-        # Hostname używany do komunikacji z kontenerem usługi Redis
-        REDIS_HOST: redis
-        # Domyślny port Redis
-        REDIS_PORT: 6379
     - name: Run Tests
       run: |
         cd EDMS
         poetry run python manage.py test
       env:
+        REDIS_HOST: localhost
+        # The default Redis port
+        REDIS_PORT: 6379
         POSTGRES_USER: ${{ vars.POSTGRES_USER }}
         POSTGRES_NAME: ${{ vars.POSTGRES_DB }}
         POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
