@@ -247,6 +247,19 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card my-2">
+                        {% load plotly_dash %}
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#statisticsCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Statistics</h5>
+                        </div>
+                        <div id="statisticsCollapse" class="collapse show">
+                            <div class="card-body">{% plotly_app name="EmployeeStats" ratio=0.5 %}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

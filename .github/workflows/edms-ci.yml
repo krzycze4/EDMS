@@ -29,6 +29,16 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - uses: actions/checkout@v3
@@ -43,6 +53,16 @@ jobs:
     - name: Install Dependencies
       run: |
         poetry install
+    - name: Connect to Redis
+      # Runs a script that creates a Redis client, populates
+      # the client with data, and retrieves data
+      run: node client.js
+      # Environment variable used by the `client.js` script to create a new Redis client.
+      env:
+        # The hostname used to communicate with the Redis service container
+        REDIS_HOST: redis
+        # The default Redis port
+        REDIS_PORT: 6379
     - name: Run Tests
       run: |
         cd EDMS

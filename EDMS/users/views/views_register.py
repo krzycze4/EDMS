@@ -36,7 +36,7 @@ class UserRegisterView(FormView):
         from_email: str = settings.COMPANY_EMAIL
         subject = "Account Activation"
         message: str = render_to_string(
-            "emails/account_activation_email.html",
+            "email_templates/account_activation_email.html",
             {"user": user, "domain": domain, "uidb64": uidb64, "token": token},
         )
         send_activation_email.delay(

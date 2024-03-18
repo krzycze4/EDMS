@@ -4,11 +4,13 @@ from _decimal import Decimal
 from companies.models import Company
 from contracts.models import Contract
 from dash import Input, Output, dcc, html
+from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.utils import timezone
 from django_plotly_dash import DjangoDash
 from orders.models import Order
 
+User = get_user_model()
 app = DjangoDash("EmployeeStats")
 
 app.layout = html.Div(
@@ -27,7 +29,7 @@ app.layout = html.Div(
     [Output("dropdown-company", "options"), Output("dropdown-company", "value")],
     Input("dummy-input", "children"),
 )
-def update_company_dropdown(dummy_input, user):
+def update_company_dropdown(dummy_input, user: User):
     employee_companies = Company.objects.filter(contracts__employee=user).distinct()
     options = [
         {"label": company.name, "value": company.name} for company in employee_companies
@@ -40,10 +42,10 @@ def update_company_dropdown(dummy_input, user):
     [Output("dropdown-contract", "options"), Output("dropdown-contract", "value")],
     Input("dropdown-company", "value"),
 )
-def update_contract_dropdown(selected_companies: List[Dict[str, str]]):
+def update_contract_dropdown(selected_companies: List[Dict[str, str]], user: User):
     selected_company_names = get_names(selected_objects=selected_companies)
     employee_contracts = Contract.objects.filter(
-        company__name__in=selected_company_names
+        company__name__in=selected_company_names, employee__exact=user
     ).distinct()
     options = [
         {"label": contract.name, "value": contract.name}
@@ -54,7 +56,7 @@ def update_contract_dropdown(selected_companies: List[Dict[str, str]]):
 
 
 @app.callback(Output("graph-balance", "figure"), Input("dropdown-contract", "value"))
-def update_graph_balance(selected_contracts: List[Dict[str, str]]):
+def update_graph_balance(selected_contracts: List[Dict[str, str]], user: User):
     graph_data = {}
     figure = {
         "layout": {
@@ -67,7 +69,7 @@ def update_graph_balance(selected_contracts: List[Dict[str, str]]):
     }
     selected_contract_names = get_names(selected_objects=selected_contracts)
     connected_orders = (
-        Order.objects.filter(contract__name__in=selected_contract_names)
+        Order.objects.filter(contract__name__in=selected_contract_names, user=user)
         .distinct()
         .order_by("end_date")
     )

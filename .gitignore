@@ -165,5 +165,5 @@ media/
 # ruff
 .ruff_cache/
 
-# emails
+# email_templates
 emails/

@@ -13,7 +13,7 @@ User = get_user_model()
 class AddressCreateView(CreateView, LoginRequiredMixin):
     model = Address
     form_class = AddressForm
-    template_name = "employees/address/address_update.html"
+    template_name = "employees/addresses/address_update.html"
 
     def get_success_url(self) -> str:
         return reverse("detail-employee", kwargs={"pk": self.kwargs["pk"]})
@@ -29,7 +29,7 @@ class AddressCreateView(CreateView, LoginRequiredMixin):
 class AddressUpdateView(UpdateView, LoginRequiredMixin):
     model = Address
     form_class = AddressForm
-    template_name = "employees/address/address_update.html"
+    template_name = "employees/addresses/address_update.html"
 
     def get_success_url(self) -> str:
         return reverse("detail-employee", kwargs={"pk": self.kwargs["pk"]})

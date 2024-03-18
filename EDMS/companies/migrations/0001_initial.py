@@ -52,11 +52,11 @@ class Migration(migrations.Migration):
                 ("is_mine", models.BooleanField(blank=True, default=False)),
                 ("shortcut", models.CharField(max_length=5, unique=True)),
                 (
-                    "address",
+                    "addresses",
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="companies.address",
+                        to="companies.addresses",
                     ),
                 ),
             ],

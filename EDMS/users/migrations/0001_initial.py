@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 (
                     "email",
                     models.EmailField(
-                        max_length=254, unique=True, verbose_name="email address"
+                        max_length=254, unique=True, verbose_name="email addresses"
                     ),
                 ),
                 (
@@ -93,12 +93,12 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "address",
+                    "addresses",
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="companies.address",
+                        to="companies.addresses",
                     ),
                 ),
                 (
