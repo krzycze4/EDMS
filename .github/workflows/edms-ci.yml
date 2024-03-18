@@ -57,6 +57,9 @@ jobs:
       # Runs a script that creates a Redis client, populates
       # the client with data, and retrieves data
       run: |
+        sudo service redis-server start
+        redis-cli
+        ping
       env:
         # The hostname used to communicate with the Redis service container
         REDIS_HOST: redis
