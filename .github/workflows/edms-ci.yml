@@ -10,6 +10,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container: node:10.18-jessie
     strategy:
       max-parallel: 4
       matrix:
@@ -56,8 +57,8 @@ jobs:
     - name: Connect to Redis
       # Runs a script that creates a Redis client, populates
       # the client with data, and retrieves data
-      run: |
-        redis-server --version
+      run: node client.js
+      # Environment variable used by the `client.js` script to create a new Redis client.
       env:
         # The hostname used to communicate with the Redis service container
         REDIS_HOST: redis
