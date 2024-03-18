@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django import forms
 from django.core import mail
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -53,6 +53,7 @@ class TestCaseUserRegisterView(TestCase):
         self.assertRedirects(response, reverse("success-register"))
         self.assertTrue(User.objects.filter(email=form_data["email"]).exists())
 
+    @tag("celery")
     def test_sending_email_with_token_and_uidb64_if_successfully_registration(self):
         form_data = {
             "first_name": "First",
