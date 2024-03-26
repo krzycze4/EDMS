@@ -11,9 +11,9 @@ from django_plotly_dash import DjangoDash
 from orders.models import Order
 
 User = get_user_model()
-app = DjangoDash("EmployeeStats")
+app_employee = DjangoDash("EmployeeStats")
 
-app.layout = html.Div(
+app_employee.layout = html.Div(
     [
         html.H4(children="Company"),
         dcc.Dropdown(id="dropdown-company", multi=True),
@@ -25,7 +25,7 @@ app.layout = html.Div(
 )
 
 
-@app.callback(
+@app_employee.callback(
     [Output("dropdown-company", "options"), Output("dropdown-company", "value")],
     Input("dummy-input", "children"),
 )
@@ -38,7 +38,7 @@ def update_company_dropdown(dummy_input, user: User):
     return options, values
 
 
-@app.callback(
+@app_employee.callback(
     [Output("dropdown-contract", "options"), Output("dropdown-contract", "value")],
     Input("dropdown-company", "value"),
 )
@@ -55,7 +55,9 @@ def update_contract_dropdown(selected_companies: List[Dict[str, str]], user: Use
     return options, values
 
 
-@app.callback(Output("graph-balance", "figure"), Input("dropdown-contract", "value"))
+@app_employee.callback(
+    Output("graph-balance", "figure"), Input("dropdown-contract", "value")
+)
 def update_graph_balance(selected_contracts: List[Dict[str, str]], user: User):
     graph_data = {}
     figure = {
