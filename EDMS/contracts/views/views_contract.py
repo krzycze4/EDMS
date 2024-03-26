@@ -1,5 +1,8 @@
 from typing import Any, Dict
 
+from contracts.filters import ContractFilterSet
+from contracts.forms import ContractForm
+from contracts.models import Contract
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse
@@ -10,10 +13,6 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-
-from .filters import ContractFilterSet
-from .forms import ContractForm
-from .models import Contract
 
 
 class ContractCreateView(CreateView, LoginRequiredMixin):

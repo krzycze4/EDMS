@@ -2,7 +2,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
-from .views import (
+from .views.views_api_invoice import (
+    InvoiceListCreateAPIView,
+    InvoiceRetrieveUpdateDestroyAPIView,
+)
+from .views.views_invoice import (
     InvoiceCreateView,
     InvoiceDeleteView,
     InvoiceDetailView,
@@ -19,6 +23,16 @@ urlpatterns = [
     ),
     path(
         "invoices/<int:pk>/delete/", InvoiceDeleteView.as_view(), name="delete-invoice"
+    ),
+    path(
+        "api/invoices/",
+        InvoiceListCreateAPIView.as_view(),
+        name="api-list-create-invoice",
+    ),
+    path(
+        "api/invoices/<int:pk>",
+        InvoiceRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-invoice",
     ),
 ]
 

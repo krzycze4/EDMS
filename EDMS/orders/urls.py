@@ -1,6 +1,14 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from orders.views.views_api_orders import (
+    OrderListCreateAPIView,
+    OrderRetrieveUpdateDestroyAPIView,
+)
+from orders.views.views_api_protocols import (
+    ProtocolListCreateAPIView,
+    ProtocolRetrieveUpdateDestroyAPIView,
+)
 from orders.views.views_orders import (
     OrderCreateView,
     OrderDeleteView,
@@ -31,6 +39,22 @@ urlpatterns = [
         "orders/protocols/<int:pk>/delete",
         ProtocolDeleteView.as_view(),
         name="delete-protocol",
+    ),
+    path("api/orders/", OrderListCreateAPIView.as_view(), name="api-list-create-order"),
+    path(
+        "api/orders/<int:pk>",
+        OrderRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-order",
+    ),
+    path(
+        "api/protocols/",
+        ProtocolListCreateAPIView.as_view(),
+        name="api-list-create-protocol",
+    ),
+    path(
+        "api/protocols/<int:pk>",
+        ProtocolRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-protocol",
     ),
 ]
 

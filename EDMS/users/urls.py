@@ -1,5 +1,6 @@
 from django.urls import path
 
+from .views.views_api_user import UserListAPIView, UserRetrieveAPIView
 from .views.views_login_logout import CustomLoginView, CustomLogoutView
 from .views.views_register import (
     ActivateAccountView,
@@ -39,4 +40,6 @@ urlpatterns = [
         name="forgot-password-complete",
     ),
     path("logout/", CustomLogoutView.as_view(), name="logout"),
+    path("api/users/", UserListAPIView.as_view(), name="api-list-user"),
+    path("api/users/<int:pk>", UserRetrieveAPIView.as_view(), name="api-retrieve-user"),
 ]

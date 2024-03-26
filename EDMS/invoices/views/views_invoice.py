@@ -11,11 +11,10 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from invoices.filters import InvoiceFilter
+from invoices.forms import InvoiceForm
+from invoices.models import Invoice
 from orders.models import Order
-
-from .filters import InvoiceFilter
-from .forms import InvoiceForm
-from .models import Invoice
 
 
 class InvoiceCreateView(CreateView, LoginRequiredMixin):

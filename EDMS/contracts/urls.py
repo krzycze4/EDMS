@@ -2,7 +2,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
-from .views import (
+from .views.views_api_contract import (
+    ContractListCreateAPIView,
+    ContractRetrieveUpdateDestroyAPIView,
+)
+from .views.views_contract import (
     ContractCreateView,
     ContractDeleteView,
     ContractDetailView,
@@ -24,6 +28,16 @@ urlpatterns = [
         name="delete-contract",
     ),
     path("contracts/", ContractListView.as_view(), name="list-contract"),
+    path(
+        "api/contracts/",
+        ContractListCreateAPIView.as_view(),
+        name="api-list-create-contract",
+    ),
+    path(
+        "api/contracts/<int:pk>/",
+        ContractRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-contract",
+    ),
 ]
 
 if settings.DEBUG:

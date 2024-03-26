@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django_plotly_dash",
     "dpd_static_support",
     "channels",
+    "rest_framework",
 ]
 
 CHANNEL_LAYERS = {

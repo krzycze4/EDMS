@@ -15,6 +15,26 @@ from .views.views_agreement import (
     AgreementDetailView,
     AgreementUpdateView,
 )
+from .views.views_api_addendum import (
+    AddendumListCreateAPIView,
+    AddendumRetrieveUpdateDestroyAPIView,
+)
+from .views.views_api_agreement import (
+    AgreementListCreateAPIView,
+    AgreementRetrieveUpdateDestroyAPIView,
+)
+from .views.views_api_payment import (
+    PaymentListCreateAPIView,
+    PaymentRetrieveUpdateDestroyAPIView,
+)
+from .views.views_api_termination import (
+    TerminationListCreateAPIView,
+    TerminationRetrieveUpdateDestroyAPIView,
+)
+from .views.views_api_vacation import (
+    VacationListCreateAPIView,
+    VacationRetrieveUpdateDestroyAPIView,
+)
 from .views.views_employee import (
     EmployeeDetailView,
     EmployeeListView,
@@ -154,6 +174,56 @@ urlpatterns = [
     ),
     path(
         "change-password/", CustomPasswordChangeView.as_view(), name="change-password"
+    ),
+    path(
+        "api/addenda/",
+        AddendumListCreateAPIView.as_view(),
+        name="api-list-create-addendum",
+    ),
+    path(
+        "api/addenda/<int:pk>",
+        AddendumRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-addendum",
+    ),
+    path(
+        "api/agreements/",
+        AgreementListCreateAPIView.as_view(),
+        name="api-list-create-agreement",
+    ),
+    path(
+        "api/agreements/<int:pk>",
+        AgreementRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-agreement",
+    ),
+    path(
+        "api/payments/",
+        PaymentListCreateAPIView.as_view(),
+        name="api-list-create-payment",
+    ),
+    path(
+        "api/payments/<int:pk>",
+        PaymentRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-payment",
+    ),
+    path(
+        "api/terminations/",
+        TerminationListCreateAPIView.as_view(),
+        name="api-list-create-termination",
+    ),
+    path(
+        "api/terminations/<int:pk>",
+        TerminationRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-termination",
+    ),
+    path(
+        "api/vacations/",
+        VacationListCreateAPIView.as_view(),
+        name="api-list-create-vacation",
+    ),
+    path(
+        "api/vacations/<int:pk>",
+        VacationRetrieveUpdateDestroyAPIView.as_view(),
+        name="api-retrieve-update-destroy-vacation",
     ),
 ]
 
