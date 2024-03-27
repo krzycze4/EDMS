@@ -1,14 +1,8 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
-from orders.views.views_api_orders import (
-    OrderListCreateAPIView,
-    OrderRetrieveUpdateDestroyAPIView,
-)
-from orders.views.views_api_protocols import (
-    ProtocolListCreateAPIView,
-    ProtocolRetrieveUpdateDestroyAPIView,
-)
+from django.urls import include, path
+from orders.api.views.views_api_orders import OrderModelViewSet
+from orders.api.views.views_api_protocols import ProtocolModelViewSet
 from orders.views.views_orders import (
     OrderCreateView,
     OrderDeleteView,
@@ -18,6 +12,11 @@ from orders.views.views_orders import (
     OrderUpdateView,
 )
 from orders.views.views_protocols import ProtocolCreateView, ProtocolDeleteView
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register("api/orders", OrderModelViewSet)
+router.register("api/protocols", ProtocolModelViewSet)
 
 urlpatterns = [
     path("orders/create/", OrderCreateView.as_view(), name="create-order"),
@@ -40,22 +39,7 @@ urlpatterns = [
         ProtocolDeleteView.as_view(),
         name="delete-protocol",
     ),
-    path("api/orders/", OrderListCreateAPIView.as_view(), name="api-list-create-order"),
-    path(
-        "api/orders/<int:pk>",
-        OrderRetrieveUpdateDestroyAPIView.as_view(),
-        name="api-retrieve-update-destroy-order",
-    ),
-    path(
-        "api/protocols/",
-        ProtocolListCreateAPIView.as_view(),
-        name="api-list-create-protocol",
-    ),
-    path(
-        "api/protocols/<int:pk>",
-        ProtocolRetrieveUpdateDestroyAPIView.as_view(),
-        name="api-retrieve-update-destroy-protocol",
-    ),
+    path("", include(router.urls)),
 ]
 
 if settings.DEBUG:

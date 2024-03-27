@@ -1,14 +1,9 @@
-from django.urls import path
+from companies.api.views.views_api_address import AddressModelViewSet
+from django.urls import include, path
+from rest_framework import routers
 
-from .views.views_api_address import AddressListAPIView, AddressRetrieveUpdateAPIView
-from .views.views_api_company import (
-    CompanyListCreateAPIView,
-    CompanyRetrieveUpdateDestroyAPIView,
-)
-from .views.views_api_contact import (
-    ContactListCreateAPIView,
-    ContactRetrieveUpdateDestroyAPIView,
-)
+from .api.views.views_api_company import CompanyModelViewSet
+from .api.views.views_api_contact import ContactModelViewSet
 from .views.views_company import (
     CompanyAddressUpdateView,
     CompanyCreateView,
@@ -19,6 +14,12 @@ from .views.views_company import (
     CreateCompanyDoneView,
 )
 from .views.views_contact import ContactCreateView, ContactDeleteView, ContactUpdateView
+
+router = routers.DefaultRouter()
+router.register("api/addresses", AddressModelViewSet)
+router.register("api/companies", CompanyModelViewSet)
+router.register("api/contacts", ContactModelViewSet)
+
 
 urlpatterns = [
     path("companies/find/", CompanyFindView.as_view(), name="find-company"),
@@ -55,30 +56,5 @@ urlpatterns = [
         ContactDeleteView.as_view(),
         name="delete-contact",
     ),
-    path("api/addresses/", AddressListAPIView.as_view(), name="api-list-address"),
-    path(
-        "api/addresses/<int:pk>/",
-        AddressRetrieveUpdateAPIView.as_view(),
-        name="api-retrieve-update-address",
-    ),
-    path(
-        "api/companies/",
-        CompanyListCreateAPIView.as_view(),
-        name="api-list-create-company",
-    ),
-    path(
-        "api/companies/<int:pk>/",
-        CompanyRetrieveUpdateDestroyAPIView.as_view(),
-        name="api-retrieve-update-destroy-company",
-    ),
-    path(
-        "api/contacts/",
-        ContactListCreateAPIView.as_view(),
-        name="api-list-create-contact",
-    ),
-    path(
-        "api/contact/<int:pk>/",
-        ContactRetrieveUpdateDestroyAPIView.as_view(),
-        name="api-retrieve-update-destroy-contact",
-    ),
+    path("", include(router.urls)),
 ]

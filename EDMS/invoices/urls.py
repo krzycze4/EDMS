@@ -1,18 +1,18 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
-
-from .views.views_api_invoice import (
-    InvoiceListCreateAPIView,
-    InvoiceRetrieveUpdateDestroyAPIView,
-)
-from .views.views_invoice import (
+from django.urls import include, path
+from invoices.api.views_api_invoice import InvoiceModelViewSet
+from invoices.views import (
     InvoiceCreateView,
     InvoiceDeleteView,
     InvoiceDetailView,
     InvoiceListView,
     InvoiceUpdateView,
 )
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register("api/invoices", InvoiceModelViewSet)
 
 urlpatterns = [
     path("invoices/create/", InvoiceCreateView.as_view(), name="create-invoice"),
@@ -24,16 +24,7 @@ urlpatterns = [
     path(
         "invoices/<int:pk>/delete/", InvoiceDeleteView.as_view(), name="delete-invoice"
     ),
-    path(
-        "api/invoices/",
-        InvoiceListCreateAPIView.as_view(),
-        name="api-list-create-invoice",
-    ),
-    path(
-        "api/invoices/<int:pk>",
-        InvoiceRetrieveUpdateDestroyAPIView.as_view(),
-        name="api-retrieve-update-destroy-invoice",
-    ),
+    path("", include(router.urls)),
 ]
 
 if settings.DEBUG:

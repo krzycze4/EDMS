@@ -1,18 +1,18 @@
-from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import path
-
-from .views.views_api_contract import (
-    ContractListCreateAPIView,
-    ContractRetrieveUpdateDestroyAPIView,
-)
-from .views.views_contract import (
+from contracts.api.views_api_contract import ContractModelViewSet
+from contracts.views import (
     ContractCreateView,
     ContractDeleteView,
     ContractDetailView,
     ContractListView,
     ContractUpdateView,
 )
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import include, path
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register("api/contracts", ContractModelViewSet)
 
 urlpatterns = [
     path("contracts/create/", ContractCreateView.as_view(), name="create-contract"),
@@ -28,16 +28,7 @@ urlpatterns = [
         name="delete-contract",
     ),
     path("contracts/", ContractListView.as_view(), name="list-contract"),
-    path(
-        "api/contracts/",
-        ContractListCreateAPIView.as_view(),
-        name="api-list-create-contract",
-    ),
-    path(
-        "api/contracts/<int:pk>/",
-        ContractRetrieveUpdateDestroyAPIView.as_view(),
-        name="api-retrieve-update-destroy-contract",
-    ),
+    path("", include(router.urls)),
 ]
 
 if settings.DEBUG:

@@ -1,6 +1,7 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework import routers
 
-from .views.views_api_user import UserListAPIView, UserRetrieveAPIView
+from .api.views_api_user import UserModelViewSet
 from .views.views_login_logout import CustomLoginView, CustomLogoutView
 from .views.views_register import (
     ActivateAccountView,
@@ -13,6 +14,9 @@ from .views.views_reset_password import (
     CustomPasswordResetDoneView,
     CustomPasswordResetView,
 )
+
+router = routers.DefaultRouter()
+router.register("api/users", UserModelViewSet)
 
 urlpatterns = [
     path("register/", UserRegisterView.as_view(), name="register"),
@@ -40,6 +44,5 @@ urlpatterns = [
         name="forgot-password-complete",
     ),
     path("logout/", CustomLogoutView.as_view(), name="logout"),
-    path("api/users/", UserListAPIView.as_view(), name="api-list-user"),
-    path("api/users/<int:pk>", UserRetrieveAPIView.as_view(), name="api-retrieve-user"),
+    path("", include(router.urls)),
 ]
