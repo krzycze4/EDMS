@@ -29,7 +29,7 @@ def validate_no_repetition(cleaned_data: Dict[str, Any]) -> None:
     ):
         raise ValidationError(
             {
-                "error": "Order with this data already exists!",
+                "name": "Order with this data already exists!",
             }
         )
 

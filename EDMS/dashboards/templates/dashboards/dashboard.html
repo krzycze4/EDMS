@@ -3,10 +3,9 @@
     Dashboard
 {% endblock title %}
 {% block content %}
-    {% load plotly_dash %}
     <div class="card-header">
         <p class="font-weight-bold">Your statistics</p>
     </div>
-    <div class="card-body">{% plotly_app name="EmployeeStats" ratio=0.5 %}</div>
-    <div class="card-body">{% plotly_app name="CompanyStats" ratio=0.6 %}</div>
+    {{ plot_employee|safe }}
+    {{ plot_company|safe }}
 {% endblock content %}

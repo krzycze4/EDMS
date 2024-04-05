@@ -49,12 +49,15 @@ class Order(models.Model):
         return f"{self.name}"
 
     def save(self, *args, **kwargs) -> None:
-        current_month = timezone.now().strftime("%m")
-        current_year = timezone.now().strftime("%Y")
-        counter = self.declare_counter(
-            current_month=current_month, current_year=current_year
-        )
-        self.name = f"{self.company.shortcut}-{counter}/{current_month}/{current_year}"
+        if not self.pk:
+            current_month = timezone.now().strftime("%m")
+            current_year = timezone.now().strftime("%Y")
+            counter = self.declare_counter(
+                current_month=current_month, current_year=current_year
+            )
+            self.name = (
+                f"{self.company.shortcut}-{counter}/{current_month}/{current_year}"
+            )
         super().save(*args, **kwargs)
 
     def declare_counter(self, current_month: int, current_year: int) -> int:

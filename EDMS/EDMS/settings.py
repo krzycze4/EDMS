@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     "django_cleanup",
     "django_celery_beat",
     "django_celery_results",
-    "django_plotly_dash",
     "dpd_static_support",
     "channels",
     "rest_framework",
@@ -66,8 +65,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_plotly_dash.middleware.BaseMiddleware",
-    "django_plotly_dash.middleware.ExternalRedirectionMiddleware",
     "django.middleware.security.SecurityMiddleware",
 ]
 

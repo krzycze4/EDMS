@@ -1,14 +1,17 @@
 from typing import Any, Dict
 
+from dashboards.plots import render_plot
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView
 from employees.filters import UserFilterSet
 from employees.forms.forms_contact import ContactForm
 from employees.models.models_addendum import Addendum
 from employees.models.models_termination import Termination
+from orders.models import Order
 
 User = get_user_model()
 
@@ -25,6 +28,16 @@ class EmployeeDetailView(DetailView, LoginRequiredMixin):
         context["has_addendum"] = Addendum.objects.filter(
             agreement__user__id=self.kwargs["pk"]
         ).exists()
+
+        user = get_object_or_404(User, pk=self.kwargs["pk"])
+        text_employee = f"Statistics employee: {user}"
+        orders_employee = list(
+            Order.objects.filter(contract__employee__exact=user).order_by("end_date")
+        )
+
+        context["plot_employee"] = render_plot(
+            orders=orders_employee, text=text_employee
+        )
         return context
 
 

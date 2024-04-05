@@ -83,7 +83,7 @@ class OrderUpdateForm(forms.ModelForm):
     def clean(self) -> Dict[str, Any]:
         cleaned_data: Dict[str, Any] = super().clean()
         validate_end_date_after_start_date(cleaned_data=cleaned_data)
-        validate_start_date_in_contract_period(cleaned_data=cleaned_data)
+        # validate_start_date_in_contract_period(cleaned_data=cleaned_data)
         return cleaned_data
 
     def __init__(self, *args, **kwargs) -> None:
