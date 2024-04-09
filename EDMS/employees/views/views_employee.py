@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from dashboards.plots import render_plot
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -16,7 +16,8 @@ from orders.models import Order
 User = get_user_model()
 
 
-class EmployeeDetailView(DetailView, LoginRequiredMixin):
+class EmployeeDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "users.view_user"
     model = User
     template_name = "employees/employees/employee_detail.html"
 
@@ -30,18 +31,31 @@ class EmployeeDetailView(DetailView, LoginRequiredMixin):
         ).exists()
 
         user = get_object_or_404(User, pk=self.kwargs["pk"])
+
         text_employee = f"Statistics employee: {user}"
         orders_employee = list(
             Order.objects.filter(contract__employee__exact=user).order_by("end_date")
         )
 
+        text_company = "Statistics my company"
+        orders_company = list(Order.objects.order_by("end_date"))
+
         context["plot_employee"] = render_plot(
             orders=orders_employee, text=text_employee
         )
+
+        context["plot_company"] = render_plot(
+            orders=orders_company, text=text_company, is_company=True
+        )
+        is_accountant_or_hr = False
+        if user.groups.exists() and user.groups.first().name in ("accountants", "hrs"):
+            is_accountant_or_hr = True
+        context["is_accountant_or_hr"] = is_accountant_or_hr
         return context
 
 
-class EmployeeUpdateView(UpdateView, LoginRequiredMixin):
+class EmployeeUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "users.change_user"
     model = User
     form_class = ContactForm
     template_name = "employees/employees/employee_update.html"
@@ -50,7 +64,8 @@ class EmployeeUpdateView(UpdateView, LoginRequiredMixin):
         return reverse("detail-employee", kwargs={"pk": self.object.pk})
 
 
-class EmployeeListView(ListView, LoginRequiredMixin):
+class EmployeeListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
+    permission_required = "users.view_user"
     queryset = User.objects.all()
     template_name = "employees/employees/employee_list.html"
     paginate_by = 10

@@ -13,7 +13,7 @@ from companies.forms.forms_company_and_address import (
 from companies.models import Address, Company
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -27,7 +27,8 @@ from django.views.generic import (
 )
 
 
-class CompanyFindView(FormView, LoginRequiredMixin):
+class CompanyFindView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
+    permission_required = "companies.add_company"
     template_name = "companies/companies/find_company.html"
     form_class = KRSForm
     success_url = reverse_lazy("create-company")
@@ -107,7 +108,8 @@ class CompanyFindView(FormView, LoginRequiredMixin):
         return redirect("create-company")
 
 
-class CompanyCreateView(FormView, LoginRequiredMixin):
+class CompanyCreateView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
+    permission_required = "companies.add_company"
     template_name = "companies/companies/create_company.html"
     form_class = CompanyAndAddressForm
     success_url = reverse_lazy("create-company-done")
@@ -155,11 +157,13 @@ class CompanyCreateView(FormView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class CreateCompanyDoneView(TemplateView, LoginRequiredMixin):
+class CreateCompanyDoneView(PermissionRequiredMixin, TemplateView, LoginRequiredMixin):
+    permission_required = "companies.add_company"
     template_name = "companies/companies/create_company_done.html"
 
 
-class CompanyListView(ListView, LoginRequiredMixin):
+class CompanyListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
+    permission_required = "companies.view_company"
     queryset = Company.objects.all()
     template_name = "companies/companies/list_company.html"
     context_object_name = "companies"
@@ -178,12 +182,16 @@ class CompanyListView(ListView, LoginRequiredMixin):
         return context
 
 
-class CompanyDetailView(DetailView, LoginRequiredMixin):
+class CompanyDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "companies.view_company"
     model = Company
     template_name = "companies/companies/detail_company.html"
 
 
-class CompanyIdentifiersUpdateView(UpdateView, LoginRequiredMixin):
+class CompanyIdentifiersUpdateView(
+    PermissionRequiredMixin, UpdateView, LoginRequiredMixin
+):
+    permission_required = "companies.change_company"
     model = Company
     form_class = UpdateCompanyIdentifiersForm
     template_name = "companies/companies/update_identifiers_company.html"
@@ -192,7 +200,8 @@ class CompanyIdentifiersUpdateView(UpdateView, LoginRequiredMixin):
         return reverse_lazy("detail-company", kwargs={"pk": self.object.pk})
 
 
-class CompanyAddressUpdateView(UpdateView, LoginRequiredMixin):
+class CompanyAddressUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "companies.change_company"
     model = Address
     form_class = UpdateAddressForm
     template_name = "companies/companies/update_address_company.html"

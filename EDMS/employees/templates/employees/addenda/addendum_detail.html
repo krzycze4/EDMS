@@ -34,12 +34,16 @@
                                 <p class="font-weight-bold">
                                     Connected user: <a href="{% url 'detail-employee' addendum.agreement.user.pk %}">{{ addendum.agreement.user }}</a>
                                 </p>
-                                <a class="btn btn-warning mr-2"
-                                   type="button"
-                                   href="{% url "update-addendum" addendum.pk %}">Edit addendum</a>
-                                <a class="btn btn-danger mr-2"
-                                   type="button"
-                                   href="{% url "delete-addendum" addendum.pk %}">Delete addendum</a>
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "ceos" or group.name == "hrs" %}
+                                        <a class="btn btn-warning mr-2"
+                                           type="button"
+                                           href="{% url "update-addendum" addendum.pk %}">Edit addendum</a>
+                                        <a class="btn btn-danger mr-2"
+                                           type="button"
+                                           href="{% url "delete-addendum" addendum.pk %}">Delete addendum</a>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

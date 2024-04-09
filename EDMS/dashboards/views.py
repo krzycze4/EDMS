@@ -2,7 +2,7 @@
 
 from dashboards.plots import render_plot
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import TemplateView
 from orders.models import Order
 

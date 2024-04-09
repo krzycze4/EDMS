@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
@@ -11,7 +11,8 @@ from employees.models.models_agreement import Agreement
 User = get_user_model()
 
 
-class AgreementCreateView(CreateView, LoginRequiredMixin):
+class AgreementCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
+    permission_required = "employees.add_agreement"
     model = Agreement
     form_class = AgreementForm
     template_name = "employees/agreements/agreement_create.html"
@@ -25,12 +26,14 @@ class AgreementCreateView(CreateView, LoginRequiredMixin):
         return kwargs
 
 
-class AgreementDetailView(DetailView, LoginRequiredMixin):
+class AgreementDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "employees.view_agreement"
     model = Agreement
     template_name = "employees/agreements/agreement_detail.html"
 
 
-class AgreementUpdateView(UpdateView, LoginRequiredMixin):
+class AgreementUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "employees.change_agreement"
     model = Agreement
     form_class = AgreementForm
     template_name = "employees/agreements/agreement_update.html"
@@ -44,7 +47,8 @@ class AgreementUpdateView(UpdateView, LoginRequiredMixin):
         return context
 
 
-class AgreementDeleteView(DeleteView, LoginRequiredMixin):
+class AgreementDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
+    permission_required = "employees.delete_agreement"
     model = Agreement
     template_name = "employees/agreements/agreement_delete.html"
 

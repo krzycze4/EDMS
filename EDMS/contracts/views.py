@@ -3,7 +3,7 @@ from typing import Any, Dict
 from contracts.filters import ContractFilterSet
 from contracts.forms import ContractForm
 from contracts.models import Contract
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse
 from django.views.generic import (
@@ -15,7 +15,8 @@ from django.views.generic import (
 )
 
 
-class ContractCreateView(CreateView, LoginRequiredMixin):
+class ContractCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
+    permission_required = "contracts.add_contract"
     model = Contract
     form_class = ContractForm
     template_name = "contracts/contract_create.html"
@@ -24,12 +25,14 @@ class ContractCreateView(CreateView, LoginRequiredMixin):
         return reverse("detail-contract", kwargs={"pk": self.object.pk})
 
 
-class ContractDetailView(DetailView, LoginRequiredMixin):
+class ContractDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "contracts.view_contract"
     model = Contract
     template_name = "contracts/contract_detail.html"
 
 
-class ContractUpdateView(UpdateView, LoginRequiredMixin):
+class ContractUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "contracts.change_contract"
     model = Contract
     form_class = ContractForm
     template_name = "contracts/contract_update.html"
@@ -38,7 +41,8 @@ class ContractUpdateView(UpdateView, LoginRequiredMixin):
         return reverse("detail-contract", kwargs={"pk": self.object.pk})
 
 
-class ContractDeleteView(DeleteView, LoginRequiredMixin):
+class ContractDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
+    permission_required = "contracts.delete_contract"
     model = Contract
     template_name = "contracts/contract_delete.html"
 
@@ -46,7 +50,8 @@ class ContractDeleteView(DeleteView, LoginRequiredMixin):
         return reverse("list-contract")
 
 
-class ContractListView(ListView, LoginRequiredMixin):
+class ContractListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
+    permission_required = "contracts.view_contract"
     model = Contract
     template_name = "contracts/contract_list.html"
     paginate_by = 10

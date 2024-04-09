@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -15,7 +15,8 @@ from employees.forms.forms_payment import PaymentForm
 from employees.models.models_payment import Payment
 
 
-class PaymentCreateView(CreateView, LoginRequiredMixin):
+class PaymentCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
+    permission_required = "employees.add_payment"
     model = Payment
     form_class = PaymentForm
     template_name = "employees/payments/payment_create.html"
@@ -24,12 +25,14 @@ class PaymentCreateView(CreateView, LoginRequiredMixin):
         return reverse("detail-payment", kwargs={"pk": self.object.pk})
 
 
-class PaymentDetailView(DetailView, LoginRequiredMixin):
+class PaymentDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "employees.view_payment"
     model = Payment
     template_name = "employees/payments/payment_detail.html"
 
 
-class PaymentUpdateView(UpdateView, LoginRequiredMixin):
+class PaymentUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "employees.change_payment"
     model = Payment
     form_class = PaymentForm
     template_name = "employees/payments/payment_update.html"
@@ -38,13 +41,15 @@ class PaymentUpdateView(UpdateView, LoginRequiredMixin):
         return reverse("detail-payment", kwargs={"pk": self.object.pk})
 
 
-class PaymentDeleteView(DeleteView, LoginRequiredMixin):
+class PaymentDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
+    permission_required = "employees.delete_payment"
     model = Payment
     template_name = "employees/payments/payment_delete.html"
     success_url = reverse_lazy("list-payment")
 
 
-class PaymentListView(ListView, LoginRequiredMixin):
+class PaymentListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
+    permission_required = "employees.view_payment"
     model = Payment
     ordering = "-date"
     paginate_by = 10

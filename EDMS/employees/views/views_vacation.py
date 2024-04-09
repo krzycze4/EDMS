@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from employees.forms.forms_vacation import VacationForm
@@ -10,7 +10,8 @@ from employees.models.models_vacation import Vacation
 User = get_user_model()
 
 
-class VacationCreateView(CreateView, LoginRequiredMixin):
+class VacationCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
+    permission_required = "employees.add_vacation"
     model = Vacation
     form_class = VacationForm
     template_name = "employees/vacations/vacation_create.html"
@@ -26,12 +27,14 @@ class VacationCreateView(CreateView, LoginRequiredMixin):
         return initial
 
 
-class VacationDetailView(DetailView, LoginRequiredMixin):
+class VacationDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "employees.view_vacation"
     model = Vacation
     template_name = "employees/vacations/vacation_detail.html"
 
 
-class VacationUpdateView(UpdateView, LoginRequiredMixin):
+class VacationUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "employees.change_vacation"
     model = Vacation
     form_class = VacationForm
     template_name = "employees/vacations/vacation_update.html"
@@ -47,7 +50,8 @@ class VacationUpdateView(UpdateView, LoginRequiredMixin):
         return initial
 
 
-class VacationDeleteView(DeleteView, LoginRequiredMixin):
+class VacationDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
+    permission_required = "employees.delete_vacation"
     model = Vacation
     template_name = "employees/vacations/vacation_delete.html"
 

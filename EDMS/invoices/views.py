@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Union
 
 from django import forms
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -17,7 +17,8 @@ from invoices.models import Invoice
 from orders.models import Order
 
 
-class InvoiceCreateView(CreateView, LoginRequiredMixin):
+class InvoiceCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
+    permission_required = "invoices.add_invoice"
     template_name = "invoices/create_invoice.html"
     model = Invoice
     form_class = InvoiceForm
@@ -26,7 +27,8 @@ class InvoiceCreateView(CreateView, LoginRequiredMixin):
         return reverse_lazy("detail-invoice", kwargs={"pk": self.object.pk})
 
 
-class InvoiceDetailView(DetailView, LoginRequiredMixin):
+class InvoiceDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "invoices.view_invoice"
     template_name = "invoices/detail_invoice.html"
     model = Invoice
 
@@ -42,7 +44,8 @@ class InvoiceDetailView(DetailView, LoginRequiredMixin):
         return child_invoices
 
 
-class InvoiceListView(ListView, LoginRequiredMixin):
+class InvoiceListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
+    permission_required = "invoices.view_invoice"
     template_name = "invoices/list_invoice.html"
     queryset = Invoice.objects.all()
     paginate_by = 10
@@ -61,7 +64,8 @@ class InvoiceListView(ListView, LoginRequiredMixin):
         return context
 
 
-class InvoiceUpdateView(UpdateView, LoginRequiredMixin):
+class InvoiceUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "invoices.change_invoice"
     model = Invoice
     form_class = InvoiceForm
     template_name = "invoices/update_invoice.html"
@@ -96,7 +100,8 @@ class InvoiceUpdateView(UpdateView, LoginRequiredMixin):
         return form
 
 
-class InvoiceDeleteView(DeleteView, LoginRequiredMixin):
+class InvoiceDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
+    permission_required = "invoices.delete_invoice"
     model = Invoice
     template_name = "invoices/delete_invoice.html"
     success_url = reverse_lazy("list-invoice")

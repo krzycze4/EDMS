@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Union
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
@@ -18,7 +18,8 @@ from orders.forms.forms_order import OrderCreateForm, OrderUpdateForm
 from orders.models import Order
 
 
-class OrderCreateView(CreateView, LoginRequiredMixin):
+class OrderCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
+    permission_required = "orders.add_order"
     template_name = "orders/orders/create_order.html"
     form_class = OrderCreateForm
 
@@ -31,7 +32,8 @@ class OrderCreateView(CreateView, LoginRequiredMixin):
         return reverse("detail-order", kwargs={"pk": self.object.pk})
 
 
-class OrderDetailView(DetailView, LoginRequiredMixin):
+class OrderDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "orders.view_order"
     template_name = "orders/orders/detail_order.html"
     model = Order
 
@@ -64,7 +66,8 @@ class OrderDetailView(DetailView, LoginRequiredMixin):
         return sum_net_price
 
 
-class OrderUpdateView(UpdateView, LoginRequiredMixin):
+class OrderUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "orders.change_order"
     template_name = "orders/orders/update_order.html"
     model = Order
     form_class = OrderUpdateForm
@@ -73,7 +76,8 @@ class OrderUpdateView(UpdateView, LoginRequiredMixin):
         return reverse("detail-order", kwargs={"pk": self.object.pk})
 
 
-class OrderListView(ListView, LoginRequiredMixin):
+class OrderListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
+    permission_required = "orders.view_order"
     template_name = "orders/orders/list_order.html"
     queryset = Order.objects.all()
     paginate_by = 10
@@ -91,13 +95,15 @@ class OrderListView(ListView, LoginRequiredMixin):
         return context
 
 
-class OrderDeleteView(DeleteView, LoginRequiredMixin):
+class OrderDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
+    permission_required = "orders.delete_order"
     template_name = "orders/orders/delete_order.html"
     model = Order
     success_url = reverse_lazy("list-order")
 
 
-class OrderManageInvoices(UpdateView, LoginRequiredMixin):
+class OrderManageInvoices(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "orders.change_order"
     template_name = "orders/orders/manage_invoice.html"
     form_class = ManageInvoicesForm
     model = Order

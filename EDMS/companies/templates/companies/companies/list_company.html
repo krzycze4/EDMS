@@ -5,8 +5,11 @@
 {% block content %}
     <div class="container-fluid">
         <p class="mb-4">
-            Table represents the whole list of companies added to the system. If you click the name of any company you will see its details.
-            If there's not looking for company - create <a href="{% url "find-company" %}">New Company</a>.
+            Table represents the list of companies added to the system. If you click the name of any company you will see its details.
+            {% if group.name == 'ceos' or group.name == 'accountants' %}
+                If there's not looking for company - create
+                <a href="{% url "find-company" %}">New Company</a>.
+            {% endif %}
         </p>
         <div class="card shadow mb-4">
             <div class="card-header py-3">

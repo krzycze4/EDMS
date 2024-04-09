@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from employees.forms.forms_addendum import AddendumForm
@@ -8,7 +8,8 @@ from employees.models.models_addendum import Addendum
 User = get_user_model()
 
 
-class AddendumCreateView(CreateView, LoginRequiredMixin):
+class AddendumCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
+    permission_required = "addendum.add_addendum"
     model = Addendum
     template_name = "employees/addenda/addendum_create.html"
     form_class = AddendumForm
@@ -17,12 +18,14 @@ class AddendumCreateView(CreateView, LoginRequiredMixin):
         return reverse("detail-addendum", kwargs={"pk": self.object.pk})
 
 
-class AddendumDetailView(DetailView, LoginRequiredMixin):
+class AddendumDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+    permission_required = "addendum.view_addendum"
     model = Addendum
     template_name = "employees/addenda/addendum_detail.html"
 
 
-class AddendumUpdateView(UpdateView, LoginRequiredMixin):
+class AddendumUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+    permission_required = "addendum.change_addendum"
     model = Addendum
     form_class = AddendumForm
     template_name = "employees/addenda/addendum_update.html"
@@ -31,7 +34,8 @@ class AddendumUpdateView(UpdateView, LoginRequiredMixin):
         return reverse("detail-addendum", kwargs={"pk": self.kwargs["pk"]})
 
 
-class AddendumDeleteView(DeleteView, LoginRequiredMixin):
+class AddendumDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
+    permission_required = "addendum.delete_addendum"
     model = Addendum
     template_name = "employees/addenda/addendum_delete.html"
 
