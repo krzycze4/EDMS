@@ -111,6 +111,13 @@ def set_start_month_and_year(start_month: int, start_year: int) -> Tuple[int, in
     return start_month, start_year
 
 
+# def set_start_month_and_year(start_month: int, start_year: int) -> Tuple[int, int]:
+#     new_month = (start_month % 12) + 1
+#     new_year = start_year + (start_month // 12)
+
+# (2, 2024)
+
+
 def set_x_values(
     plot_data: Dict[Tuple[int, int], Decimal]
 ) -> List[Union[str | NoneType]]:

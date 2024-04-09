@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-from EDMS.groups import create_group_with_permissions
+from EDMS.group_utils import create_group_with_permissions
 
 
 def define_groups(sender, **kwargs):
