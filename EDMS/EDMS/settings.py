@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "dpd_static_support",
     "channels",
     "rest_framework",
+    "silk",
 ]
 
 INSTALLED_EXTENSIONS = [
@@ -56,6 +57,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
 ]
+
+if DEBUG:
+    MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
 
 AUTH_USER_MODEL = "users.User"
 
@@ -127,6 +131,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
