@@ -26,6 +26,7 @@ from .views.views_employee import (
     EmployeeListView,
     EmployeeUpdateView,
 )
+from .views.views_group import GroupUpdateView
 from .views.views_password import CustomPasswordChangeView
 from .views.views_payment import (
     PaymentCreateView,
@@ -162,6 +163,7 @@ urlpatterns = [
         name="list-payment",
     ),
     path("change-password/", CustomPasswordChangeView.as_view(), name="change-password"),
+    path("employees/<int:pk>/update-group", GroupUpdateView.as_view(), name="update-group"),
     path("", include(router.urls)),
 ]
 

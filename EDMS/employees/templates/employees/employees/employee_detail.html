@@ -9,6 +9,11 @@
                 <div class="card-header d-flex justify-content-between align-items-center pointer">
                     <h6 class="m-0 font-weight-bold text-primary">{{ user }}</h6>
                     <div class="d-flex">
+                        {% if group.name == "ceos" %}
+                            <a class="btn btn-info mr-2"
+                               type="button"
+                               href="{% url "update-group" user.pk %}">Set permission group</a>
+                        {% endif %}
                         {% if user == request.user %}
                             <a class="btn btn-warning mr-2"
                                type="button"
@@ -44,6 +49,15 @@
                                     <p class="font-weight-bold">E-mail: {{ user.email }}</p>
                                     <p class="font-weight-bold">Phone number: {{ user.phone_number }}</p>
                                     <p class="font-weight-bold">Position: {{ user.position }}</p>
+                                    {% if group.name == "ceos" %}
+                                        <p class="font-weight-bold">
+                                            Permission groups:
+                                            {% for employee_group in user.groups.all %}
+                                                {{ employee_group.name }}
+                                                {% if not forloop.last %},{% endif %}
+                                            {% endfor %}
+                                        </p>
+                                    {% endif %}
                                     {% if group.name == "ceos" or group.name == "hrs" %}
                                         <a class="btn btn-warning mr-2"
                                            type="button"
