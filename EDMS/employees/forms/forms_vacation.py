@@ -35,12 +35,8 @@ class VacationForm(forms.ModelForm):
         ]
         widgets = {
             "type": forms.Select(attrs={"class": "form-control"}),
-            "start_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
+            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "leave_user": forms.HiddenInput(),
             "substitute_users": forms.SelectMultiple(
                 attrs={"class": "form-control js-example-basic-multiple", "size": 3}
@@ -56,9 +52,7 @@ class VacationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["substitute_users"].queryset = User.objects.exclude(
-            pk=kwargs["initial"]["leave_user"]
-        )
+        self.fields["substitute_users"].queryset = User.objects.exclude(pk=kwargs["initial"]["leave_user"])
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data: Dict[str, Any] = super().clean()

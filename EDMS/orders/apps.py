@@ -10,13 +10,8 @@ def define_groups(sender, **kwargs):
         "accountants": ["view_order"],
         "managers": ["add_order", "change_order", "delete_order", "view_order"],
     }
-    for (
-        group_name,
-        permission_codenames,
-    ) in group_names_with_permission_codenames.items():
-        create_group_with_permissions(
-            group_name=group_name, permission_codenames=permission_codenames
-        )
+    for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
+        create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
 
 
 class OrdersConfig(AppConfig):

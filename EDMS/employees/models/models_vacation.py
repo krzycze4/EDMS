@@ -24,9 +24,7 @@ class Vacation(models.Model):
     type = models.CharField(max_length=9, choices=TYPE_CHOICES)
     start_date = models.DateField()
     end_date = models.DateField()
-    leave_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="vacations"
-    )
+    leave_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vacations")
     substitute_users = models.ManyToManyField(User, related_name="vacation")
     scan = models.FileField(upload_to="vacations")
     included_days_off = models.PositiveSmallIntegerField(
@@ -47,15 +45,8 @@ class Vacation(models.Model):
             Agreement,
         )
 
-        agreement = (
-            self.leave_user.agreements.filter(type=Agreement.EMPLOYMENT)
-            .order_by("-create_date")
-            .first()
-        )
-        self.leave_user.vacation_left = (
-            agreement.count_granted_vacation_from_agreement()
-            - self.count_used_vacation()
-        )
+        agreement = self.leave_user.agreements.filter(type=Agreement.EMPLOYMENT).order_by("-create_date").first()
+        self.leave_user.vacation_left = agreement.count_granted_vacation_from_agreement() - self.count_used_vacation()
         self.leave_user.save()
 
     @staticmethod
@@ -63,9 +54,5 @@ class Vacation(models.Model):
         used_vacation_days: int = 0
         vacations = list(Vacation.objects.filter(type=Vacation.ANNUAL))
         for vacation in vacations:
-            used_vacation_days += (
-                (vacation.end_date - vacation.start_date).days
-                - vacation.included_days_off
-                + 1
-            )
+            used_vacation_days += (vacation.end_date - vacation.start_date).days - vacation.included_days_off + 1
         return used_vacation_days

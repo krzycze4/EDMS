@@ -39,9 +39,7 @@ class CustomUserCreationForm(BaseUserCreationForm):
     password1 = forms.CharField(
         label=_("Password"),
         strip=False,
-        widget=forms.PasswordInput(
-            attrs={"class": "form-control form-control-user", "placeholder": "Password"}
-        ),
+        widget=forms.PasswordInput(attrs={"class": "form-control form-control-user", "placeholder": "Password"}),
         help_text=password_validation.password_validators_help_text_html(),
     )
     password2 = forms.CharField(
@@ -69,7 +67,5 @@ class CustomUserCreationForm(BaseUserCreationForm):
     def clean_email(self) -> str:
         email: str = self.cleaned_data["email"]
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError(
-                message=f"Email '{email}' has been already used."
-            )
+            raise forms.ValidationError(message=f"Email '{email}' has been already used.")
         return email

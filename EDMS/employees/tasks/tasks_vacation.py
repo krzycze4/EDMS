@@ -15,13 +15,9 @@ User = get_user_model()
 @shared_task
 def set_user_vacation_left() -> None:
     for user in User.objects.filter(is_superuser=False, is_active=True):
-        current_employment_agreement = user.agreements.filter(
-            type=Agreement.EMPLOYMENT, is_current=True
-        )
+        current_employment_agreement = user.agreements.filter(type=Agreement.EMPLOYMENT, is_current=True)
         if current_employment_agreement:
-            add_new_vacation_days(
-                user=user, current_employment_agreement=current_employment_agreement
-            )
+            add_new_vacation_days(user=user, current_employment_agreement=current_employment_agreement)
 
 
 def add_new_vacation_days(user: User, current_employment_agreement: Agreement) -> None:
@@ -31,17 +27,13 @@ def add_new_vacation_days(user: User, current_employment_agreement: Agreement) -
     user.save()
 
 
-def count_granted_vacation_from_agreement(
-    current_employment_agreement: Agreement, user: User
-) -> int:
+def count_granted_vacation_from_agreement(current_employment_agreement: Agreement, user: User) -> int:
     months_in_year = 12
     work_months_current_year = count_work_months_current_year(
         start_date=current_employment_agreement.start_date,
         end_date_actual=current_employment_agreement.end_date_actual,
     )
-    vacation_from_agreement = ceil(
-        work_months_current_year * user.vacation_days_per_year / months_in_year
-    )
+    vacation_from_agreement = ceil(work_months_current_year * user.vacation_days_per_year / months_in_year)
     return vacation_from_agreement
 
 
@@ -59,9 +51,7 @@ def count_work_months_current_year(start_date: date, end_date_actual: date) -> i
 
 @shared_task
 def remind_vacations(remind_days: int) -> None:
-    for vacation in Vacation.objects.filter(
-        start_date=timezone.now().date() + timezone.timedelta(days=remind_days)
-    ):
+    for vacation in Vacation.objects.filter(start_date=timezone.now().date() + timezone.timedelta(days=remind_days)):
         send_mail_to_leave_user(vacation)
         send_mails_to_substitute_users(vacation)
 

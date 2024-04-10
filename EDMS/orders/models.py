@@ -25,21 +25,15 @@ class Order(models.Model):
         validators=[MinValueValidator(1.00)],
     )
     status = models.CharField(max_length=9, choices=STATUS_CHOICES, default=OPEN)
-    company = models.ForeignKey(
-        Company, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders"
-    )
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")
     income_invoice = models.ManyToManyField(
         Invoice,
         blank=True,
         related_name="order_from_income_invoice",
     )
-    cost_invoice = models.ManyToManyField(
-        Invoice, blank=True, related_name="order_from_cost_invoice"
-    )
+    cost_invoice = models.ManyToManyField(Invoice, blank=True, related_name="order_from_cost_invoice")
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    contract = models.ForeignKey(
-        Contract, on_delete=models.SET_NULL, null=True, related_name="orders"
-    )
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True, related_name="orders")
     create_date = models.DateField(default=timezone.now)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -52,12 +46,8 @@ class Order(models.Model):
         if not self.pk:
             current_month = timezone.now().strftime("%m")
             current_year = timezone.now().strftime("%Y")
-            counter = self.declare_counter(
-                current_month=current_month, current_year=current_year
-            )
-            self.name = (
-                f"{self.company.shortcut}-{counter}/{current_month}/{current_year}"
-            )
+            counter = self.declare_counter(current_month=current_month, current_year=current_year)
+            self.name = f"{self.company.shortcut}-{counter}/{current_month}/{current_year}"
         super().save(*args, **kwargs)
 
     def declare_counter(self, current_month: int, current_year: int) -> int:
@@ -78,12 +68,8 @@ class Protocol(models.Model):
     name = models.CharField(max_length=64)
     scan = models.FileField(upload_to="protocols/")
     create_date = models.DateField()
-    user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="protocols"
-    )
-    order = models.ForeignKey(
-        Order, on_delete=models.SET_NULL, null=True, related_name="protocols"
-    )
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="protocols")
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, related_name="protocols")
 
     def __str__(self) -> str:
         return f"{self.name}"

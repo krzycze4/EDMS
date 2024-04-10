@@ -15,11 +15,7 @@ class Termination(models.Model):
         return f"Termination #{self.name}"
 
     def update_agreement_end_date(self):
-        last_addendum = (
-            Addendum.objects.filter(agreement=self.agreement)
-            .order_by("create_date")
-            .last()
-        )
+        last_addendum = Addendum.objects.filter(agreement=self.agreement).order_by("create_date").last()
         if self.agreement.termination:
             self.agreement.end_date_actual = self.agreement.termination.end_date
         elif last_addendum:
@@ -42,9 +38,7 @@ class Termination(models.Model):
     def delete(self, *args, **kwargs):
         agreement = self.agreement
         super().delete(*args, **kwargs)
-        last_addendum = (
-            Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
-        )
+        last_addendum = Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
         if last_addendum:
             agreement.end_date_actual = last_addendum.end_date
         else:

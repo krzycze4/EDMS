@@ -10,15 +10,9 @@ class TerminationForm(forms.ModelForm):
         fields = ["name", "create_date", "agreement", "end_date", "scan"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "agreement": forms.Select(
-                attrs={"class": "form-control js-example-basic-single"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
+            "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "agreement": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "scan": forms.FileInput(),
         }
 
@@ -27,9 +21,7 @@ class TerminationForm(forms.ModelForm):
         if self.instance.pk:
             self.fields["agreement"].disabled = True
         else:
-            self.fields["agreement"].queryset = Agreement.objects.filter(
-                termination=None
-            )
+            self.fields["agreement"].queryset = Agreement.objects.filter(termination=None)
 
     def clean(self):
         cleaned_data = super().clean()

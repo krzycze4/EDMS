@@ -64,9 +64,7 @@ class TestCaseUserRegisterView(TestCase):
         }
         response = self.client.post(reverse("register"), data=form_data)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertTemplateUsed(
-            response, "email_templates/account_activation_email.html"
-        )
+        self.assertTemplateUsed(response, "email_templates/account_activation_email.html")
 
         token = response.context["token"]
         self.assertEqual(len(token), 39)
@@ -132,11 +130,7 @@ class TestCaseActivateAccountView(TestCase):
 
     def test_activate_user_successfully(self):
         self.assertFalse(self.user.is_active)
-        response = self.client.get(
-            reverse(
-                "activate-account", kwargs={"uidb64": self.uidb64, "token": self.token}
-            )
-        )
+        response = self.client.get(reverse("activate-account", kwargs={"uidb64": self.uidb64, "token": self.token}))
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/register/activation_result.html")
@@ -144,11 +138,7 @@ class TestCaseActivateAccountView(TestCase):
         self.assertTrue(self.user.is_active)
 
     def test_user_activation_failure_uidb64(self):
-        response = self.client.get(
-            reverse(
-                "activate-account", kwargs={"uidb64": "invalid", "token": self.token}
-            )
-        )
+        response = self.client.get(reverse("activate-account", kwargs={"uidb64": "invalid", "token": self.token}))
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/register/activation_result.html")
@@ -156,11 +146,7 @@ class TestCaseActivateAccountView(TestCase):
         self.assertFalse(self.user.is_active)
 
     def test_user_activation_failure_token(self):
-        response = self.client.get(
-            reverse(
-                "activate-account", kwargs={"uidb64": self.uidb64, "token": "invalid"}
-            )
-        )
+        response = self.client.get(reverse("activate-account", kwargs={"uidb64": self.uidb64, "token": "invalid"}))
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/register/activation_result.html")

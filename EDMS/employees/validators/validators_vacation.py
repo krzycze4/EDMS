@@ -15,9 +15,7 @@ def validate_no_overlap_vacation_dates(cleaned_data: Dict[str, Any]) -> None:
     leave_user: date = cleaned_data["leave_user"]
     if "id" in cleaned_data.keys():
         vacation_id: int = cleaned_data["id"]
-        vacations = Vacation.objects.filter(leave_user=leave_user).exclude(
-            pk=vacation_id
-        )
+        vacations = Vacation.objects.filter(leave_user=leave_user).exclude(pk=vacation_id)
     else:
         vacations = Vacation.objects.filter(leave_user=leave_user)
     if vacations:
@@ -37,26 +35,14 @@ def validate_no_overlap_vacation_dates(cleaned_data: Dict[str, Any]) -> None:
 
 def validate_user_can_take_vacation(cleaned_data: Dict[str, Any]) -> None:
     leave_user: User = cleaned_data["leave_user"]
-    if not Agreement.objects.filter(
-        user=leave_user, is_current=True, type=Agreement.EMPLOYMENT
-    ).exists():
-        raise ValidationError(
-            {
-                "scan": "You can't take vacation because you don't have current employment agreement."
-            }
-        )
+    if not Agreement.objects.filter(user=leave_user, is_current=True, type=Agreement.EMPLOYMENT).exists():
+        raise ValidationError({"scan": "You can't take vacation because you don't have current employment agreement."})
 
 
 def validate_enough_vacation_left(cleaned_data: Dict[str, Any]) -> None:
     vacation_left = cleaned_data["leave_user"].vacation_left
     considered_vacation = (
-        (cleaned_data["end_date"] - cleaned_data["start_date"]).days
-        + cleaned_data["included_days_off"]
-        + 1
+        (cleaned_data["end_date"] - cleaned_data["start_date"]).days + cleaned_data["included_days_off"] + 1
     )
     if considered_vacation > vacation_left:
-        raise ValidationError(
-            {
-                "scan": "You can't take vacation because you don't have enough vacation left."
-            }
-        )
+        raise ValidationError({"scan": "You can't take vacation because you don't have enough vacation left."})

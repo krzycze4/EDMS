@@ -36,9 +36,7 @@ class Contact(models.Model):
     email = models.EmailField(max_length=100, blank=True)
     phone = models.CharField(max_length=20, blank=True)
     description = models.CharField(max_length=200)
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="contacts"
-    )
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="contacts")
 
     def __str__(self):
         return f"{self.name}"

@@ -89,13 +89,9 @@ class InvoiceUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
     def get_form(self, form_class=None) -> InvoiceForm:
         form = super().get_form(form_class)
         if self.get_order():
-            form.fields["seller"].widget = forms.HiddenInput(
-                attrs={"class": "form-control", "readonly": "readonly"}
-            )
+            form.fields["seller"].widget = forms.HiddenInput(attrs={"class": "form-control", "readonly": "readonly"})
             form.fields["seller"].label = ""
-            form.fields["buyer"].widget = forms.HiddenInput(
-                attrs={"class": "form-control", "readonly": "readonly"}
-            )
+            form.fields["buyer"].widget = forms.HiddenInput(attrs={"class": "form-control", "readonly": "readonly"})
             form.fields["buyer"].label = ""
         return form
 

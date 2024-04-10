@@ -5,9 +5,7 @@ from employees.models.models_agreement import Agreement
 
 class Addendum(models.Model):
     name = models.CharField(max_length=25)
-    agreement = models.ForeignKey(
-        Agreement, on_delete=models.CASCADE, related_name="addenda"
-    )
+    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE, related_name="addenda")
     create_date = models.DateField()
     end_date = models.DateField()
     salary_gross = models.IntegerField()
@@ -20,11 +18,7 @@ class Addendum(models.Model):
         return f"Addendum #{self.name}"
 
     def update_agreement_end_date(self):
-        last_addendum = (
-            Addendum.objects.filter(agreement=self.agreement)
-            .order_by("create_date")
-            .last()
-        )
+        last_addendum = Addendum.objects.filter(agreement=self.agreement).order_by("create_date").last()
         if last_addendum:
             self.agreement.end_date_actual = last_addendum.end_date
         else:
@@ -45,9 +39,7 @@ class Addendum(models.Model):
     def delete(self, *args, **kwargs):
         agreement = self.agreement
         super().delete(*args, **kwargs)
-        last_addendum = (
-            Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
-        )
+        last_addendum = Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
         if last_addendum:
             agreement.end_date_actual = last_addendum.end_date
         else:

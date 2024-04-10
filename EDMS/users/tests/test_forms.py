@@ -34,7 +34,5 @@ class TestCaseCustomUserCreationForm(TestCase):
                 "password2": "edmsedms1",
             }
         )
-        self.assertEqual(
-            form.errors["email"], ["Email 'email@email.com' has been already used."]
-        )
+        self.assertEqual(form.errors["email"], ["Email 'email@email.com' has been already used."])
         self.assertFalse(form.is_valid())

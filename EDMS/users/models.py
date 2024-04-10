@@ -22,9 +22,7 @@ class CustomUserManager(UserManager):
         # Lookup the real model class from the global app registry so this
         # manager method can be used in migrations. This is fine because
         # managers are by definition working on the real model.
-        GlobalUserModel: Any = apps.get_model(
-            self.model._meta.app_label, self.model._meta.object_name
-        )
+        GlobalUserModel: Any = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
         email = GlobalUserModel.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.password = make_password(password)
@@ -64,17 +62,14 @@ class User(AbstractUser):
         _("active"),
         default=False,
         help_text=_(
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
+            "Designates whether this user should be treated as active. " "Unselect this instead of deleting accounts."
         ),
     )
     phone_number = models.CharField(max_length=50, null=True)
     position = models.CharField(max_length=30, null=True)
     vacation_days_per_year = models.PositiveSmallIntegerField(default=26)
     vacation_left = models.SmallIntegerField(default=0)
-    address = models.ForeignKey(
-        Address, on_delete=models.SET_NULL, null=True, blank=True
-    )
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
     photo = models.ImageField(upload_to="photos", default="photos/undraw_profile.svg")
 
     objects = CustomUserManager()

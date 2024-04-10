@@ -33,9 +33,7 @@ class TestCaseCustomPasswordResetDoneView(TestCase):
     def test_status_and_template(self):
         response = self.client.get(reverse("forgot-password-done"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(
-            response, "users/forgot_password/forgot_password_done.html"
-        )
+        self.assertTemplateUsed(response, "users/forgot_password/forgot_password_done.html")
 
 
 class TestCaseCustomPasswordResetConfirmView(TestCase):
@@ -63,9 +61,7 @@ class TestCaseCustomPasswordResetConfirmView(TestCase):
 
     def test_render_set_password_page(self):
         response = self.client.get(f"/forgot-password/{self.uidb64}/set-password/")
-        self.assertTemplateUsed(
-            response, "users/forgot_password/forgot_password_confirm.html"
-        )
+        self.assertTemplateUsed(response, "users/forgot_password/forgot_password_confirm.html")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_change_password_with_different_new_passwords(self):
@@ -119,6 +115,4 @@ class TestCaseCustomPasswordResetCompleteView(TestCase):
     def test_render_forgot_password_complete(self):
         response = self.client.get(reverse("forgot-password-complete"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(
-            response, "users/forgot_password/forgot_password_complete.html"
-        )
+        self.assertTemplateUsed(response, "users/forgot_password/forgot_password_complete.html")

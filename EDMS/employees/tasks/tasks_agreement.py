@@ -12,9 +12,7 @@ def set_agreement_is_current() -> None:
 
 
 def set_agreement_is_current_for_ending_agreement() -> None:
-    for agreement in Agreement.objects.filter(
-        end_date_actual=timezone.now().date() - timezone.timedelta(days=1)
-    ):
+    for agreement in Agreement.objects.filter(end_date_actual=timezone.now().date() - timezone.timedelta(days=1)):
         agreement.is_current = False
         agreement.save()
 
@@ -27,9 +25,7 @@ def set_agreement_is_current_for_starting_agreement() -> None:
 
 @shared_task
 def remind_expiring_agreement(remind_days: int):
-    for agreement in Agreement.objects.filter(
-        end_date=timezone.now().date() + timezone.timedelta(days=remind_days)
-    ):
+    for agreement in Agreement.objects.filter(end_date=timezone.now().date() + timezone.timedelta(days=remind_days)):
         send_mail_to_user(agreement)
 
 

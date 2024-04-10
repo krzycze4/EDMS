@@ -37,6 +37,4 @@ class TerminationDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMi
     template_name = "employees/terminations/termination_delete.html"
 
     def get_success_url(self) -> str:
-        return reverse(
-            "detail-employee", kwargs={"pk": self.get_object().agreement.user.pk}
-        )
+        return reverse("detail-employee", kwargs={"pk": self.get_object().agreement.user.pk})

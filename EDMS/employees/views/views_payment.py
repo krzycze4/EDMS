@@ -58,9 +58,7 @@ class PaymentListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     context_object_name = "payments"
 
     def get_queryset(self) -> QuerySet[Payment]:
-        self.filter_set = PaymentFilterSet(
-            self.request.GET, queryset=Payment.objects.all()
-        )
+        self.filter_set = PaymentFilterSet(self.request.GET, queryset=Payment.objects.all())
         return self.filter_set.qs
 
     def get_context_data(self, *args, **kwargs) -> Dict[str, Any]:

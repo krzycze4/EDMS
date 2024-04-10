@@ -26,13 +26,8 @@ def define_groups(sender, **kwargs):
         "managers": ["view_company", "add_contact"],
         "hrs": ["view_company", "add_contact"],
     }
-    for (
-        group_name,
-        permission_codenames,
-    ) in group_names_with_permission_codenames.items():
-        create_group_with_permissions(
-            group_name=group_name, permission_codenames=permission_codenames
-        )
+    for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
+        create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
 
 
 class CompaniesConfig(AppConfig):

@@ -87,9 +87,7 @@ class Migration(migrations.Migration):
                 ("date", models.DateField()),
                 (
                     "fee",
-                    models.IntegerField(
-                        validators=[django.core.validators.MinValueValidator(1)]
-                    ),
+                    models.IntegerField(validators=[django.core.validators.MinValueValidator(1)]),
                 ),
             ],
         ),

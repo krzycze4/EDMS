@@ -11,3 +11,5 @@ urlpatterns = [
     path("", include("orders.urls")),
     path("", include("employees.urls")),
 ]
+
+urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]

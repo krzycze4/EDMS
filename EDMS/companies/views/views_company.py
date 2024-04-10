@@ -33,9 +33,7 @@ class CompanyFindView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
     form_class = KRSForm
     success_url = reverse_lazy("create-company")
 
-    def post(
-        self, request: HttpRequest, *args, **kwargs
-    ) -> Union[HttpResponse | Callable]:
+    def post(self, request: HttpRequest, *args, **kwargs) -> Union[HttpResponse | Callable]:
         form: KRSForm = self.get_form()
 
         if form.is_valid():
@@ -43,9 +41,7 @@ class CompanyFindView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
             api_url: str = os.path.join(settings.BASE_KRS_API_URL, krs)
 
             try:
-                response: requests.Response = requests.get(
-                    url=api_url, timeout=settings.KRS_API_TIMEOUT
-                )
+                response: requests.Response = requests.get(url=api_url, timeout=settings.KRS_API_TIMEOUT)
             except requests.Timeout:
                 messages.error(
                     self.request,
@@ -73,21 +69,17 @@ class CompanyFindView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
             )
         return render(self.request, self.template_name, {"form": form})
 
-    def process_valid_response(
-        self, response: requests.Response, krs: str
-    ) -> HttpResponseRedirect:
+    def process_valid_response(self, response: requests.Response, krs: str) -> HttpResponseRedirect:
         api_json = response.json()
 
-        company_data: Dict[str, Union[str, Dict[str, str]]] = api_json["odpis"]["dane"][
-            "dzial1"
-        ]["danePodmiotu"]
+        company_data: Dict[str, Union[str, Dict[str, str]]] = api_json["odpis"]["dane"]["dzial1"]["danePodmiotu"]
         name: str = company_data["nazwa"]
         regon: str = company_data["identyfikatory"]["regon"]
         nip: str = company_data["identyfikatory"]["nip"]
 
-        company_address: Dict[str, Union[str, Dict[str, str]]] = api_json["odpis"][
-            "dane"
-        ]["dzial1"]["siedzibaIAdres"]["adres"]
+        company_address: Dict[str, Union[str, Dict[str, str]]] = api_json["odpis"]["dane"]["dzial1"]["siedzibaIAdres"][
+            "adres"
+        ]
         street_name = company_address["ulica"]
         street_number = company_address["nrDomu"]
         city = company_address["miejscowosc"]
@@ -188,9 +180,7 @@ class CompanyDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin)
     template_name = "companies/companies/detail_company.html"
 
 
-class CompanyIdentifiersUpdateView(
-    PermissionRequiredMixin, UpdateView, LoginRequiredMixin
-):
+class CompanyIdentifiersUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
     permission_required = "companies.change_company"
     model = Company
     form_class = UpdateCompanyIdentifiersForm

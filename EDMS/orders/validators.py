@@ -14,9 +14,7 @@ def validate_end_date_after_start_date(cleaned_data: Dict[str, Any]) -> None:
     start_date = cleaned_data["start_date"]
     end_date = cleaned_data["end_date"]
     if start_date > end_date:
-        raise ValidationError(
-            {"end_date": "End end_date can't be earlier than start end_date!"}
-        )
+        raise ValidationError({"end_date": "End end_date can't be earlier than start end_date!"})
 
 
 def validate_no_repetition(cleaned_data: Dict[str, Any]) -> None:
@@ -24,9 +22,7 @@ def validate_no_repetition(cleaned_data: Dict[str, Any]) -> None:
     end_date = cleaned_data["end_date"]
     payment = cleaned_data["payment"]
     company = cleaned_data["company"]
-    if Order.objects.filter(
-        payment=payment, company=company, start_date=start_date, end_date=end_date
-    ):
+    if Order.objects.filter(payment=payment, company=company, start_date=start_date, end_date=end_date):
         raise ValidationError(
             {
                 "name": "Order with this data already exists!",
@@ -37,9 +33,7 @@ def validate_no_repetition(cleaned_data: Dict[str, Any]) -> None:
 def validate_no_future_create_date(cleaned_data: Dict[str, Any]) -> None:
     create_date = cleaned_data["create_date"]
     if timezone.now().date() < create_date:
-        raise ValidationError(
-            {"create_date": "The create end_date can't be future end_date."}
-        )
+        raise ValidationError({"create_date": "The create end_date can't be future end_date."})
 
 
 def validate_max_size_file(cleaned_data: Dict[str, Any]) -> None:
@@ -47,9 +41,7 @@ def validate_max_size_file(cleaned_data: Dict[str, Any]) -> None:
     scan_size = scan.size
     max_scan_size = 10**7  # 10mB
     if scan_size > max_scan_size:
-        raise ValidationError(
-            {"scan": f"Max size file is {naturalsize(max_scan_size)}"}
-        )
+        raise ValidationError({"scan": f"Max size file is {naturalsize(max_scan_size)}"})
 
 
 def validate_file_extension(cleaned_data: Dict[str, Any]) -> None:

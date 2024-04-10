@@ -31,9 +31,7 @@ class Migration(migrations.Migration):
                 ("password", models.CharField(max_length=128, verbose_name="password")),
                 (
                     "last_login",
-                    models.DateTimeField(
-                        blank=True, null=True, verbose_name="last login"
-                    ),
+                    models.DateTimeField(blank=True, null=True, verbose_name="last login"),
                 ),
                 (
                     "is_superuser",
@@ -53,9 +51,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "date_joined",
-                    models.DateTimeField(
-                        default=django.utils.timezone.now, verbose_name="date joined"
-                    ),
+                    models.DateTimeField(default=django.utils.timezone.now, verbose_name="date joined"),
                 ),
                 (
                     "first_name",
@@ -67,9 +63,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "email",
-                    models.EmailField(
-                        max_length=254, unique=True, verbose_name="email address"
-                    ),
+                    models.EmailField(max_length=254, unique=True, verbose_name="email address"),
                 ),
                 (
                     "is_active",
@@ -88,9 +82,7 @@ class Migration(migrations.Migration):
                 ("vacation_left", models.SmallIntegerField(default=0)),
                 (
                     "photo",
-                    models.ImageField(
-                        default="photos/undraw_profile.svg", upload_to="photos"
-                    ),
+                    models.ImageField(default="photos/undraw_profile.svg", upload_to="photos"),
                 ),
                 (
                     "address",

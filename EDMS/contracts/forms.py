@@ -19,21 +19,11 @@ class ContractForm(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "start_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "company": forms.Select(
-                attrs={"class": "form-control js-example-basic-single"}
-            ),
-            "employee": forms.SelectMultiple(
-                attrs={"class": "form-control js-example-basic-multiple"}
-            ),
+            "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "company": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
+            "employee": forms.SelectMultiple(attrs={"class": "form-control js-example-basic-multiple"}),
             "price": forms.NumberInput(attrs={"class": "form-control"}),
             "scan": forms.FileInput(attrs={"class": "form-input"}),
         }

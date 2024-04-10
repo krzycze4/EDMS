@@ -4,9 +4,7 @@ from .models import Contract
 
 
 class ContractFilterSet(django_filters.FilterSet):
-    company_name = django_filters.CharFilter(
-        field_name="company__name", lookup_expr="icontains"
-    )
+    company_name = django_filters.CharFilter(field_name="company__name", lookup_expr="icontains")
 
     class Meta:
         model = Contract

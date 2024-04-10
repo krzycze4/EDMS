@@ -24,12 +24,8 @@ class UserFilterSet(django_filters.FilterSet):
 
 
 class PaymentFilterSet(django_filters.FilterSet):
-    user_first_name = django_filters.CharFilter(
-        field_name="user__first_name", lookup_expr="icontains"
-    )
-    user_last_name = django_filters.CharFilter(
-        field_name="user__last_name", lookup_expr="icontains"
-    )
+    user_first_name = django_filters.CharFilter(field_name="user__first_name", lookup_expr="icontains")
+    user_last_name = django_filters.CharFilter(field_name="user__last_name", lookup_expr="icontains")
 
     class Meta:
         model = Payment

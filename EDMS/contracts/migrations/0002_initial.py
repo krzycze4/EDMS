@@ -17,8 +17,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="contract",
             name="employee",
-            field=models.ManyToManyField(
-                related_name="contracts", to=settings.AUTH_USER_MODEL
-            ),
+            field=models.ManyToManyField(related_name="contracts", to=settings.AUTH_USER_MODEL),
         ),
     ]

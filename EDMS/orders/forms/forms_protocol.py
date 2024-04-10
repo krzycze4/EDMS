@@ -15,9 +15,7 @@ class ProtocolForm(forms.ModelForm):
         fields = ["scan", "create_date"]
         widgets = {
             "scan": forms.FileInput(attrs={"type": "file"}),
-            "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
+            "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
         }
 
     def clean(self) -> Dict[str, Any]:

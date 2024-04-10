@@ -2,9 +2,7 @@
 from typing import List
 
 
-def create_group_with_permissions(
-    group_name: str, permission_codenames: List[str]
-) -> "Group":
+def create_group_with_permissions(group_name: str, permission_codenames: List[str]) -> "Group":
     from django.contrib.auth.models import Group, Permission
 
     permissions = Permission.objects.filter(codename__in=permission_codenames)

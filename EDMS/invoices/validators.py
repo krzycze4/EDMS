@@ -26,9 +26,7 @@ def validate_max_vat(attrs: Dict[str, Union[Decimal | date | Company]]) -> None:
     max_allowed_vat: Decimal = max_vat_rate * net_price
 
     if vat > max_allowed_vat:
-        raise ValidationError(
-            {"vat": ["VAT prize can't be bigger than 23% of net price."]}
-        )
+        raise ValidationError({"vat": ["VAT prize can't be bigger than 23% of net price."]})
 
 
 def validate_net_price_plus_vat_equal_gross(
@@ -39,9 +37,7 @@ def validate_net_price_plus_vat_equal_gross(
     gross: Decimal = attrs["gross"]
 
     if net_price + vat != gross:
-        raise ValidationError(
-            {"gross": "The net price plus the vat is not equal the gross."}
-        )
+        raise ValidationError({"gross": "The net price plus the vat is not equal the gross."})
 
 
 def validate_no_future_create_date(
@@ -51,9 +47,7 @@ def validate_no_future_create_date(
     create_date: date = attrs["create_date"]
 
     if today < create_date:
-        raise ValidationError(
-            {"create_date": "You can't create any invoice with a future end_date."}
-        )
+        raise ValidationError({"create_date": "You can't create any invoice with a future end_date."})
 
 
 def validate_no_payment_date_before_create_date(
@@ -64,11 +58,7 @@ def validate_no_payment_date_before_create_date(
         create_date: date = attrs["create_date"]
 
         if payment_date < create_date:
-            raise ValidationError(
-                {
-                    "payment_date": "Payment end_date can't be earlier than create end_date."
-                }
-            )
+            raise ValidationError({"payment_date": "Payment end_date can't be earlier than create end_date."})
 
 
 def validate_seller_or_buyer_must_be_my_company(
@@ -92,9 +82,7 @@ def validate_original_invoice_not_linked_to_other_invoice(
     invoice_type: str = attrs["type"]
     linked_invoice: Invoice = attrs["linked_invoice"]
     if linked_invoice and invoice_type == Invoice.ORIGINAL:
-        raise ValidationError(
-            {"linked_invoice": "Original can't be linked to any other invoice."}
-        )
+        raise ValidationError({"linked_invoice": "Original can't be linked to any other invoice."})
 
 
 def validate_proforma_and_duplicate_same_data_as_original(
@@ -110,11 +98,7 @@ def validate_proforma_and_duplicate_same_data_as_original(
             for field in checked_fields:
                 if attrs[field] != getattr(linked_invoice, field):
                     formatted_field = " ".join(word for word in field.split("_"))
-                    raise ValidationError(
-                        {
-                            field: f"{formatted_field.title()} must be the same as in the original."
-                        }
-                    )
+                    raise ValidationError({field: f"{formatted_field.title()} must be the same as in the original."})
 
 
 def validate_correcting_invoice_linked_with_original_or_duplicate(
@@ -123,8 +107,4 @@ def validate_correcting_invoice_linked_with_original_or_duplicate(
     invoice_type: str = attrs["type"]
     linked_invoice: Invoice = attrs["linked_invoice"]
     if invoice_type == Invoice.CORRECTING and linked_invoice.type == Invoice.PROFORMA:
-        raise ValidationError(
-            {
-                "linked_invoice": "Correcting invoice must be linked to duplicate or original invoice."
-            }
-        )
+        raise ValidationError({"linked_invoice": "Correcting invoice must be linked to duplicate or original invoice."})

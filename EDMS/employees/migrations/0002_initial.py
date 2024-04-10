@@ -28,9 +28,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="addendum",
             name="agreement",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="employees.agreement"
-            ),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="employees.agreement"),
         ),
         migrations.AddField(
             model_name="payment",
@@ -44,9 +42,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="termination",
             name="agreement",
-            field=models.OneToOneField(
-                on_delete=django.db.models.deletion.CASCADE, to="employees.agreement"
-            ),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to="employees.agreement"),
         ),
         migrations.AddField(
             model_name="vacation",
@@ -60,8 +56,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="vacation",
             name="substitute_users",
-            field=models.ManyToManyField(
-                related_name="substitute_users", to=settings.AUTH_USER_MODEL
-            ),
+            field=models.ManyToManyField(related_name="substitute_users", to=settings.AUTH_USER_MODEL),
         ),
     ]

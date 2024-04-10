@@ -39,12 +39,8 @@ class OrderDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        income_invoices_net_price_sum = self.count_invoices_sum(
-            self.object.income_invoice.all()
-        )
-        cost_invoices_net_price_sum = self.count_invoices_sum(
-            self.object.cost_invoice.all()
-        )
+        income_invoices_net_price_sum = self.count_invoices_sum(self.object.income_invoice.all())
+        cost_invoices_net_price_sum = self.count_invoices_sum(self.object.cost_invoice.all())
         order_balance = income_invoices_net_price_sum - cost_invoices_net_price_sum
         context["income_invoices_net_price_sum"] = income_invoices_net_price_sum
         context["cost_invoices_net_price_sum"] = cost_invoices_net_price_sum
@@ -55,10 +51,7 @@ class OrderDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
     def count_invoices_sum(invoices: List[Union[Invoice | None]]) -> int:
         sum_net_price = 0
         for invoice in invoices:
-            if (
-                invoice.type in [Invoice.ORIGINAL, Invoice.DUPLICATE]
-                and invoice.linked_invoice is None
-            ):
+            if invoice.type in [Invoice.ORIGINAL, Invoice.DUPLICATE] and invoice.linked_invoice is None:
                 sum_net_price += invoice.net_price
             elif invoice.type == Invoice.CORRECTING:
                 sum_net_price -= invoice.linked_invoice.net_price

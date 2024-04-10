@@ -134,12 +134,8 @@ urlpatterns = [
         name="create-addendum",
     ),
     path("addenda/<int:pk>/", AddendumDetailView.as_view(), name="detail-addendum"),
-    path(
-        "addenda/<int:pk>/update/", AddendumUpdateView.as_view(), name="update-addendum"
-    ),
-    path(
-        "addenda/<int:pk>/delete/", AddendumDeleteView.as_view(), name="delete-addendum"
-    ),
+    path("addenda/<int:pk>/update/", AddendumUpdateView.as_view(), name="update-addendum"),
+    path("addenda/<int:pk>/delete/", AddendumDeleteView.as_view(), name="delete-addendum"),
     path(
         "payments/create/",
         PaymentCreateView.as_view(),
@@ -165,9 +161,7 @@ urlpatterns = [
         PaymentListView.as_view(),
         name="list-payment",
     ),
-    path(
-        "change-password/", CustomPasswordChangeView.as_view(), name="change-password"
-    ),
+    path("change-password/", CustomPasswordChangeView.as_view(), name="change-password"),
     path("", include(router.urls)),
 ]
 

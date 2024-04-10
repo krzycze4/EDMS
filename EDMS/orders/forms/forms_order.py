@@ -25,27 +25,17 @@ class OrderCreateForm(forms.ModelForm):
         ]
         widgets = {
             "payment": forms.NumberInput(attrs={"class": "form-control"}),
-            "company": forms.Select(
-                attrs={"class": "form-control js-example-basic-single"}
-            ),
+            "company": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
-            "start_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "contract": forms.Select(
-                attrs={"class": "form-control js-example-basic-single"}
-            ),
+            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "contract": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            self.fields["contract"].queryset = Contract.objects.filter(
-                company=self.instance.company
-            )
+            self.fields["contract"].queryset = Contract.objects.filter(company=self.instance.company)
 
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
@@ -71,12 +61,8 @@ class OrderUpdateForm(forms.ModelForm):
             "company": forms.HiddenInput(),
             "payment": forms.NumberInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-control"}),
-            "start_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "end_date"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "end_date"}
-            ),
+            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
         }
 
@@ -88,10 +74,5 @@ class OrderUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        if (
-            self.instance.end_date > datetime.today().date()
-            or not Protocol.objects.filter(order=self.instance)
-        ):
-            self.fields["status"].widget = forms.TextInput(
-                attrs={"class": "form-control", "readonly": "readonly"}
-            )
+        if self.instance.end_date > datetime.today().date() or not Protocol.objects.filter(order=self.instance):
+            self.fields["status"].widget = forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"})

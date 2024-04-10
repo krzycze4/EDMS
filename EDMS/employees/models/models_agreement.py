@@ -28,9 +28,7 @@ class Agreement(models.Model):
     end_date_actual = models.DateField(
         help_text="Calculated date after adding addenda or termination. Necessary to calculate vacations for employee."
     )
-    user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="agreements"
-    )
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="agreements")
     scan = models.FileField(upload_to="agreements")
     is_current = models.BooleanField(default=True)
 
@@ -56,19 +54,13 @@ class Agreement(models.Model):
                 self.end_date_actual = self.end_date
 
     def set_is_current(self) -> None:
-        if (
-            timezone.now().date() < self.start_date
-            or self.end_date_actual < timezone.now().date()
-        ):
+        if timezone.now().date() < self.start_date or self.end_date_actual < timezone.now().date():
             self.is_current = False
         else:
             self.is_current = True
 
     def count_vacation_left(self) -> None:
-        self.user.vacation_left = (
-            self.count_granted_vacation_from_agreement()
-            - Vacation.count_used_vacation()
-        )
+        self.user.vacation_left = self.count_granted_vacation_from_agreement() - Vacation.count_used_vacation()
         self.user.save()
 
     def count_granted_vacation_from_agreement(self) -> int:
@@ -76,11 +68,7 @@ class Agreement(models.Model):
         if self.is_current and self.type == self.EMPLOYMENT:
             months_in_year = 12
             work_months_current_year = self.count_work_months_current_year()
-            vacation_from_agreement = ceil(
-                work_months_current_year
-                * self.user.vacation_days_per_year
-                / months_in_year
-            )
+            vacation_from_agreement = ceil(work_months_current_year * self.user.vacation_days_per_year / months_in_year)
         return vacation_from_agreement
 
     def count_work_months_current_year(self) -> int:

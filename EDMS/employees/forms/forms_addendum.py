@@ -17,15 +17,9 @@ class AddendumForm(forms.ModelForm):
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "agreement": forms.Select(
-                attrs={"class": "form-control js-example-basic-single"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
+            "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "agreement": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "salary_gross": forms.NumberInput(attrs={"class": "form-control"}),
             "scan": forms.FileInput(),
         }
@@ -34,9 +28,7 @@ class AddendumForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
             self.fields["agreement"].disabled = True
-        self.fields["agreement"].queryset = Agreement.objects.exclude(
-            termination__isnull=False
-        )
+        self.fields["agreement"].queryset = Agreement.objects.exclude(termination__isnull=False)
 
     def clean(self):
         cleaned_data = super().clean()

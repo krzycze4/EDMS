@@ -38,15 +38,9 @@ class AgreementForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "type": forms.Select(attrs={"class": "form-control"}),
             "salary_gross": forms.NumberInput(attrs={"class": "form-control"}),
-            "create_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "start_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date"}
-            ),
+            "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "user": forms.HiddenInput(),
             "scan": forms.FileInput(),
         }
@@ -58,9 +52,7 @@ class AgreementForm(forms.ModelForm):
         instance = kwargs.get("instance", None)
         user = kwargs.pop("user", None)
         if instance:
-            initial_user_display = (
-                f"{instance.user.first_name} {instance.user.last_name}"
-            )
+            initial_user_display = f"{instance.user.first_name} {instance.user.last_name}"
         else:
             initial_user_display = f"{user.first_name} {user.last_name}"
         super().__init__(*args, **kwargs)

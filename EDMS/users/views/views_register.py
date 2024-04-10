@@ -39,9 +39,7 @@ class UserRegisterView(FormView):
             "email_templates/account_activation_email.html",
             {"user": user, "domain": domain, "uidb64": uidb64, "token": token},
         )
-        send_activation_email.delay(
-            user_id=user.id, subject=subject, message=message, from_email=from_email
-        )
+        send_activation_email.delay(user_id=user.id, subject=subject, message=message, from_email=from_email)
         return super().form_valid(form)
 
 
