@@ -6,11 +6,11 @@
     <div class="card-header">
         <p class="font-weight-bold">Your statistics</p>
     </div>
-    {% for group in user.groups.all %}
-        {% if group.name == "managers" %}
-            {{ plot_employee|safe }}
-        {% elif group.name == "ceos" %}
-            {{ plot_company|safe }}
-        {% endif %}
-    {% endfor %}
+    {#    {% for group in user.groups.all %}#}
+    {% if user_group == "managers" %}
+        {{ plot_employee|safe }}
+    {% elif user_group == "ceos" %}
+        {{ plot_company|safe }}
+    {% endif %}
+    {#    {% endfor %}#}
 {% endblock content %}

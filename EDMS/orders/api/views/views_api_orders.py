@@ -1,12 +1,10 @@
 from orders.api.serializers import OrderSerializer
 from orders.models import Order
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.viewsets import ModelViewSet
 
 
 class OrderModelViewSet(ModelViewSet):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = (DjangoModelPermissions,)
     serializer_class = OrderSerializer
     queryset = Order.objects.all()

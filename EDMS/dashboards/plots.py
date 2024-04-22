@@ -48,11 +48,14 @@ class Plot:
 
             while start_month <= end_month and start_year <= end_year:
                 plot_data[(start_month, start_year)] = Decimal(0)
+
+                # PROBLEM N+1
                 for order in orders:
                     if order.end_date.month <= start_month and order.end_date.year <= start_year:
                         balance: Decimal = self.count_order_balance(order=order, is_company=is_company)
                         plot_data[(start_month, start_year)] += balance
                         orders.remove(order)
+
                 start_month, start_year = self.set_start_month_and_year(start_month=start_month, start_year=start_year)
         return plot_data
 
@@ -75,7 +78,7 @@ class Plot:
         return sum_net_price
 
     @staticmethod
-    def get_payment_fees(is_company, order):
+    def get_payment_fees(is_company: bool, order: Order):
         sum_payment_fee = Decimal(0)
         if is_company:
             payments = Payment.objects.filter(date__month=order.end_date.month, date__year=order.end_date.year)

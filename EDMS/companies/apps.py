@@ -13,6 +13,10 @@ def define_groups(sender, **kwargs):
             "add_contact",
             "change_contact",
             "delete_contact",
+            "add_address",
+            "change_address",
+            "delete_address",
+            "view_address",
         ],
         "accountants": [
             "add_company",
@@ -22,9 +26,13 @@ def define_groups(sender, **kwargs):
             "add_contact",
             "change_contact",
             "delete_contact",
+            "add_address",
+            "change_address",
+            "delete_address",
+            "view_address",
         ],
-        "managers": ["view_company", "add_contact"],
-        "hrs": ["view_company", "add_contact"],
+        "managers": ["view_company", "add_contact", "view_address"],
+        "hrs": ["view_company", "add_contact", "view_address"],
     }
     for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
         create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
