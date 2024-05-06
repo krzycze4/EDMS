@@ -46,7 +46,7 @@ class ContactUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
         company = Company.objects.get(id=company_pk)
         return {"company": company}
 
-    def get_object(self):
+    def get_object(self, **kwargs):
         company_pk = self.kwargs["company_pk"]
         contact_pk = self.kwargs["contact_pk"]
         contact = Contact.objects.get(id=contact_pk, company_id=company_pk)

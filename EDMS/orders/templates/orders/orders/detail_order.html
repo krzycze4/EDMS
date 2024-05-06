@@ -1,218 +1,225 @@
 {% extends "base.html" %}
+{% load group_tags %}
 {% block title %}
     Order Detail
 {% endblock title %}
 {% block content %}
-    {% for group in request.user.groups.all %}
-        <div class="card-group">
-            <div class="card shadow">
-                <div class="card-header d-flex justify-content-between align-items-center pointer">
-                    <h6 class="m-0 font-weight-bold text-primary">Order: {{ order.name }}</h6>
-                    <div class="d-flex">
-                        {% if order.status == 'open' and group.name == "ceos" or order.status == 'open' and group.name == "managers" %}
-                            <a class="btn btn-danger mr-2"
-                               type="button"
-                               href="{% url 'delete-order' order.pk %}">Delete order</a>
-                        {% endif %}
-                        <a class="btn btn-primary" type="button" href="{% url 'list-order' %}">Back to order list</a>
-                    </div>
+    <div class="card-group">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center pointer">
+                <h6 class="m-0 font-weight-bold text-primary">Order: {{ order.name }}</h6>
+                <div class="d-flex">
+                    {% if order.status == 'open' and request.user|has_group:"ceos" or order.status == 'open' and request.user|has_group:"managers" %}
+                        <a class="btn btn-danger mr-2"
+                           type="button"
+                           href="{% url 'delete-order' order.pk %}">Delete order</a>
+                    {% endif %}
+                    <a class="btn btn-primary" type="button" href="{% url 'list-order' %}">Back to order list</a>
                 </div>
-                <div class="row p-6">
-                    <div class="col">
-                        <div class="card my-2">
-                            <div class="card-header d-flex justify-content-between align-items-center pointer"
-                                 data-toggle="collapse"
-                                 data-target="#orderCollapse"
-                                 aria-expanded="true"
-                                 role="button">
-                                <h5 class="m-0 font-weight-bold">Details</h5>
-                            </div>
-                            <div id="orderCollapse" class="collapse show">
-                                <div class="card-body">
-                                    <p class="font-weight-bold">Payment: {{ order.payment }}</p>
-                                    <p class="font-weight-bold">Status: {{ order.status }}</p>
+            </div>
+            <div class="row p-6">
+                <div class="col">
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#orderCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Details</h5>
+                        </div>
+                        <div id="orderCollapse" class="collapse show">
+                            <div class="card-body">
+                                <p class="font-weight-bold">Payment: {{ order.payment }}</p>
+                                <p class="font-weight-bold">Status: {{ order.status }}</p>
+                                <p class="font-weight-bold">
+                                    Company: <a href="{% url "detail-company" order.company.pk %}">{{ order.company.name }}</a>
+                                </p>
+                                <p class="font-weight-bold">
+                                    Create by: <a href="{% url "detail-employee" order.user.pk %}">{{ order.user }}</a>
+                                </p>
+                                <p class="font-weight-bold">Create date: {{ order.create_date }}</p>
+                                <p class="font-weight-bold">Start date: {{ order.start_date }}</p>
+                                <p class="font-weight-bold">End date: {{ order.end_date }}</p>
+                                {% if contract %}
                                     <p class="font-weight-bold">
-                                        Company: <a href="{% url "detail-company" order.company.pk %}">{{ order.company.name }}</a>
+                                        Contract: <a href="{% url "detail-contract" contract.pk %}">{{ contract.name }}</a>
                                     </p>
-                                    <p class="font-weight-bold">
-                                        Create by: <a href="{% url "detail-employee" order.user.pk %}">{{ order.user }}</a>
-                                    </p>
-                                    <p class="font-weight-bold">Create date: {{ order.create_date }}</p>
-                                    <p class="font-weight-bold">Start date: {{ order.start_date }}</p>
-                                    <p class="font-weight-bold">End date: {{ order.end_date }}</p>
-                                    <p class="font-weight-bold">
-                                        Contract: <a href="{% url "detail-contract" order.contract.pk %}">{{ order.contract.name }}</a>
-                                    </p>
-                                    <p class="font-weight-bold">Description: {{ order.description }}</p>
-                                    {% if group.name == "ceos" or group.name == "managers" %}
-                                        <a class="btn btn-warning mr-2"
-                                           type="button"
-                                           href="{% url 'update-order' order.pk %}">Edit details</a>
-                                    {% endif %}
-                                </div>
+                                {% else %}
+                                    <p class="font-weight-bold">Contract: Not connected to any order</p>
+                                {% endif %}
+                                <p class="font-weight-bold">Description: {{ order.description }}</p>
+                                {% if request.user|has_group:"ceos" or request.user|has_group:"managers" %}
+                                    <a class="btn btn-warning mr-2"
+                                       type="button"
+                                       href="{% url 'update-order' order.pk %}">Edit details</a>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="card my-2">
-                            <div class="card-header d-flex justify-content-between align-items-center pointer"
-                                 data-toggle="collapse"
-                                 data-target="#invoiceCollapse"
-                                 aria-expanded="true"
-                                 role="button">
-                                <h5 class="m-0 font-weight-bold">Invoices</h5>
-                            </div>
-                            <div id="invoiceCollapse" class="collapse show">
-                                <div class="card-body">
-                                    <div class="font-weight-bold">
-                                        <h4>Order balance: {{ order_balance }}</h4>
-                                        {% if group.name == "ceos" or group.name == "managers" %}
-                                            <a class="btn btn-success my-2"
-                                               href="{% url "manage-invoice" order.pk %}">Manage invoices</a>
-                                        {% endif %}
-                                    </div>
-                                    {# Incoming Table #}
-                                    <table class="table table-responsive">
-                                        <thead class="table-info text-dark">
-                                            <tr>
-                                                <th scope="col">Income Invoice Number</th>
-                                                {% if order.income_invoice.all %}<th scope="col">Type</th>{% endif %}
-                                                {% if order.income_invoice.all %}<th scope="col">Linked to</th>{% endif %}
-                                                {% if order.income_invoice.all %}<th scope="col">Net price</th>{% endif %}
-                                            </tr>
-                                        </thead>
-                                        {% if order.income_invoice.all %}
-                                            <tbody>
-                                                {% for income_invoice in order.income_invoice.all %}
-                                                    <tr>
-                                                        <td>
-                                                            <a class="font-weight-bold"
-                                                               href="{% url "detail-invoice" income_invoice.pk %}">
-                                                                {{ income_invoice }}
-                                                            </a>
-                                                        </td>
-                                                        <td>{{ income_invoice.type }}</td>
-                                                        {% if income_invoice.linked_invoice %}
-                                                            <td>
-                                                                <a href="{% url "detail-invoice" income_invoice.linked_invoice.pk %}">{{ income_invoice.linked_invoice }}</a>
-                                                            </td>
-                                                        {% else %}
-                                                            <td>Not linked</td>
-                                                        {% endif %}
-                                                        <td>{{ income_invoice.net_price }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                            <tfoot class="table-dark text-light">
-                                                <tr>
-                                                    <th scope="col">Sum</th>
-                                                    <th scope="col"></th>
-                                                    <th scope="col"></th>
-                                                    <th scope="col">{{ income_invoices_net_price_sum }}</th>
-                                                </tr>
-                                            </tfoot>
-                                        {% else %}
-                                            <tr>
-                                                <th>Invoices not yet pinned.</th>
-                                            </tr>
-                                        {% endif %}
-                                    </table>
-                                    {# Cost Table #}
-                                    <table class="table table-responsive">
-                                        <thead class="table-info text-dark">
-                                            <tr>
-                                                <th scope="col">Cost Invoice Number</th>
-                                                {% if order.cost_invoice.all %}<th scope="col">Type</th>{% endif %}
-                                                {% if order.cost_invoice.all %}<th scope="col">Linked to</th>{% endif %}
-                                                {% if order.cost_invoice.all %}<th scope="col">Net price</th>{% endif %}
-                                            </tr>
-                                        </thead>
-                                        {% if order.cost_invoice.all %}
-                                            <tbody>
-                                                {% for cost_invoice in order.cost_invoice.all %}
-                                                    <tr>
-                                                        <td>
-                                                            <a class="font-weight-bold"
-                                                               href="{% url "detail-invoice" cost_invoice.pk %}">
-                                                                {{ cost_invoice }}
-                                                            </a>
-                                                        </td>
-                                                        <td>{{ cost_invoice.type }}</td>
-                                                        {% if cost_invoice.linked_invoice %}
-                                                            <td>
-                                                                <a href="{% url "detail-invoice" cost_invoice.linked_invoice.pk %}">{{ cost_invoice.linked_invoice }}</a>
-                                                            </td>
-                                                        {% else %}
-                                                            <td>Not linked</td>
-                                                        {% endif %}
-                                                        <td>{{ cost_invoice.net_price }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                            <tfoot class="table-dark text-light">
-                                                <tr>
-                                                    <th scope="col">Sum</th>
-                                                    <th scope="col"></th>
-                                                    <th scope="col"></th>
-                                                    <th scope="col">{{ cost_invoices_net_price_sum }}</th>
-                                                </tr>
-                                            </tfoot>
-                                        {% else %}
-                                            <tr>
-                                                <th>Invoices not yet pinned.</th>
-                                            </tr>
-                                        {% endif %}
-                                    </table>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#invoiceCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Invoices</h5>
                         </div>
-                        <!-- Protocols-->
-                        <div class="card my-2">
-                            <div class="card-header d-flex justify-content-between align-items-center pointer"
-                                 data-toggle="collapse"
-                                 data-target="#protocolsCollapse"
-                                 aria-expanded="true"
-                                 role="button">
-                                <h5 class="m-0 font-weight-bold">Protocols</h5>
-                            </div>
-                            <div id="protocolsCollapse" class="collapse show">
-                                <div class="card-body">
-                                    {% if group.name == "ceos" or group.name == "managers" %}
-                                        <a type="button"
-                                           class="btn btn-success mb-2"
-                                           href="{% url 'create-protocol' order.pk %}">Manage protocols</a>
+                        <div id="invoiceCollapse" class="collapse show">
+                            <div class="card-body">
+                                <div class="font-weight-bold">
+                                    <h4>Order balance: {{ order_balance }}</h4>
+                                    {% if request.user|has_group:"ceos" or request.user|has_group:"managers" %}
+                                        <a class="btn btn-success my-2"
+                                           href="{% url "manage-invoice" order.pk %}">Manage invoices</a>
                                     {% endif %}
-                                    {# Protocol Table #}
-                                    <table class="table table-responsive">
-                                        <thead class="table-info text-dark">
-                                            <tr>
-                                                <th scope="col">Scan</th>
-                                                <th scope="col">Create date</th>
-                                                <th scope="col">Create by</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% if order.protocols.all %}
-                                                {% for protocol in order.protocols.all %}
-                                                    <tr>
-                                                        <td>
-                                                            <a target="_blank" href="{{ protocol.scan.url }}">{{ protocol.name }}</a>
-                                                        </td>
-                                                        <td>{{ protocol.create_date }}</td>
-                                                        <td>{{ protocol.user }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            {% else %}
-                                                <tr>
-                                                    <th>Protocols not yet pinned.</th>
-                                                </tr>
+                                </div>
+                                {# Incoming Table #}
+                                <table class="table table-responsive">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Income Invoice Number</th>
+                                            {% if income_invoices %}
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Linked to</th>
+                                                <th scope="col">Net price</th>
                                             {% endif %}
+                                        </tr>
+                                    </thead>
+                                    {% if income_invoices %}
+                                        <tbody>
+                                            {% for income_invoice in income_invoices %}
+                                                <tr>
+                                                    <td>
+                                                        <a class="font-weight-bold"
+                                                           href="{% url "detail-invoice" income_invoice.pk %}">
+                                                            {{ income_invoice }}
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ income_invoice.type }}</td>
+                                                    {% if income_invoice.linked_invoice %}
+                                                        <td>
+                                                            <a href="{% url "detail-invoice" income_invoice.linked_invoice.pk %}">{{ income_invoice.linked_invoice }}</a>
+                                                        </td>
+                                                    {% else %}
+                                                        <td>Not linked</td>
+                                                    {% endif %}
+                                                    <td>{{ income_invoice.net_price }}</td>
+                                                </tr>
+                                            {% endfor %}
                                         </tbody>
-                                    </table>
-                                </div>
+                                        <tfoot class="table-dark text-light">
+                                            <tr>
+                                                <th scope="col">Sum</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col">{{ income_invoices_net_price_sum }}</th>
+                                            </tr>
+                                        </tfoot>
+                                    {% else %}
+                                        <tr>
+                                            <th>Invoices not yet pinned.</th>
+                                        </tr>
+                                    {% endif %}
+                                </table>
+                                {# Cost Table #}
+                                <table class="table table-responsive">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Cost Invoice Number</th>
+                                            {% if cost_invoices %}
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Linked to</th>
+                                                <th scope="col">Net price</th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    {% if cost_invoices %}
+                                        <tbody>
+                                            {% for cost_invoice in cost_invoices %}
+                                                <tr>
+                                                    <td>
+                                                        <a class="font-weight-bold"
+                                                           href="{% url "detail-invoice" cost_invoice.pk %}">
+                                                            {{ cost_invoice }}
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ cost_invoice.type }}</td>
+                                                    {% if cost_invoice.linked_invoice %}
+                                                        <td>
+                                                            <a href="{% url "detail-invoice" cost_invoice.linked_invoice.pk %}">{{ cost_invoice.linked_invoice }}</a>
+                                                        </td>
+                                                    {% else %}
+                                                        <td>Not linked</td>
+                                                    {% endif %}
+                                                    <td>{{ cost_invoice.net_price }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot class="table-dark text-light">
+                                            <tr>
+                                                <th scope="col">Sum</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col">{{ cost_invoices_net_price_sum }}</th>
+                                            </tr>
+                                        </tfoot>
+                                    {% else %}
+                                        <tr>
+                                            <th>Invoices not yet pinned.</th>
+                                        </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Protocols-->
+                    <div class="card my-2">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#protocolsCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Protocols</h5>
+                        </div>
+                        <div id="protocolsCollapse" class="collapse show">
+                            <div class="card-body">
+                                {% if request.user|has_group:"ceos" or request.user|has_group:"managers" %}
+                                    <a type="button"
+                                       class="btn btn-success mb-2"
+                                       href="{% url 'create-protocol' order.pk %}">Manage protocols</a>
+                                {% endif %}
+                                {# Protocol Table #}
+                                <table class="table table-responsive">
+                                    <thead class="table-info text-dark">
+                                        <tr>
+                                            <th scope="col">Scan</th>
+                                            <th scope="col">Create date</th>
+                                            <th scope="col">Create by</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if protocols %}
+                                            {% for protocol in protocols %}
+                                                <tr>
+                                                    <td>
+                                                        <a target="_blank" href="{{ protocol.scan.url }}">{{ protocol.name }}</a>
+                                                    </td>
+                                                    <td>{{ protocol.create_date }}</td>
+                                                    <td>{{ protocol.user }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <th>Protocols not yet pinned.</th>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    {% endfor %}
+    </div>
 {% endblock content %}

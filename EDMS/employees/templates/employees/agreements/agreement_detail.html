@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load group_tags %}
 {% block title %}
     Agreement Detail
 {% endblock title %}
@@ -43,16 +44,14 @@
                                         No
                                     {% endif %}
                                 </p>
-                                {% for group in request.user.groups.all %}
-                                    {% if group.name == "ceos" or group.name == "hrs" %}
-                                        <a class="btn btn-warning mr-2"
-                                           type="button"
-                                           href="{% url "update-agreement" agreement.pk %}">Edit agreement</a>
-                                        <a class="btn btn-danger mr-2"
-                                           type="button"
-                                           href="{% url "delete-agreement" agreement.pk %}">Delete agreement</a>
-                                    {% endif %}
-                                {% endfor %}
+                                {% if request.user|has_group:"ceos" or request.user|has_group:"hrs" %}
+                                    <a class="btn btn-warning mr-2"
+                                       type="button"
+                                       href="{% url "update-agreement" agreement.pk %}">Edit agreement</a>
+                                    <a class="btn btn-danger mr-2"
+                                       type="button"
+                                       href="{% url "delete-agreement" agreement.pk %}">Delete agreement</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

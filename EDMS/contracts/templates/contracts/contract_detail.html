@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load group_tags %}
 {% block title %}
     Contract Detail
 {% endblock title %}
@@ -43,16 +44,14 @@
                                 <p class="font-weight-bold">
                                     Scan: <a target="_blank" href="{{ contract.scan.url }}">Show scan in another explorer tab</a>
                                 </p>
-                                {% for group in user.groups.all %}
-                                    {% if group.name == "ceos" %}
-                                        <a class="btn btn-warning mr-2"
-                                           type="button"
-                                           href="{% url "update-contract" contract.pk %}">Edit contract</a>
-                                        <a class="btn btn-danger mr-2"
-                                           type="button"
-                                           href="{% url "delete-contract" contract.pk %}">Delete contract</a>
-                                    {% endif %}
-                                {% endfor %}
+                                {% if request.user|has_group:"ceos" %}
+                                    <a class="btn btn-warning mr-2"
+                                       type="button"
+                                       href="{% url "update-contract" contract.pk %}">Edit contract</a>
+                                    <a class="btn btn-danger mr-2"
+                                       type="button"
+                                       href="{% url "delete-contract" contract.pk %}">Delete contract</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -79,23 +78,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if contract.orders.all %}
-                                    {% for order in contract.orders.all %}
-                                        <tr>
-                                            <td>
-                                                <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
-                                            </td>
-                                            <td>{{ order.payment }}</td>
-                                            <td>{{ order.status }}</td>
-                                            <td>{{ order.start_date }}</td>
-                                            <td>{{ order.end_date }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
+                                {% for order in contract.orders.all %}
                                     <tr>
-                                        <th>Order not pinned yet.</th>
+                                        <td>
+                                            <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
+                                        </td>
+                                        <td>{{ order.payment }}</td>
+                                        <td>{{ order.status }}</td>
+                                        <td>{{ order.start_date }}</td>
+                                        <td>{{ order.end_date }}</td>
                                     </tr>
-                                {% endif %}
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>

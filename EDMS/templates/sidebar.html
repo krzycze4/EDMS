@@ -1,5 +1,6 @@
 {# djlint:off H006 #}
 {% load static %}
+{% load group_tags %}
 <!-- Sidebar -->
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
     id="accordionSidebar">
@@ -12,123 +13,121 @@
         </div>
         <div class="sidebar-brand-text mx-4">EDMS</div>
     </div>
-    {% for group in request.user.groups.all %}
-        {% if group.name == "managers" or group.name == "ceos" %}
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
-                <a class="nav-link" href={% url "dashboard" %}>
-                    <i class="fas fa-solid fa-house fa-l"></i>
-                    <span>Home</span></a>
-            </li>
-        {% endif %}
+    {% if request.user|has_group:"managers" or request.user|has_group:"ceos" %}
         <!-- Divider -->
-        <hr class="sidebar-divider">
-        <!-- Nav Item - Contracts Collapse Menu -->
-        {% if group.name == 'ceos' or group.name == 'accountants' or group.name == 'managers' %}
-            <li class="nav-item">
-                <a class="nav-link collapsed"
-                   href="#"
-                   data-toggle="collapse"
-                   data-target="#collapseContracts">
-                    <i class="fa-regular fa-handshake fa-lg"></i>
-                    <span>Contracts</span>
-                </a>
-                <div id="collapseContracts"
-                     class="collapse"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% if group.name == 'ceos' %}
-                            <a class="collapse-item" href="{% url "create-contract" %}">New contract</a>
-                        {% endif %}
-                        <a class="collapse-item" href="{% url "list-contract" %}">Contract list</a>
-                    </div>
-                </div>
-            </li>
-            <!-- Nav Item - Orders Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed"
-                   href="#"
-                   data-toggle="collapse"
-                   data-target="#collapseOrders">
-                    <i class="fas fa-solid fa-file-contract fa-lg"></i>
-                    <span>Orders</span>
-                </a>
-                <div id="collapseOrders" class="collapse" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% if group.name == 'ceos' or group.name == 'managers' %}
-                            <a class="collapse-item" href="{% url 'create-order' %}">New order</a>
-                        {% endif %}
-                        <a class="collapse-item" href="{% url "list-order" %}">Order list</a>
-                    </div>
-                </div>
-            </li>
-        {% endif %}
-        <!-- Nav Item - Invoices Collapse Menu -->
-        {% if group.name == 'ceos' or group.name == 'accountants' or group.name == 'managers' %}
-            <li class="nav-item">
-                <a class="nav-link collapsed"
-                   href="#"
-                   data-toggle="collapse"
-                   data-target="#collapseInvoices">
-                    <i class="fas fa-solid fa-file-invoice-dollar fa-lg"></i>
-                    <span>Invoices</span>
-                </a>
-                <div id="collapseInvoices"
-                     class="collapse"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% if group.name == 'ceos' or group.name == 'accountants' %}
-                            <a class="collapse-item" href="{% url "create-invoice" %}">New invoice</a>
-                        {% endif %}
-                        <a class="collapse-item" href="{% url "list-invoice" %}">Invoice list</a>
-                    </div>
-                </div>
-            </li>
-        {% endif %}
-        <!-- Nav Item - Companies Collapse Menu -->
+        <hr class="sidebar-divider my-0">
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" href={% url "dashboard" %}>
+                <i class="fas fa-solid fa-house fa-l"></i>
+                <span>Home</span></a>
+        </li>
+    {% endif %}
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+    <!-- Nav Item - Contracts Collapse Menu -->
+    {% if request.user|has_group:'ceos' or request.user|has_group:'accountants' or request.user|has_group:'managers' %}
         <li class="nav-item">
             <a class="nav-link collapsed"
                href="#"
                data-toggle="collapse"
-               data-target="#collapseCompanies">
-                <i class="fa-solid fa-building fa-lg"></i>
-                <span>Companies</span>
+               data-target="#collapseContracts">
+                <i class="fa-regular fa-handshake fa-lg"></i>
+                <span>Contracts</span>
             </a>
-            <div id="collapseCompanies"
+            <div id="collapseContracts"
                  class="collapse"
                  data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    {% if group.name == 'ceos' or group.name == 'accountants' %}
-                        <a class="collapse-item" href="{% url "find-company" %}">New company</a>
+                    {% if request.user|has_group:'ceos' %}
+                        <a class="collapse-item" href="{% url "create-contract" %}">New contract</a>
                     {% endif %}
-                    <a class="collapse-item" href="{% url "list-company" %}">Company list</a>
+                    <a class="collapse-item" href="{% url "list-contract" %}">Contract list</a>
                 </div>
             </div>
         </li>
-        <!-- Nav Item - My Business Collapse Menu -->
-        {% if group.name == 'ceos' or group.name == 'accountants' or group.name == 'hrs' %}
-            <li class="nav-item">
-                <a class="nav-link collapsed"
-                   href="#"
-                   data-toggle="collapse"
-                   data-target="#collapseBusiness">
-                    <i class="fa-solid fa-briefcase"></i>
-                    <span>My Business</span>
-                </a>
-                <div id="collapseBusiness"
-                     class="collapse"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{% url "list-employee" %}">Employee list</a>
-                        <a class="collapse-item" href="{% url "create-payment" %}">New employee payment</a>
-                        <a class="collapse-item" href="{% url "list-payment" %}">Employee payment list</a>
-                    </div>
+        <!-- Nav Item - Orders Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed"
+               href="#"
+               data-toggle="collapse"
+               data-target="#collapseOrders">
+                <i class="fas fa-solid fa-file-contract fa-lg"></i>
+                <span>Orders</span>
+            </a>
+            <div id="collapseOrders" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {% if request.user|has_group:'ceos' or request.user|has_group:'managers' %}
+                        <a class="collapse-item" href="{% url 'create-order' %}">New order</a>
+                    {% endif %}
+                    <a class="collapse-item" href="{% url "list-order" %}">Order list</a>
                 </div>
-            </li>
-        {% endif %}
-    {% endfor %}
+            </div>
+        </li>
+    {% endif %}
+    <!-- Nav Item - Invoices Collapse Menu -->
+    {% if request.user|has_group:'ceos' or request.user|has_group:'accountants' or request.user|has_group:'managers' %}
+        <li class="nav-item">
+            <a class="nav-link collapsed"
+               href="#"
+               data-toggle="collapse"
+               data-target="#collapseInvoices">
+                <i class="fas fa-solid fa-file-invoice-dollar fa-lg"></i>
+                <span>Invoices</span>
+            </a>
+            <div id="collapseInvoices"
+                 class="collapse"
+                 data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {% if request.user|has_group:'ceos' or request.user|has_group:'accountants' %}
+                        <a class="collapse-item" href="{% url "create-invoice" %}">New invoice</a>
+                    {% endif %}
+                    <a class="collapse-item" href="{% url "list-invoice" %}">Invoice list</a>
+                </div>
+            </div>
+        </li>
+    {% endif %}
+    <!-- Nav Item - Companies Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed"
+           href="#"
+           data-toggle="collapse"
+           data-target="#collapseCompanies">
+            <i class="fa-solid fa-building fa-lg"></i>
+            <span>Companies</span>
+        </a>
+        <div id="collapseCompanies"
+             class="collapse"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                {% if request.user|has_group:'ceos' or request.user|has_group:'accountants' %}
+                    <a class="collapse-item" href="{% url "find-company" %}">New company</a>
+                {% endif %}
+                <a class="collapse-item" href="{% url "list-company" %}">Company list</a>
+            </div>
+        </div>
+    </li>
+    <!-- Nav Item - My Business Collapse Menu -->
+    {% if request.user|has_group:'ceos' or request.user|has_group:'accountants' or request.user|has_group:'hrs' %}
+        <li class="nav-item">
+            <a class="nav-link collapsed"
+               href="#"
+               data-toggle="collapse"
+               data-target="#collapseBusiness">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>My Business</span>
+            </a>
+            <div id="collapseBusiness"
+                 class="collapse"
+                 data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{% url "list-employee" %}">Employee list</a>
+                    <a class="collapse-item" href="{% url "create-payment" %}">New employee payment</a>
+                    <a class="collapse-item" href="{% url "list-payment" %}">Employee payment list</a>
+                </div>
+            </div>
+        </li>
+    {% endif %}
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
     <!-- Sidebar Toggler (Sidebar) -->

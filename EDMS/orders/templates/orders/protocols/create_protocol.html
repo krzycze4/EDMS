@@ -23,8 +23,8 @@
                 {% endfor %}
                 <input type="submit" class="btn btn-primary" value="Upload">
             </form>
-            {% if order.protocols.all %}<h4>Pinned protocols:</h4>{% endif %}
-            {% for protocol in order.protocols.all %}
+            {% if protocols %}<h4>Pinned protocols:</h4>{% endif %}
+            {% for protocol in protocols %}
                 <p>
                     <a target="_blank" href="{{ protocol.scan.url }}">{{ protocol }}</a>
                     <a class="btn btn-danger" href="{% url "delete-protocol" protocol.pk %}">Delete</a>

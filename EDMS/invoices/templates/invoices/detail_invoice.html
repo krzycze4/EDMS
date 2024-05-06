@@ -1,104 +1,103 @@
 {% extends "base.html" %}
+{% load group_tags %}
 {% block title %}
     Invoice Detail
 {% endblock title %}
 {% block content %}
-    {% for group in request.user.groups.all %}
-        <div class="card-group">
-            <div class="card shadow">
-                <div class="card-header d-flex justify-content-between align-items-center pointer">
-                    <h6 class="m-0 font-weight-bold text-primary">Invoice {{ invoice.name }}</h6>
-                    <div class="d-flex">
-                        {% if group.name == "ceos" and group.name == "accountants" %}
-                            {% if not invoice.order_from_income_invoice.all and not invoice.order_from_cost_invoice.all and not invoice.is_paid and not invoice.linked_invoice and not child_invoices %}
-                                <a class="btn btn-danger mr-2"
-                                   type="button"
-                                   href="{% url 'delete-invoice' invoice.pk %}">Delete invoice</a>
-                            {% endif %}
-                            <a class="btn btn-warning mr-2"
+    <div class="card-group">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center pointer">
+                <h6 class="m-0 font-weight-bold text-primary">Invoice {{ invoice.name }}</h6>
+                <div class="d-flex">
+                    {% if request.user|has_group:"ceos" and request.user|has_group:"accountants" %}
+                        {% if not invoice.order_from_income_invoice.all and not invoice.order_from_cost_invoice.all and not invoice.is_paid and not invoice.linked_invoice and not child_invoices %}
+                            <a class="btn btn-danger mr-2"
                                type="button"
-                               href="{% url 'update-invoice' invoice.pk %}">Update invoice</a>
-                            <a class="btn btn-primary mr-2"
-                               type="button"
-                               href="{% url 'create-invoice' %}">Create another invoice</a>
+                               href="{% url 'delete-invoice' invoice.pk %}">Delete invoice</a>
                         {% endif %}
-                        <a class="btn btn-primary" type="button" href="{% url 'list-invoice' %}">Back to invoice list</a>
-                    </div>
+                        <a class="btn btn-warning mr-2"
+                           type="button"
+                           href="{% url 'update-invoice' invoice.pk %}">Update invoice</a>
+                        <a class="btn btn-primary mr-2"
+                           type="button"
+                           href="{% url 'create-invoice' %}">Create another invoice</a>
+                    {% endif %}
+                    <a class="btn btn-primary" type="button" href="{% url 'list-invoice' %}">Back to invoice list</a>
                 </div>
-                <div class="row p-6">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center pointer"
-                                 data-toggle="collapse"
-                                 data-target="#identifiersCollapse"
-                                 aria-expanded="true"
-                                 role="button">
-                                <h5 class="m-0 font-weight-bold">Invoice data</h5>
-                            </div>
-                            <div id="identifiersCollapse" class="collapse show">
-                                <div class="card-body">
-                                    <p class="font-weight-bold">
-                                        Scan: <a target="_blank" href="{{ invoice.scan.url }}">{{ invoice }}</a>
-                                    </p>
-                                    <p class="font-weight-bold">Type: {{ invoice.type }}</p>
-                                    <p class="font-weight-bold">
-                                        Seller: <a href="{% url 'detail-company' invoice.seller.id %}">{{ invoice.seller.name }}</a>
-                                    </p>
-                                    <p class="font-weight-bold">
-                                        Buyer: <a href="{% url 'detail-company' invoice.buyer.id %}">{{ invoice.buyer.name }}</a>
-                                    </p>
-                                    <p class="font-weight-bold">Net price: {{ invoice.net_price }} zł</p>
-                                    <p class="font-weight-bold">Vat: {{ invoice.vat }} zł</p>
-                                    <p class="font-weight-bold">Gross: {{ invoice.gross }} zł</p>
-                                    <p class="font-weight-bold">Create date: {{ invoice.create_date }}</p>
-                                    <p class="font-weight-bold">Service date: {{ invoice.service_date }}</p>
-                                    <p class="font-weight-bold">Payment date: {{ invoice.payment_date }}</p>
-                                    <p class="font-weight-bold">
-                                        Order:
-                                        {% if invoice.order_from_income_invoice.all %}
-                                            {% for order in invoice.order_from_income_invoice.all %}
-                                                <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
-                                            {% endfor %}
-                                        {% elif invoice.order_from_cost_invoice.all %}
-                                            {% for order in invoice.order_from_cost_invoice.all %}
-                                                <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
-                                            {% endfor %}
-                                        {% else %}
-                                            NOT PINNED
-                                        {% endif %}
-                                    </p>
-                                    <p class="font-weight-bold">
-                                        Status:
-                                        {% if invoice.is_paid %}
-                                            PAID
-                                        {% else %}
-                                            NOT PAID
-                                        {% endif %}
-                                    </p>
-                                    <p class="font-weight-bold">
-                                        Parent invoice:
-                                        {% if invoice.linked_invoice %}
-                                            <a href="{% url "detail-invoice" invoice.linked_invoice.pk %}">{{ invoice.linked_invoice }}</a>
-                                        {% else %}
-                                            this invoice is parent invoice
-                                        {% endif %}
-                                    </p>
-                                    <p class="font-weight-bold">
-                                        {% if child_invoices %}
-                                            Child invoices:
-                                            {% for child_invoice in child_invoices %}
-                                                <li class="font-weight-bold">
-                                                    <a href="{% url "detail-invoice" child_invoice.pk %}">{{ child_invoice }}</a>
-                                                </li>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </p>
-                                </div>
+            </div>
+            <div class="row p-6">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center pointer"
+                             data-toggle="collapse"
+                             data-target="#identifiersCollapse"
+                             aria-expanded="true"
+                             role="button">
+                            <h5 class="m-0 font-weight-bold">Invoice data</h5>
+                        </div>
+                        <div id="identifiersCollapse" class="collapse show">
+                            <div class="card-body">
+                                <p class="font-weight-bold">
+                                    Scan: <a target="_blank" href="{{ invoice.scan.url }}">{{ invoice }}</a>
+                                </p>
+                                <p class="font-weight-bold">Type: {{ invoice.type }}</p>
+                                <p class="font-weight-bold">
+                                    Seller: <a href="{% url 'detail-company' invoice.seller.id %}">{{ invoice.seller.name }}</a>
+                                </p>
+                                <p class="font-weight-bold">
+                                    Buyer: <a href="{% url 'detail-company' invoice.buyer.id %}">{{ invoice.buyer.name }}</a>
+                                </p>
+                                <p class="font-weight-bold">Net price: {{ invoice.net_price }} zł</p>
+                                <p class="font-weight-bold">Vat: {{ invoice.vat }} zł</p>
+                                <p class="font-weight-bold">Gross: {{ invoice.gross }} zł</p>
+                                <p class="font-weight-bold">Create date: {{ invoice.create_date }}</p>
+                                <p class="font-weight-bold">Service date: {{ invoice.service_date }}</p>
+                                <p class="font-weight-bold">Payment date: {{ invoice.payment_date }}</p>
+                                <p class="font-weight-bold">
+                                    Order:
+                                    {% if invoice.order_from_income_invoice.all %}
+                                        {% for order in invoice.order_from_income_invoice.all %}
+                                            <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
+                                        {% endfor %}
+                                    {% elif invoice.order_from_cost_invoice.all %}
+                                        {% for order in invoice.order_from_cost_invoice.all %}
+                                            <a href="{% url "detail-order" order.pk %}">{{ order }}</a>
+                                        {% endfor %}
+                                    {% else %}
+                                        NOT PINNED
+                                    {% endif %}
+                                </p>
+                                <p class="font-weight-bold">
+                                    Status:
+                                    {% if invoice.is_paid %}
+                                        PAID
+                                    {% else %}
+                                        NOT PAID
+                                    {% endif %}
+                                </p>
+                                <p class="font-weight-bold">
+                                    Parent invoice:
+                                    {% if invoice.linked_invoice %}
+                                        <a href="{% url "detail-invoice" invoice.linked_invoice.pk %}">{{ invoice.linked_invoice }}</a>
+                                    {% else %}
+                                        this invoice is parent invoice
+                                    {% endif %}
+                                </p>
+                                <p class="font-weight-bold">
+                                    {% if child_invoices %}
+                                        Child invoices:
+                                        {% for child_invoice in child_invoices %}
+                                            <li class="font-weight-bold">
+                                                <a href="{% url "detail-invoice" child_invoice.pk %}">{{ child_invoice }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    {% endfor %}
+    </div>
 {% endblock content %}

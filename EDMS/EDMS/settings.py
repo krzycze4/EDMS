@@ -45,7 +45,6 @@ INSTALLED_EXTENSIONS = [
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -77,12 +76,14 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
+            "libraries": {
+                "group_tags": "EDMS.group_tags",
+            },
         },
     },
 ]
 
 WSGI_APPLICATION = "EDMS.wsgi.application"
-
 
 DATABASES = {
     "default": {
@@ -132,7 +133,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
