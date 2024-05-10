@@ -5,7 +5,10 @@ from django.db import models
 User = get_user_model()
 
 
-class Payment(models.Model):
+class Salary(models.Model):
     date = models.DateField()
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="salaries")
     fee = models.IntegerField(validators=[MinValueValidator(1)])
+
+    class Meta:
+        verbose_name_plural = "Salaries"

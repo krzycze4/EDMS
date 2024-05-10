@@ -5,7 +5,7 @@ from employees.api.views.views_api_agreement import AgreementModelViewSet
 from rest_framework import routers
 
 from .api.views.views_api_addendum import AddendumModelViewSet
-from .api.views.views_api_payment import PaymentModelViewSet
+from .api.views.views_api_payment import SalaryModelViewSet
 from .api.views.views_api_termination import TerminationModelViewSet
 from .api.views.views_api_vacation import VacationModelViewSet
 from .views.views_addendum import (
@@ -28,12 +28,12 @@ from .views.views_employee import (
 )
 from .views.views_group import GroupUpdateView
 from .views.views_password import CustomPasswordChangeView
-from .views.views_payment import (
-    PaymentCreateView,
-    PaymentDeleteView,
-    PaymentDetailView,
-    PaymentListView,
-    PaymentUpdateView,
+from .views.views_salary import (
+    SalaryCreateView,
+    SalaryDeleteView,
+    SalaryDetailView,
+    SalaryListView,
+    SalaryUpdateView,
 )
 from .views.views_termination import (
     TerminationCreateView,
@@ -51,7 +51,7 @@ from .views.views_vacation import (
 router = routers.DefaultRouter()
 router.register("api/addenda", AddendumModelViewSet)
 router.register("api/agreements", AgreementModelViewSet)
-router.register("api/payments", PaymentModelViewSet)
+router.register("api/salaries", SalaryModelViewSet)
 router.register("api/terminations", TerminationModelViewSet)
 router.register("api/vacations", VacationModelViewSet)
 
@@ -138,29 +138,29 @@ urlpatterns = [
     path("addenda/<int:pk>/update/", AddendumUpdateView.as_view(), name="update-addendum"),
     path("addenda/<int:pk>/delete/", AddendumDeleteView.as_view(), name="delete-addendum"),
     path(
-        "payments/create/",
-        PaymentCreateView.as_view(),
-        name="create-payment",
+        "salaries/create/",
+        SalaryCreateView.as_view(),
+        name="create-salary",
     ),
     path(
-        "payments/create/<int:pk>/",
-        PaymentUpdateView.as_view(),
-        name="update-payment",
+        "salaries/create/<int:pk>/",
+        SalaryUpdateView.as_view(),
+        name="update-salary",
     ),
     path(
-        "payments/<int:pk>/",
-        PaymentDetailView.as_view(),
-        name="detail-payment",
+        "salaries/<int:pk>/",
+        SalaryDetailView.as_view(),
+        name="detail-salary",
     ),
     path(
-        "payments/<int:pk>/delete/",
-        PaymentDeleteView.as_view(),
-        name="delete-payment",
+        "salaries/<int:pk>/delete/",
+        SalaryDeleteView.as_view(),
+        name="delete-salary",
     ),
     path(
-        "payments/",
-        PaymentListView.as_view(),
-        name="list-payment",
+        "salaries/",
+        SalaryListView.as_view(),
+        name="list-salary",
     ),
     path("change-password/", CustomPasswordChangeView.as_view(), name="change-password"),
     path("employees/<int:pk>/update-group", GroupUpdateView.as_view(), name="update-group"),

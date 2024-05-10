@@ -58,7 +58,7 @@ def validate_no_payment_date_before_create_date(
         create_date: date = attrs["create_date"]
 
         if payment_date < create_date:
-            raise ValidationError({"payment_date": "Payment end_date can't be earlier than create end_date."})
+            raise ValidationError({"payment_date": "Salary end_date can't be earlier than create end_date."})
 
 
 def validate_seller_or_buyer_must_be_my_company(

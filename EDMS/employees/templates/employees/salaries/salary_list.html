@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block title %}
-    Payment list
+    Salary list
 {% endblock title %}
 {% block content %}
     <div class="container-fluid">
         <p class="mb-4">
-            Table represents the whole list of payment registered to the system. If you click the name of any payment you will see its details.
+            Table represents the whole list of salary registered to the system. If you click the name of any salary you will see its details.
         </p>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Payment list</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Salary list</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive-sm">
@@ -41,7 +41,7 @@
                                                 {% endfor %}
                                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                                     <input type="submit" value="Search" class="btn btn-primary" />
-                                                    <a class="btn btn-primary" href="{% url 'list-payment' %}">Show all payments</a>
+                                                    <a class="btn btn-primary" href="{% url 'list-salary' %}">Show all salaries</a>
                                                 </div>
                                             </form>
                                         </div>
@@ -82,14 +82,14 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for payment in payments %}
+                                        {% for salary in salaries %}
                                             <tr class="odd">
                                                 <th>
-                                                    <a href="{% url "detail-payment" payment.pk %}">{{ payment.pk }}</a>
+                                                    <a href="{% url "detail-salary" salary.pk %}">{{ salary.pk }}</a>
                                                 </th>
-                                                <th>{{ payment.date }}</th>
-                                                <th>{{ payment.user }}</th>
-                                                <th>{{ payment.fee }}</th>
+                                                <th>{{ salary.date }}</th>
+                                                <th>{{ salary.user }}</th>
+                                                <th>{{ salary.fee }}</th>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

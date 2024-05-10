@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}
-    Payment Detail
+    Salary Detail
 {% endblock title %}
 {% block content %}
     <div class="card-group">
         <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center pointer">
-                <h6 class="m-0 font-weight-bold text-primary">Payment #{{ payment.pk }}</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Salary #{{ salary.pk }}</h6>
                 <div class="d-flex">
-                    <a class="btn btn-primary" type="button" href="{% url "list-payment" %}">Back to payment list</a>
+                    <a class="btn btn-primary" type="button" href="{% url "list-salary" %}">Back to salary list</a>
                 </div>
             </div>
             <div class="row p-6">
@@ -16,24 +16,24 @@
                     <div class="card my-2">
                         <div class="card-header d-flex justify-content-between align-items-center pointer"
                              data-toggle="collapse"
-                             data-target="#paymentCollapse"
+                             data-target="#salaryCollapse"
                              aria-expanded="true"
                              role="button">
-                            <h5 class="m-0 font-weight-bold">Payment #{{ payment.pk }}</h5>
+                            <h5 class="m-0 font-weight-bold">Salary #{{ salary.pk }}</h5>
                         </div>
-                        <div id="paymentCollapse" class="collapse show">
+                        <div id="salaryCollapse" class="collapse show">
                             <div class="card-body">
-                                <p class="font-weight-bold">Date: {{ payment.date }}</p>
+                                <p class="font-weight-bold">Date: {{ salary.date }}</p>
                                 <p class="font-weight-bold">
-                                    Employee: <a href="{% url 'detail-employee' payment.user.pk %}">{{ payment.user }}</a>
+                                    Employee: <a href="{% url 'detail-employee' salary.user.pk %}">{{ salary.user }}</a>
                                 </p>
-                                <p class="font-weight-bold">Fee: {{ payment.fee }}</p>
+                                <p class="font-weight-bold">Fee: {{ salary.fee }}</p>
                                 <a class="btn btn-warning mr-2"
                                    type="button"
-                                   href="{% url "update-payment" payment.pk %}">Edit payment</a>
+                                   href="{% url "update-salary" salary.pk %}">Edit salary</a>
                                 <a class="btn btn-danger mr-2"
                                    type="button"
-                                   href="{% url "delete-payment" payment.pk %}">Delete payment</a>
+                                   href="{% url "delete-salary" salary.pk %}">Delete salary</a>
                             </div>
                         </div>
                     </div>

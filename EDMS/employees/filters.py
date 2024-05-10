@@ -1,6 +1,6 @@
 import django_filters
 from django.contrib.auth import get_user_model
-from employees.models.models_payment import Payment
+from employees.models.models_salaries import Salary
 
 User = get_user_model()
 
@@ -23,12 +23,12 @@ class UserFilterSet(django_filters.FilterSet):
             field.widget.attrs.update({"class": "form-control"})
 
 
-class PaymentFilterSet(django_filters.FilterSet):
+class SalaryFilterSet(django_filters.FilterSet):
     user_first_name = django_filters.CharFilter(field_name="user__first_name", lookup_expr="icontains")
     user_last_name = django_filters.CharFilter(field_name="user__last_name", lookup_expr="icontains")
 
     class Meta:
-        model = Payment
+        model = Salary
         fields = {
             "date": ["gte", "lte"],
             "fee": ["gte", "lte"],

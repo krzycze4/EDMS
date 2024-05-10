@@ -1,6 +1,6 @@
 from employees.models.models_addendum import Addendum
 from employees.models.models_agreement import Agreement
-from employees.models.models_payment import Payment
+from employees.models.models_salaries import Salary
 from employees.models.models_termination import Termination
 from employees.models.models_vacation import Vacation
 from rest_framework import serializers
@@ -18,9 +18,9 @@ class AgreementSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PaymentSerializer(serializers.ModelSerializer):
+class SerializerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Payment
+        model = Salary
         fields = "__all__"
 
 

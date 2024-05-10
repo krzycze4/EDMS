@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models.models_addendum import Addendum, Agreement
-from .models.models_payment import Payment
+from .models.models_salaries import Salary
 from .models.models_termination import Termination
 from .models.models_vacation import Vacation
 
@@ -41,7 +41,7 @@ class CustomAddendumAdmin(admin.ModelAdmin):
     list_display = ("name", "agreement", "create_date", "end_date", "salary_gross")
 
 
-class CustomPaymentAdmin(admin.ModelAdmin):
+class CustomSalaryAdmin(admin.ModelAdmin):
     list_display = ("id", "date", "user", "fee")
 
 
@@ -49,4 +49,4 @@ admin.site.register(Vacation, CustomVacationAdmin)
 admin.site.register(Agreement, CustomAgreementAdmin)
 admin.site.register(Termination, CustomTerminationAdmin)
 admin.site.register(Addendum, CustomAddendumAdmin)
-admin.site.register(Payment, CustomPaymentAdmin)
+admin.site.register(Salary, CustomSalaryAdmin)

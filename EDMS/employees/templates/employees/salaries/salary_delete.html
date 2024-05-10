@@ -1,30 +1,30 @@
 {% extends "base.html" %}
 {% block title %}
-    Delete Payment
+    Delete Salary
 {% endblock title %}
 {% block content %}
     <div class="card">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Do you want to delete the payment?</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Do you want to delete the salary?</h6>
         </div>
         <div class="card-body">
             <div class="mb-3">
-                <strong>Number:</strong> {{ payment.pk }}
+                <strong>Number:</strong> {{ salary.pk }}
             </div>
             <div class="mb-3">
-                <strong>Date:</strong> {{ payment.date }}
+                <strong>Date:</strong> {{ salary.date }}
             </div>
             <div class="mb-3">
                 <strong>User:</strong>
-                <a href="{% url "detail-employee" payment.user.pk %}">{{ payment.user }}</a>
+                <a href="{% url "detail-employee" salary.user.pk %}">{{ salary.user }}</a>
             </div>
             <div class="mb-3">
-                <strong>Fee:</strong> {{ payment.fee }}
+                <strong>Fee:</strong> {{ salary.fee }}
             </div>
             <form method="post">
                 {% csrf_token %}
                 <input type="submit" class="btn btn-danger my-2" value="Yes">
-                <a class="btn btn-primary my-2" href="{% url "list-payment" %}">No</a>
+                <a class="btn btn-primary my-2" href="{% url "list-salary" %}">No</a>
             </form>
         </div>
     </div>
