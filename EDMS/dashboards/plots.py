@@ -4,9 +4,8 @@ from typing import Dict, List, Tuple, Union
 import plotly.graph_objs as go
 from _decimal import Decimal
 from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
 from django.utils import timezone
-from employees.models.models_payment import Payment
+from employees.models.models_salaries import Salary
 from invoices.models import Invoice
 from orders.models import Order
 
@@ -14,8 +13,8 @@ User = get_user_model()
 
 
 class Plot:
-    def render_plot(self, orders: List[Order], text: str, is_company=False) -> str:
-        plot_data = self.set_plot_data(orders=orders, is_company=is_company)
+    def render(self, orders: List[Order], salaries: List[Salary], text: str, is_company=False) -> str:
+        plot_data = self.set_plot_data(orders=orders, salaries=salaries, is_company=is_company)
         x_data = self.set_x_values(plot_data=plot_data)
         y_data = list(plot_data.values())
         generated_date = timezone.now().strftime("%d/%m/%Y - %H:%M")
@@ -38,62 +37,65 @@ class Plot:
         )
         return fig.to_html(full_html=False)
 
-    def set_plot_data(self, orders: List[Order], is_company: bool) -> Dict[Tuple[int, int], Decimal]:
+    def set_plot_data(
+        self, orders: List[Order], salaries: List[Salary], is_company: bool
+    ) -> Dict[Tuple[int, int], Decimal]:
         plot_data = {}
-        if len(orders) > 0:
+        if len(orders) > 0 or len(salaries) > 0:
             start_month: int = orders[0].end_date.month
             start_year: int = orders[0].end_date.year
             end_month: int = timezone.now().month
             end_year: int = timezone.now().year
-
+            month_balance = Decimal(0)
             while start_month <= end_month and start_year <= end_year:
-                plot_data[(start_month, start_year)] = Decimal(0)
-
-                # PROBLEM N+1
-                for order in orders:
-                    if order.end_date.month <= start_month and order.end_date.year <= start_year:
-                        balance: Decimal = self.count_order_balance(order=order, is_company=is_company)
-                        plot_data[(start_month, start_year)] += balance
-                        orders.remove(order)
-
-                start_month, start_year = self.set_start_month_and_year(start_month=start_month, start_year=start_year)
+                month_balance = self.count_month_balance(month_balance, orders, salaries, start_month, start_year)
+                plot_data[(start_month, start_year)] = month_balance
+                start_month, start_year = self.set_start_month_and_start_year(
+                    start_month=start_month, start_year=start_year
+                )
+                month_balance = Decimal(0)
         return plot_data
 
-    def count_order_balance(self, order: Order, is_company: bool) -> Decimal:
-        income_invoices = order.income_invoice.all()
-        income_sum_net_price = self.get_sum_invoice_net_price(invoices=income_invoices)
-
-        cost_invoices = order.cost_invoice.all()
-        cost_sum_net_price = self.get_sum_invoice_net_price(invoices=cost_invoices)
-
-        sum_payment_fee = self.get_payment_fees(is_company=is_company, order=order)
-
-        return income_sum_net_price - cost_sum_net_price - sum_payment_fee
+    def count_month_balance(self, month_balance, orders, salaries, start_month, start_year):
+        month_balance += self.count_month_orders_balance(orders, start_month, start_year)
+        month_balance -= self.count_month_salaries_balance(salaries, start_month, start_year)
+        return month_balance
 
     @staticmethod
-    def get_sum_invoice_net_price(invoices: QuerySet[Invoice]) -> Decimal:
+    def count_month_salaries_balance(salaries, start_month, start_year):
+        month_salaries_balance = Decimal(0)
+        for salary in salaries[:]:
+            if salary.date.month == start_month and salary.date.year == start_year:
+                month_salaries_balance += salary.fee
+                salaries.remove(salary)
+        return month_salaries_balance
+
+    def count_month_orders_balance(self, orders, start_month, start_year):
+        month_orders_balance = Decimal(0)
+        for order in orders[:]:
+            if order.end_date.month == start_month and order.end_date.year == start_year:
+                month_orders_balance += self.count_single_order_balance(order=order)
+                orders.remove(order)
+        return month_orders_balance
+
+    def count_single_order_balance(self, order: Order) -> Decimal:
+        income_invoices = list(order.income_invoice.all())
+        income_sum_net_price = self.get_sum_invoice_net_price(invoices=income_invoices)
+
+        cost_invoices = list(order.cost_invoice.all())
+        cost_sum_net_price = self.get_sum_invoice_net_price(invoices=cost_invoices)
+
+        return income_sum_net_price - cost_sum_net_price
+
+    @staticmethod
+    def get_sum_invoice_net_price(invoices: List[Invoice]) -> Decimal:
         sum_net_price = Decimal(0)
         for invoice in invoices:
             sum_net_price += invoice.net_price
         return sum_net_price
 
     @staticmethod
-    def get_payment_fees(is_company: bool, order: Order):
-        sum_payment_fee = Decimal(0)
-        if is_company:
-            payments = Payment.objects.filter(date__month=order.end_date.month, date__year=order.end_date.year)
-        else:
-            payments = Payment.objects.filter(
-                date__month=order.end_date.month,
-                date__year=order.end_date.year,
-                user=order.user,
-            )
-        for payment in payments:
-            sum_payment_fee += payment.fee
-        return sum_payment_fee
-
-    @staticmethod
-    def set_start_month_and_year(start_month: int, start_year: int) -> Tuple[int, int]:
+    def set_start_month_and_start_year(start_month: int, start_year: int) -> Tuple[int, int]:
         new_month = (start_month % 12) + 1
         new_year = start_year + (start_month // 12)
         return new_month, new_year
@@ -104,3 +106,26 @@ class Plot:
         for month, year in plot_data.keys():
             x_values.append(f"{month}/{year}")
         return x_values
+
+
+def render_plot_for_user_group(user: User) -> str:
+    plot = Plot()
+    text = ""
+    salaries = []
+    orders = []
+    is_company = False
+    user_group = user.groups.first()
+
+    if user_group.name == "managers":
+        text = f"Statistics employee: {user}"
+        orders = list(
+            Order.objects.prefetch_related("cost_invoice", "income_invoice").filter(user=user).order_by("end_date")
+        )
+        salaries = list(Salary.objects.filter(user=user).order_by("date"))
+    elif user_group.name == "ceos":
+        text = "Statistics my company"
+        orders = list(Order.objects.prefetch_related("cost_invoice", "income_invoice").order_by("end_date"))
+        salaries = list(Salary.objects.order_by("date"))
+        is_company = True
+
+    return plot.render(orders=orders, salaries=salaries, text=text, is_company=is_company)

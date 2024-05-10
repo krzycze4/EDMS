@@ -12,10 +12,13 @@ from orders.models import Order, Protocol
 class ProtocolCreateView(CreateView, LoginRequiredMixin):
     template_name = "orders/protocols/create_protocol.html"
     form_class = ProtocolForm
+    model = Protocol
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["order"] = get_object_or_404(Order, pk=self.kwargs["pk"])
+        order = get_object_or_404(Order, pk=self.kwargs["pk"])
+        context["order"] = order
+        context["protocols"] = Protocol.objects.filter(order=order)
         return context
 
     def get_success_url(self) -> str:

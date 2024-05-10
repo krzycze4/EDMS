@@ -37,7 +37,7 @@
                 {% csrf_token %}
                 <input type="submit" class="btn btn-danger my-2" value="Yes">
                 <a class="btn btn-primary my-2"
-                   href="{% url 'detail-company' company.pk %}">No</a>
+                   href="{% url 'detail-company' contact.company.pk %}">No</a>
             </form>
         </div>
     </div>

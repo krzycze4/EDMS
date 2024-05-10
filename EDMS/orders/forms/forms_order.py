@@ -7,7 +7,6 @@ from django import forms
 from orders.models import Order, Protocol
 from orders.validators import (
     validate_end_date_after_start_date,
-    validate_no_repetition,
     validate_start_date_in_contract_period,
 )
 
@@ -40,7 +39,7 @@ class OrderCreateForm(forms.ModelForm):
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
         validate_end_date_after_start_date(cleaned_data=cleaned_data)
-        validate_no_repetition(cleaned_data=cleaned_data)
+        # validate_no_repetition(cleaned_data=cleaned_data)
         validate_same_company_in_order_and_contract(cleaned_data=cleaned_data)
         validate_start_date_in_contract_period(cleaned_data=cleaned_data)
         return cleaned_data

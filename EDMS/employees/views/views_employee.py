@@ -1,17 +1,15 @@
 from typing import Any, Dict
 
-from dashboards.plots import Plot
+from dashboards.plots import render_plot_for_user_group
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView
 from employees.filters import UserFilterSet
 from employees.forms.forms_contact import ContactForm
 from employees.models.models_addendum import Addendum
 from employees.models.models_termination import Termination
-from orders.models import Order
 
 User = get_user_model()
 
@@ -23,26 +21,13 @@ class EmployeeDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context["has_termination"] = Termination.objects.filter(agreement__user__id=self.kwargs["pk"]).exists()
-        context["has_addendum"] = Addendum.objects.filter(agreement__user__id=self.kwargs["pk"]).exists()
-
-        user = get_object_or_404(User, pk=self.kwargs["pk"])
-        is_accountant_or_hr = False
-        if user.groups.exists() and user.groups.first().name in ("accountants", "hrs"):
-            is_accountant_or_hr = True
-        context["is_accountant_or_hr"] = is_accountant_or_hr
-
-        text_employee = f"Statistics employee: {user}"
-        orders_employee = list(Order.objects.filter(contract__employee__exact=user).order_by("end_date"))
-
-        text_company = "Statistics my company"
-        orders_company = list(Order.objects.order_by("end_date"))
-
-        plot = Plot()
-
-        context["plot_employee"] = plot.render_plot(orders=orders_employee, text=text_employee)
-        context["plot_company"] = plot.render_plot(orders=orders_company, text=text_company, is_company=True)
+        context["plot"] = render_plot_for_user_group(user=self.object)
+        context["agreements"] = self.object.agreements.all()
+        context["terminations"] = Termination.objects.filter(agreement__user__id=self.kwargs["pk"]).select_related(
+            "agreement"
+        )
+        context["addenda"] = Addendum.objects.filter(agreement__user__id=self.kwargs["pk"]).select_related("agreement")
+        context["vacations"] = self.object.vacations.prefetch_related("substitute_users")
         return context
 
 

@@ -35,6 +35,8 @@ class InvoiceDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin)
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["child_invoices"] = self.get_child_invoices()
+        context["order_from_income_invoice"] = self.object.order_from_income_invoice.all()
+        context["order_from_cost_invoice"] = self.object.order_from_cost_invoice.all()
         return context
 
     def get_child_invoices(self) -> Union[List[Invoice] | str]:
@@ -56,7 +58,10 @@ class InvoiceListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     def get_queryset(self) -> QuerySet:
         queryset: QuerySet = super().get_queryset()
         self.filter = InvoiceFilter(self.request.GET, queryset=queryset)
-        return self.filter.qs
+        queryset = self.filter.qs
+        queryset = queryset.select_related("seller")
+        queryset = queryset.select_related("buyer")
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -73,13 +78,7 @@ class InvoiceUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
     def get_success_url(self) -> str:
         return reverse("detail-invoice", kwargs={"pk": self.object.pk})
 
-    def get_context_data(self, **kwargs) -> Dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        order = self.get_order()
-        context["order"] = order
-        return context
-
-    def get_order(self) -> Union[Order, None]:
+    def get_order(self) -> Order:
         if self.object.seller.is_mine:
             order = Order.objects.filter(income_invoice=self.object).first()
         else:

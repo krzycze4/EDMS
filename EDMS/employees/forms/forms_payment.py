@@ -1,10 +1,10 @@
 from django import forms
-from employees.models.models_payment import Payment
+from employees.models.models_salaries import Salary
 
 
 class PaymentForm(forms.ModelForm):
     class Meta:
-        model = Payment
+        model = Salary
         fields = ["date", "user", "fee"]
         widgets = {
             "date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),

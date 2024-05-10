@@ -122,8 +122,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% if user.agreements.all %}
-                                                {% for agreement in user.agreements.all %}
+                                            {% if agreements %}
+                                                {% for agreement in agreements %}
                                                     <tr>
                                                         <td>
                                                             <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
@@ -162,20 +162,18 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% if user.agreements.all and has_termination %}
-                                                {% for agreement in user.agreements.all %}
-                                                    {% if agreement.termination %}
-                                                        <tr>
-                                                            <td>
-                                                                <a href="{% url "detail-termination" agreement.termination.pk %}">{{ agreement.termination.name }}</a>
-                                                            </td>
-                                                            <td>{{ agreement.termination.create_date }}</td>
-                                                            <td>
-                                                                <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
-                                                            </td>
-                                                            <td>{{ agreement.termination.end_date }}</td>
-                                                        </tr>
-                                                    {% endif %}
+                                            {% if terminations %}
+                                                {% for termination in terminations %}
+                                                    <tr>
+                                                        <td>
+                                                            <a href="{% url "detail-termination" termination.pk %}">{{ termination.name }}</a>
+                                                        </td>
+                                                        <td>{{ termination.create_date }}</td>
+                                                        <td>
+                                                            <a href="{% url "detail-agreement" termination.agreement.pk %}">{{ termination.agreement }}</a>
+                                                        </td>
+                                                        <td>{{ termination.end_date }}</td>
+                                                    </tr>
                                                 {% endfor %}
                                             {% else %}
                                                 <tr>
@@ -199,20 +197,18 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% if user.agreements.all and has_addendum %}
-                                                {% for agreement in user.agreements.all %}
-                                                    {% for addendum in agreement.addenda.all %}
-                                                        <tr>
-                                                            <td>
-                                                                <a href="{% url "detail-addendum" addendum.pk %}">{{ addendum.name }}</a>
-                                                            </td>
-                                                            <td>{{ addendum.create_date }}</td>
-                                                            <td>
-                                                                <a href="{% url "detail-agreement" agreement.pk %}">{{ agreement }}</a>
-                                                            </td>
-                                                            <td>{{ addendum.end_date }}</td>
-                                                        </tr>
-                                                    {% endfor %}
+                                            {% if addenda %}
+                                                {% for addendum in addenda %}
+                                                    <tr>
+                                                        <td>
+                                                            <a href="{% url "detail-addendum" addendum.pk %}">{{ addendum.name }}</a>
+                                                        </td>
+                                                        <td>{{ addendum.create_date }}</td>
+                                                        <td>
+                                                            <a href="{% url "detail-agreement" addendum.agreement.pk %}">{{ addendum.agreement }}</a>
+                                                        </td>
+                                                        <td>{{ addendum.end_date }}</td>
+                                                    </tr>
                                                 {% endfor %}
                                             {% else %}
                                                 <tr>
@@ -234,7 +230,6 @@
                             </div>
                             <div id="vacationsCollapse" class="collapse show">
                                 <div class="card-body">
-                                    <p class="font-weight-bold">Vacation days left: {{ vacations_left }}</p>
                                     <p class="font-weight-bold">Vacation days left: {{ user.vacation_left }}</p>
                                     {% if request.user|has_group:"hrs" or request.user|has_group:"ceos" %}
                                         <a class="btn btn-info mr-2"
@@ -252,8 +247,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% if user.vacations.all %}
-                                                {% for vacation in user.vacations.all %}
+                                            {% if vacations %}
+                                                {% for vacation in vacations %}
                                                     <tr>
                                                         <td>
                                                             <a href="{% url "detail-vacation" vacation.pk %}">{{ vacation.pk }}</a>
@@ -281,7 +276,7 @@
                         </div>
                     {% endif %}
                     {% if request.user|has_group:'ceos' or request.user|has_group:'managers' and user == request.user %}
-                        {% if not is_accountant_or_hr %}
+                        {% if not request.user|has_group:'accountants' or not request.user|has_group:'hrs' %}
                             <div class="card my-2">
                                 <div class="card-header d-flex justify-content-between align-items-center pointer"
                                      data-toggle="collapse"
@@ -290,11 +285,7 @@
                                      role="button">
                                     <h5 class="m-0 font-weight-bold">Statistics</h5>
                                 </div>
-                                {% if request.user == user and request.user|has_group:'ceos' %}
-                                    <div id="statisticsCollapse" class="collapse show">{{ plot_company|safe }}</div>
-                                {% else %}
-                                    <div id="statisticsCollapse" class="collapse show">{{ plot_employee|safe }}</div>
-                                {% endif %}
+                                <div id="statisticsCollapse" class="collapse show">{{ plot|safe }}</div>
                             </div>
                         {% endif %}
                     {% endif %}

@@ -39,12 +39,26 @@ class OrderDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        income_invoices_net_price_sum = self.count_invoices_sum(self.object.income_invoice.all())
-        cost_invoices_net_price_sum = self.count_invoices_sum(self.object.cost_invoice.all())
-        order_balance = income_invoices_net_price_sum - cost_invoices_net_price_sum
+
+        income_invoices = self.object.income_invoice.select_related("linked_invoice")
+        context["income_invoices"] = income_invoices
+
+        cost_invoices = self.object.cost_invoice.select_related("linked_invoice")
+        context["cost_invoices"] = cost_invoices
+
+        income_invoices_net_price_sum = self.count_invoices_sum(income_invoices)
         context["income_invoices_net_price_sum"] = income_invoices_net_price_sum
+
+        cost_invoices_net_price_sum = self.count_invoices_sum(cost_invoices)
         context["cost_invoices_net_price_sum"] = cost_invoices_net_price_sum
+
+        order_balance = income_invoices_net_price_sum - cost_invoices_net_price_sum
         context["order_balance"] = order_balance
+
+        protocols = self.object.protocols.select_related("user").all()
+        context["protocols"] = protocols
+
+        context["contract"] = self.object.contract
         return context
 
     @staticmethod
@@ -72,15 +86,19 @@ class OrderUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
 class OrderListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     permission_required = "orders.view_order"
     template_name = "orders/orders/list_order.html"
-    queryset = Order.objects.all()
+    queryset = Order.objects.get_queryset().order_by("id")
     paginate_by = 10
     context_object_name = "orders"
     filter = None
     ordering = ["create_date"]
 
     def get_queryset(self) -> QuerySet:
+        queryset = super().get_queryset()
         self.filter = OrderFilter(self.request.GET, queryset=self.queryset)
-        return self.filter.qs
+        queryset = self.filter.qs
+        queryset = queryset.select_related("user")
+        queryset = queryset.select_related("company")
+        return queryset
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)

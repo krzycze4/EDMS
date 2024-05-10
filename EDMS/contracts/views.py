@@ -62,7 +62,9 @@ class ContractListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     def get_queryset(self) -> QuerySet[Contract]:
         queryset = super().get_queryset()
         self.filter_set = ContractFilterSet(self.request.GET, queryset=queryset)
-        return self.filter_set.qs
+        queryset = self.filter_set.qs
+        queryset = queryset.select_related("company")
+        return queryset
 
     def get_context_data(self, *args, **kwargs) -> Dict[str, Any]:
         context = super().get_context_data(*args, **kwargs)

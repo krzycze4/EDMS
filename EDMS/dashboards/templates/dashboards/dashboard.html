@@ -7,9 +7,5 @@
     <div class="card-header">
         <p class="font-weight-bold">Your statistics</p>
     </div>
-    {% if request.user|has_group:"managers" %}
-        {{ plot_employee|safe }}
-    {% elif request.user|has_group:"ceos" %}
-        {{ plot_company|safe }}
-    {% endif %}
+    {{ plot|safe }}
 {% endblock content %}

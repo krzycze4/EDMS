@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                         decimal_places=2,
                         max_digits=8,
                         validators=[django.core.validators.MinValueValidator(1.0)],
-                        verbose_name="Payment net price",
+                        verbose_name="Salary net price",
                     ),
                 ),
                 (
