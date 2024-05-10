@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class AddendumCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
-    permission_required = "addendum.add_addendum"
+    permission_required = "employees.add_addendum"
     model = Addendum
     template_name = "employees/addenda/addendum_create.html"
     form_class = AddendumForm
@@ -19,13 +19,13 @@ class AddendumCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin
 
 
 class AddendumDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
-    permission_required = "addendum.view_addendum"
+    permission_required = "employees.view_addendum"
     model = Addendum
     template_name = "employees/addenda/addendum_detail.html"
 
 
 class AddendumUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
-    permission_required = "addendum.change_addendum"
+    permission_required = "employees.change_addendum"
     model = Addendum
     form_class = AddendumForm
     template_name = "employees/addenda/addendum_update.html"
@@ -35,7 +35,7 @@ class AddendumUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin
 
 
 class AddendumDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
-    permission_required = "addendum.delete_addendum"
+    permission_required = "employees.delete_addendum"
     model = Addendum
     template_name = "employees/addenda/addendum_delete.html"
 
