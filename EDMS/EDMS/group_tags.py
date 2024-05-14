@@ -6,12 +6,6 @@ register = template.Library()
 User = get_user_model()
 
 
-# @register.filter(name="has_group")
-# def has_group(user: User, group_name: str) -> bool:
-#     group = Group.objects.get(name=group_name)  # auth_group
-#     return True if group in user.groups.all() else False  # auth_group, users_user_groups
-
-
 @register.filter(name="has_group")
 def has_group(user: User, group_name: str) -> bool:
     cache_key = f"user_{user.pk}_groups"
