@@ -14,7 +14,7 @@ User = get_user_model()
 
 class Plot:
     def render(self, orders: List[Order], salaries: List[Salary], text: str, is_company=False) -> str:
-        plot_data = self.set_plot_data(orders=orders, salaries=salaries, is_company=is_company)
+        plot_data = self.set_plot_data(orders=orders, salaries=salaries)
         x_data = self.set_x_values(plot_data=plot_data)
         y_data = list(plot_data.values())
         generated_date = timezone.now().strftime("%d/%m/%Y - %H:%M")
@@ -37,9 +37,7 @@ class Plot:
         )
         return fig.to_html(full_html=False)
 
-    def set_plot_data(
-        self, orders: List[Order], salaries: List[Salary], is_company: bool
-    ) -> Dict[Tuple[int, int], Decimal]:
+    def set_plot_data(self, orders: List[Order], salaries: List[Salary]) -> Dict[Tuple[int, int], Decimal]:
         plot_data = {}
         if len(orders) > 0 or len(salaries) > 0:
             start_month: int = orders[0].end_date.month
@@ -56,13 +54,15 @@ class Plot:
                 month_balance = Decimal(0)
         return plot_data
 
-    def count_month_balance(self, month_balance, orders, salaries, start_month, start_year):
+    def count_month_balance(
+        self, month_balance: Decimal, orders: List[Order], salaries: List[Salary], start_month: int, start_year: int
+    ) -> Decimal:
         month_balance += self.count_month_orders_balance(orders, start_month, start_year)
         month_balance -= self.count_month_salaries_balance(salaries, start_month, start_year)
         return month_balance
 
     @staticmethod
-    def count_month_salaries_balance(salaries, start_month, start_year):
+    def count_month_salaries_balance(salaries: List[Salary], start_month: int, start_year: int) -> Decimal:
         month_salaries_balance = Decimal(0)
         for salary in salaries[:]:
             if salary.date.month == start_month and salary.date.year == start_year:
@@ -70,7 +70,7 @@ class Plot:
                 salaries.remove(salary)
         return month_salaries_balance
 
-    def count_month_orders_balance(self, orders, start_month, start_year):
+    def count_month_orders_balance(self, orders: List[Order], start_month: int, start_year: int) -> Decimal:
         month_orders_balance = Decimal(0)
         for order in orders[:]:
             if order.end_date.month == start_month and order.end_date.year == start_year:
@@ -116,13 +116,13 @@ def render_plot_for_user_group(user: User) -> str:
     is_company = False
     user_group = user.groups.first()
 
-    if user_group.name == "managers":
+    if user_group and user_group.name == "managers":
         text = f"Statistics employee: {user}"
         orders = list(
             Order.objects.prefetch_related("cost_invoice", "income_invoice").filter(user=user).order_by("end_date")
         )
         salaries = list(Salary.objects.filter(user=user).order_by("date"))
-    elif user_group.name == "ceos":
+    elif user_group and user_group.name == "ceos":
         text = "Statistics my company"
         orders = list(Order.objects.prefetch_related("cost_invoice", "income_invoice").order_by("end_date"))
         salaries = list(Salary.objects.order_by("date"))
