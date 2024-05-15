@@ -4,7 +4,7 @@ from django.db import models
 class Address(models.Model):
     street_name = models.CharField(max_length=100)
     street_number = models.CharField(max_length=10)
-    city = models.CharField(max_length=50)
+    city = models.CharField(max_length=100)
     postcode = models.CharField(max_length=10)
     country = models.CharField(max_length=50)
 
@@ -34,7 +34,7 @@ class Company(models.Model):
 class Contact(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, blank=True)
-    phone = models.CharField(max_length=20, blank=True)
+    phone = models.CharField(max_length=25, blank=True)
     description = models.CharField(max_length=200)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="contacts")
 
