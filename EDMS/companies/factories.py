@@ -3,6 +3,16 @@ from companies.models import Address, Company, Contact
 from factory.django import DjangoModelFactory
 
 
+def get_next_counter():
+    counter = 1
+    while True:
+        yield counter
+        counter += 1
+
+
+counter_generator = get_next_counter()
+
+
 class AddressFactory(DjangoModelFactory):
     class Meta:
         model = Address
@@ -24,7 +34,7 @@ class CompanyFactory(DjangoModelFactory):
     nip = factory.Faker("pyint", min_value=1000000000, max_value=9999999999)
     address = factory.SubFactory(AddressFactory)
     is_mine = True
-    shortcut = factory.LazyAttribute(lambda company: company.name[:4])
+    shortcut = factory.LazyAttribute(lambda _: next(counter_generator))
 
 
 class ContactFactory(DjangoModelFactory):
