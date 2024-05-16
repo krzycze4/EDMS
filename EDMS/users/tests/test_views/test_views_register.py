@@ -39,6 +39,7 @@ class TestCaseUserRegisterView(TestCase):
         response = self.client.get(reverse("register"))
         self.assertIsInstance(response.context["form"], CustomUserCreationForm)
 
+    @tag("celery")
     def test_register_user_successfully(self):
         form_data = {
             "first_name": "First",
