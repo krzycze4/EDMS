@@ -1,13 +1,3 @@
-# class TestCompaniesFactories(TestCase):
-#     def test_create_correct_object(self):
-#         FactoryXyz.create()
-#
-#         self.assertEqual(Object.objects.count(), 1)
-#
-#     def test_create_correct_object_bulk(self):
-#         FactoryXyz.create_batch(10)
-#
-#         self.assertEqual(Object.objects.count(), 10)
 from companies.factories import AddressFactory, CompanyFactory, ContactFactory
 from companies.models import Address, Company, Contact
 from django.test import TestCase
