@@ -17,9 +17,9 @@ class Address(models.Model):
 
 class Company(models.Model):
     name = models.CharField(max_length=100, verbose_name="Company Name")
-    krs = models.BigIntegerField(verbose_name="KRS Number")
-    regon = models.BigIntegerField(verbose_name="REGON Number")
-    nip = models.BigIntegerField(verbose_name="NIP Number")
+    krs = models.BigIntegerField(verbose_name="KRS Number", unique=True)
+    regon = models.BigIntegerField(verbose_name="REGON Number", unique=True)
+    nip = models.BigIntegerField(verbose_name="NIP Number", unique=True)
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     is_mine = models.BooleanField(default=False, blank=True)
     shortcut = models.CharField(max_length=5, unique=True)
