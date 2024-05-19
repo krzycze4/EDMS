@@ -251,4 +251,5 @@ class TestCaseCreateInstance(TestCaseCompanyModelViewSetMixin, TestCase):
         self.assertTrue(self.login)
         self.client.post(reverse_lazy("company-list"), self.company_data)
         self.client.post(reverse_lazy("company-list"), self.company_data)
+        self.assertEqual(Company.objects.count(), 11)
         self.assertRaises(serializers.ValidationError)
