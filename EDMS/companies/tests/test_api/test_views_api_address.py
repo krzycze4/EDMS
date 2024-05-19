@@ -3,7 +3,7 @@ from typing import List
 
 from companies.factories import AddressFactory
 from companies.models import Address
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
 from django.urls import reverse_lazy
@@ -50,8 +50,6 @@ class TestCaseAddressModelViewSet(TestCase):
 
     @staticmethod
     def create_group_with_permissions(group_name: str, permission_codenames: List[str]) -> "Group":
-        from django.contrib.auth.models import Group, Permission
-
         permissions = Permission.objects.filter(codename__in=permission_codenames)
         group, _ = Group.objects.get_or_create(name=group_name)
         group.permissions.add(*permissions)
