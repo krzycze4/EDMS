@@ -30,3 +30,14 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
         fields = "__all__"
+
+    def validate(self, attrs):
+        if Contact.objects.filter(
+            name=attrs["name"],
+            email=attrs["email"],
+            phone=attrs["phone"],
+            company=attrs["company"],
+        ).exists():
+            raise serializers.ValidationError("Contact has already existed in database.")
+        else:
+            return attrs
