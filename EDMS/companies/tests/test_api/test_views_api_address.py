@@ -62,10 +62,6 @@ class TestCaseAddressModelViewSetMixin:
 
 
 class TestCaseUserNotAuthenticated(TestCaseAddressModelViewSetMixin, TestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.accountant = self.create_user_with_group(group_name="accountants")
-
     def test_get_list_address_if_user_not_authenticated(self):
         response = self.client.get(reverse_lazy("address-list"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
