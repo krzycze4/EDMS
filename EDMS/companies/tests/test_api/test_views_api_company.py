@@ -26,7 +26,7 @@ class TestCaseCompanyModelViewSetMixin:
                 "delete_company",
                 "view_company",
             ],
-            "accountants": ["add_company", "change_company", "delete_company", "view_company", "add_address"],
+            "accountants": ["add_company", "change_company", "delete_company", "view_company"],
             "managers": ["view_company"],
             "hrs": ["view_company"],
         }
