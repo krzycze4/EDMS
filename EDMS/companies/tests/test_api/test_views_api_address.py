@@ -17,39 +17,25 @@ class TestCaseAddressModelViewSet(TestCase):
     def setUpTestData(cls):
         group_names_with_permission_codenames = {
             "ceos": [
-                "add_company",
-                "change_company",
-                "delete_company",
-                "view_company",
-                "add_contact",
-                "change_contact",
-                "delete_contact",
                 "add_address",
                 "change_address",
                 "delete_address",
                 "view_address",
             ],
             "accountants": [
-                "add_company",
-                "change_company",
-                "delete_company",
-                "view_company",
-                "add_contact",
-                "change_contact",
-                "delete_contact",
                 "add_address",
                 "change_address",
                 "delete_address",
                 "view_address",
             ],
-            "managers": ["view_company", "add_contact", "view_address"],
-            "hrs": ["view_company", "add_contact", "view_address"],
+            "managers": ["view_address"],
+            "hrs": ["view_address"],
         }
         for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
             cls.create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
 
     @staticmethod
-    def create_group_with_permissions(group_name: str, permission_codenames: List[str]) -> "Group":
+    def create_group_with_permissions(group_name: str, permission_codenames: List[str]) -> Group:
         permissions = Permission.objects.filter(codename__in=permission_codenames)
         group, _ = Group.objects.get_or_create(name=group_name)
         group.permissions.add(*permissions)
