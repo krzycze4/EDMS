@@ -13,6 +13,7 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = "Addresses"
+        unique_together = [["street_name", "street_number", "city", "postcode", "country"]]
 
 
 class Company(models.Model):
@@ -37,6 +38,9 @@ class Contact(models.Model):
     phone = models.CharField(max_length=25, blank=True)
     description = models.CharField(max_length=200)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="contacts")
+
+    class Meta:
+        unique_together = [["name", "email", "phone", "company"]]
 
     def __str__(self):
         return f"{self.name}"
