@@ -11,6 +11,7 @@ def draw_unique_random_number(used_numbers: Set, min_value: int, max_value: int)
     return number
 
 
-def create_date(first_date: datetime) -> datetime:
+def create_string_format_valid_date(first_date: str) -> str:
+    first_date = datetime.strptime(first_date, "%Y-%m-%d").date()
     second_date = first_date + timedelta(days=random.randint(0, 366))
-    return second_date
+    return second_date.strftime("%Y-%m-%d")
