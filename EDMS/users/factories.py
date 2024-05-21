@@ -1,13 +1,9 @@
-import io
-
 import factory
 from companies.factories import AddressFactory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from django.core.files.base import ContentFile
 from factory import post_generation
 from factory.django import DjangoModelFactory
-from PIL import Image
 
 User = get_user_model()
 
@@ -25,13 +21,6 @@ class UserFactory(DjangoModelFactory):
     vacation_days_per_year = 26
     vacation_left = 0
     address = factory.SubFactory(AddressFactory)
-
-    @factory.lazy_attribute
-    def photo(self):
-        image = Image.new("RGB", (100, 100), color="red")
-        buffer = io.BytesIO()
-        image.save(buffer, format="PNG")
-        return ContentFile(buffer.getvalue(), "test_image.png")
 
     @post_generation
     def password(self, create, extracted, **kwargs):
