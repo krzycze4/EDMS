@@ -15,5 +15,8 @@ class Contract(models.Model):
     price = models.PositiveIntegerField()
     scan = models.FileField(upload_to="contracts/")
 
+    class Meta:
+        unique_together = [["name", "create_date", "start_date", "end_date", "company", "price"]]
+
     def __str__(self) -> str:
         return f"{self.name}"
