@@ -2,15 +2,9 @@ import factory
 from companies.models import Address, Company, Contact
 from factory.django import DjangoModelFactory
 
+from EDMS.factory_utils import draw_unique_random_number
 
-def get_next_counter():
-    counter = 1
-    while True:
-        yield counter
-        counter += 1
-
-
-counter_generator = get_next_counter()
+used_numbers = set()
 
 
 class AddressFactory(DjangoModelFactory):
@@ -29,12 +23,25 @@ class CompanyFactory(DjangoModelFactory):
         model = Company
 
     name = factory.Faker("company")
-    krs = factory.Faker("pyint", min_value=10000000000000, max_value=99999999999999)
-    regon = factory.Faker("pyint", min_value=100000000, max_value=999999999)
-    nip = factory.Faker("pyint", min_value=1000000000, max_value=9999999999)
+    # krs = factory.Faker("pyint", min_value=10000000000000, max_value=99999999999999)
+    # regon = factory.Faker("pyint", min_value=100000000, max_value=999999999)
+    # nip = factory.Faker("pyint", min_value=1000000000, max_value=9999999999)
+    krs = factory.LazyAttribute(
+        lambda _: draw_unique_random_number(
+            used_numbers=used_numbers, min_value=10000000000000, max_value=99999999999999
+        )
+    )
+    regon = factory.LazyAttribute(
+        lambda _: draw_unique_random_number(used_numbers=used_numbers, min_value=100000000, max_value=999999999)
+    )
+    nip = factory.LazyAttribute(
+        lambda _: draw_unique_random_number(used_numbers=used_numbers, min_value=1000000000, max_value=9999999999)
+    )
     address = factory.SubFactory(AddressFactory)
     is_mine = True
-    shortcut = factory.LazyAttribute(lambda _: next(counter_generator))
+    shortcut = factory.LazyAttribute(
+        lambda _: f"S{draw_unique_random_number(used_numbers=used_numbers, min_value=1, max_value=100)}"
+    )
 
 
 class ContactFactory(DjangoModelFactory):
