@@ -27,7 +27,7 @@ from django.views.generic import (
 )
 
 
-class CompanyFindView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
+class CompanyFindView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     permission_required = "companies.add_company"
     template_name = "companies/companies/find_company.html"
     form_class = KRSForm
@@ -100,7 +100,7 @@ class CompanyFindView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
         return redirect("create-company")
 
 
-class CompanyCreateView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
+class CompanyCreateView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     permission_required = "companies.add_company"
     template_name = "companies/companies/create_company.html"
     form_class = CompanyAndAddressForm
@@ -149,12 +149,12 @@ class CompanyCreateView(PermissionRequiredMixin, FormView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class CreateCompanyDoneView(PermissionRequiredMixin, TemplateView, LoginRequiredMixin):
+class CreateCompanyDoneView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     permission_required = "companies.add_company"
     template_name = "companies/companies/create_company_done.html"
 
 
-class CompanyListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
+class CompanyListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = "companies.view_company"
     queryset = Company.objects.all()
     template_name = "companies/companies/list_company.html"
@@ -174,13 +174,13 @@ class CompanyListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
         return context
 
 
-class CompanyDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
+class CompanyDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     permission_required = "companies.view_company"
     model = Company
     template_name = "companies/companies/detail_company.html"
 
 
-class CompanyIdentifiersUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+class CompanyIdentifiersUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "companies.change_company"
     model = Company
     form_class = UpdateCompanyIdentifiersForm
@@ -190,7 +190,7 @@ class CompanyIdentifiersUpdateView(PermissionRequiredMixin, UpdateView, LoginReq
         return reverse_lazy("detail-company", kwargs={"pk": self.object.pk})
 
 
-class CompanyAddressUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
+class CompanyAddressUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "companies.change_company"
     model = Address
     form_class = UpdateAddressForm

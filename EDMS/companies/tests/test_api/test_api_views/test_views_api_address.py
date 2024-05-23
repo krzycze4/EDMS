@@ -16,9 +16,10 @@ from EDMS.group_utils import create_group_with_permissions
 User = get_user_model()
 
 
-class TestCaseAddressModelViewSetMixin:
+class AddressModelViewSetTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         group_names_with_permission_codenames = {
             "ceos": [
                 "add_address",
@@ -42,6 +43,7 @@ class TestCaseAddressModelViewSetMixin:
         cls.user_address = AddressFactory.create()
 
     def setUp(self) -> None:
+        super().setUp()
         self.client = APIClient()
         self.address_list = AddressFactory.create_batch(9)
         self.address = AddressFactory.build()
@@ -61,7 +63,7 @@ class TestCaseAddressModelViewSetMixin:
         return user
 
 
-class TestCaseUserNotAuthenticated(TestCaseAddressModelViewSetMixin, TestCase):
+class TestCaseUserNotAuthenticated(AddressModelViewSetTestCase):
     def test_get_list_address_if_user_not_authenticated(self):
         response = self.client.get(reverse_lazy("address-list"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
@@ -87,7 +89,7 @@ class TestCaseUserNotAuthenticated(TestCaseAddressModelViewSetMixin, TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseUserAccountant(TestCaseAddressModelViewSetMixin, TestCase):
+class TestCaseUserAccountant(AddressModelViewSetTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.accountant = self.create_user_with_group(group_name="accountants")
@@ -126,7 +128,7 @@ class TestCaseUserAccountant(TestCaseAddressModelViewSetMixin, TestCase):
         self.assertEqual(Address.objects.count(), 9)
 
 
-class TestCaseUserCeo(TestCaseAddressModelViewSetMixin, TestCase):
+class TestCaseUserCeo(AddressModelViewSetTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.ceo = self.create_user_with_group(group_name="ceos")
@@ -165,7 +167,7 @@ class TestCaseUserCeo(TestCaseAddressModelViewSetMixin, TestCase):
         self.assertEqual(Address.objects.count(), 9)
 
 
-class TestCaseUserHr(TestCaseAddressModelViewSetMixin, TestCase):
+class TestCaseUserHr(AddressModelViewSetTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.hr = self.create_user_with_group(group_name="hrs")
@@ -201,7 +203,7 @@ class TestCaseUserHr(TestCaseAddressModelViewSetMixin, TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseUserManager(TestCaseAddressModelViewSetMixin, TestCase):
+class TestCaseUserManager(AddressModelViewSetTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.manager = self.create_user_with_group(group_name="managers")
@@ -237,7 +239,7 @@ class TestCaseUserManager(TestCaseAddressModelViewSetMixin, TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseCreateInstance(TestCaseAddressModelViewSetMixin, TestCase):
+class TestCaseCreateInstance(AddressModelViewSetTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.ceo = self.create_user_with_group(group_name="ceos")

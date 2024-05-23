@@ -3,13 +3,11 @@ from _decimal import Decimal
 from companies.factories import CompanyFactory
 from contracts.models import Contract
 from django.utils import timezone
+from factory import Sequence
 from factory.django import DjangoModelFactory
 from users.factories import UserFactory
 
-from EDMS.factory_utils import (
-    create_string_format_valid_date,
-    draw_unique_random_number,
-)
+from EDMS.factory_utils import create_string_format_valid_date
 
 used_numbers = set()
 
@@ -18,9 +16,7 @@ class ContractFactory(DjangoModelFactory):
     class Meta:
         model = Contract
 
-    name = factory.LazyAttribute(
-        lambda _: f"contract{draw_unique_random_number(used_numbers=used_numbers, min_value=1, max_value=100)}"
-    )
+    name = Sequence(lambda n: f"contract{n}")
     create_date = factory.LazyFunction(
         lambda: create_string_format_valid_date(timezone.now().date().strftime("%Y-%m-%d"))
     )

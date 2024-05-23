@@ -47,7 +47,7 @@ class TestCaseCompanyAndAddressForm(TestCase):
         self.assertTrue("is_mine" in form.fields)
 
     def test_is_mine_field_exists_if_my_company_in_db(self):
-        self.my_company = CompanyFactory()
+        self.my_company = CompanyFactory(is_mine=True)
         form = CompanyAndAddressForm()
         self.assertFalse("is_mine" in form.fields)
 
