@@ -16,7 +16,7 @@ from EDMS.group_utils import create_group_with_permissions
 User = get_user_model()
 
 
-class CompanyModelViewSetTestCase(TestCase):
+class TestCaseCompanyModelViewSet(TestCase):
     @classmethod
     def setUpTestData(cls):
         group_names_with_permission_codenames = {
@@ -59,7 +59,7 @@ class CompanyModelViewSetTestCase(TestCase):
         self.company_list = CompanyFactory.create_batch(10, address=self.address)
 
 
-class TestCaseUserNotAuthenticated(CompanyModelViewSetTestCase):
+class TestCaseUserNotAuthenticatedCompanyModelViewSet(TestCaseCompanyModelViewSet):
     def test_get_list_company_if_user_not_authenticated(self):
         response = self.client.get(reverse_lazy("company-list"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
@@ -85,7 +85,7 @@ class TestCaseUserNotAuthenticated(CompanyModelViewSetTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseUserAccountant(CompanyModelViewSetTestCase):
+class TestCaseUserAccountantCompanyModelViewSet(TestCaseCompanyModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.accountant = self.create_user_with_group(group_name="accountants")
@@ -122,7 +122,7 @@ class TestCaseUserAccountant(CompanyModelViewSetTestCase):
         self.assertEqual(Company.objects.count(), 9)
 
 
-class TestCaseUserCeo(CompanyModelViewSetTestCase):
+class TestCaseUserCeoCompanyModelViewSet(TestCaseCompanyModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.ceo = self.create_user_with_group(group_name="ceos")
@@ -162,7 +162,7 @@ class TestCaseUserCeo(CompanyModelViewSetTestCase):
         self.assertEqual(Company.objects.count(), 9)
 
 
-class TestCaseUserHr(CompanyModelViewSetTestCase):
+class TestCaseUserHrCompanyModelViewSet(TestCaseCompanyModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.hr = self.create_user_with_group(group_name="hrs")
@@ -200,7 +200,7 @@ class TestCaseUserHr(CompanyModelViewSetTestCase):
         self.assertEqual(Company.objects.count(), 10)
 
 
-class TestCaseUserManager(CompanyModelViewSetTestCase):
+class TestCaseUserManagerCompanyModelViewSet(TestCaseCompanyModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.manager = self.create_user_with_group(group_name="managers")
@@ -238,7 +238,7 @@ class TestCaseUserManager(CompanyModelViewSetTestCase):
         self.assertEqual(Company.objects.count(), 10)
 
 
-class TestCaseCreateInstance(CompanyModelViewSetTestCase):
+class TestCaseCreateInstanceCompanyModelViewSet(TestCaseCompanyModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.ceo = self.create_user_with_group(group_name="ceos")

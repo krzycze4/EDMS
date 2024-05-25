@@ -16,7 +16,7 @@ from EDMS.group_utils import create_group_with_permissions
 User = get_user_model()
 
 
-class ContactModelViewSetTestCase(TestCase):
+class TestCaseContactModelViewSet(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -74,7 +74,7 @@ class ContactModelViewSetTestCase(TestCase):
         return user
 
 
-class TestCaseUserNotAuthenticated(ContactModelViewSetTestCase):
+class TestCaseUserNotAuthenticatedContactModelViewSet(TestCaseContactModelViewSet):
     def test_get_list_contact_if_user_not_authenticated(self):
         response = self.client.get(reverse_lazy("contact-list"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
@@ -100,7 +100,7 @@ class TestCaseUserNotAuthenticated(ContactModelViewSetTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseUserAccountant(ContactModelViewSetTestCase):
+class TestCaseUserAccountantContactModelViewSet(TestCaseContactModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.accountant = self.create_user_with_group(group_name="accountants")
@@ -139,7 +139,7 @@ class TestCaseUserAccountant(ContactModelViewSetTestCase):
         self.assertEqual(Contact.objects.count(), 9)
 
 
-class TestCaseUserCeo(ContactModelViewSetTestCase):
+class TestCaseUserCeoContactModelViewSet(TestCaseContactModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.ceo = self.create_user_with_group(group_name="ceos")
@@ -178,7 +178,7 @@ class TestCaseUserCeo(ContactModelViewSetTestCase):
         self.assertEqual(Contact.objects.count(), 9)
 
 
-class TestCaseUserHr(ContactModelViewSetTestCase):
+class TestCaseUserHrContactModelViewSet(TestCaseContactModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.hr = self.create_user_with_group(group_name="hrs")
@@ -217,7 +217,7 @@ class TestCaseUserHr(ContactModelViewSetTestCase):
         self.assertEqual(Contact.objects.count(), 9)
 
 
-class TestCaseUserManager(ContactModelViewSetTestCase):
+class TestCaseUserManagerContactModelViewSet(TestCaseContactModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.manager = self.create_user_with_group(group_name="hrs")
@@ -256,7 +256,7 @@ class TestCaseUserManager(ContactModelViewSetTestCase):
         self.assertEqual(Contact.objects.count(), 9)
 
 
-class TestCaseCreateInstance(ContactModelViewSetTestCase):
+class TestCaseCreateInstanceContactModelViewSet(TestCaseContactModelViewSet):
     def setUp(self) -> None:
         super().setUp()
         self.ceo = self.create_user_with_group(group_name="ceos")
