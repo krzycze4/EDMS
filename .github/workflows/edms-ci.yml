@@ -55,7 +55,7 @@ jobs:
         poetry add ruff
     - name: Run Ruff
       run: |
-        poetry run ruff .
+        poetry run ruff check
     - name: Run Tests
       run: |
         cd EDMS
