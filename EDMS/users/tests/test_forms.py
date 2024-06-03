@@ -1,38 +1,41 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from users.factories import UserFactory
 from users.forms.forms_custom_user_creation import CustomUserCreationForm
-from users.models import User
+
+User = get_user_model()
 
 
 class TestCaseCustomUserCreationForm(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            first_name="First",
-            last_name="Last",
-            email="email@email.com",
-            password="edmsemds1",
+        self.password = User.objects.make_random_password()
+        self.build_user = UserFactory.build(password=self.password)
+        self.create_user = UserFactory.create(password=self.password)
+        self.not_saved_user = UserFactory.build(password=self.password)
+        self.valid_form = CustomUserCreationForm(
+            data={
+                "first_name": self.build_user.first_name,
+                "last_name": self.build_user.last_name,
+                "email": self.build_user.email,
+                "password1": self.password,
+                "password2": self.password,
+            }
+        )
+        self.invalid_form = CustomUserCreationForm(
+            data={
+                "first_name": self.not_saved_user.first_name,
+                "last_name": self.not_saved_user.last_name,
+                "email": self.create_user.email,
+                "password1": self.password,
+                "password2": self.password,
+            }
         )
 
     def test_form_valid(self):
-        form = CustomUserCreationForm(
-            data={
-                "first_name": "first_name",
-                "last_name": "last_name",
-                "email": "email1@email.com",
-                "password1": "edmsedms1",
-                "password2": "edmsedms1",
-            }
-        )
-        self.assertTrue(form.is_valid())
+        self.assertTrue(self.valid_form.is_valid())
 
     def test_form_invalid_because_email_in_form_exists_in_database(self):
-        form = CustomUserCreationForm(
-            data={
-                "first_name": "first_name",
-                "last_name": "last_name",
-                "email": "email@email.com",
-                "password1": "edmsedms1",
-                "password2": "edmsedms1",
-            }
+        self.assertEqual(
+            self.invalid_form.errors["email"], [f"Email '{self.create_user.email}' has been already used."]
         )
-        self.assertEqual(form.errors["email"], ["Email 'email@email.com' has been already used."])
-        self.assertFalse(form.is_valid())
+        self.assertFalse(self.invalid_form.is_valid())

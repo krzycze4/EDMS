@@ -1,26 +1,46 @@
 from http import HTTPStatus
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase, tag
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from users.factories import UserFactory
 from users.forms.forms_custom_user_creation import CustomUserCreationForm
-from users.models import User
 from users.tokens import account_activation_token
+
+User = get_user_model()
 
 
 class TestCaseUserRegisterView(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.password = "edmsemds1"
-        cls.user = User.objects.create_user(
-            first_name="First",
-            last_name="Last",
-            email="email@email.com",
-            password=cls.password,
-        )
+        cls.password = User.objects.make_random_password()
+        cls.stub_user = UserFactory.stub(password=cls.password)
+        cls.valid_form = {
+            "first_name": cls.stub_user.first_name,
+            "last_name": cls.stub_user.last_name,
+            "email": cls.stub_user.email,
+            "password1": cls.password,
+            "password2": cls.password,
+        }
+        cls.invalid_form_different_passwords = {
+            "first_name": cls.stub_user.first_name,
+            "last_name": cls.stub_user.last_name,
+            "email": cls.stub_user.email,
+            "password1": cls.password,
+            "password2": "whatever",
+        }
+        cls.user = UserFactory.create(password=cls.password)
+        cls.invalid_form_existing_user = {
+            "first_name": cls.user.first_name,
+            "last_name": cls.user.last_name,
+            "email": cls.user.email,
+            "password1": cls.password,
+            "password2": cls.password,
+        }
 
     def test_redirect_to_dashboard_for_authenticated_user(self):
         login = self.client.login(username=self.user.email, password=self.password)
@@ -41,29 +61,14 @@ class TestCaseUserRegisterView(TestCase):
 
     @tag("celery")
     def test_register_user_successfully(self):
-        form_data = {
-            "first_name": "First",
-            "last_name": "Last",
-            "email": "email2@email.com",
-            "password1": "edmsedms1",
-            "password2": "edmsedms1",
-        }
-
-        response = self.client.post(reverse("register"), data=form_data)
+        response = self.client.post(reverse("register"), data=self.valid_form)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, reverse("success-register"))
-        self.assertTrue(User.objects.filter(email=form_data["email"]).exists())
+        self.assertTrue(User.objects.filter(email=self.valid_form["email"]).exists())
 
     @tag("celery")
     def test_sending_email_with_token_and_uidb64_if_successfully_registration(self):
-        form_data = {
-            "first_name": "First",
-            "last_name": "Last",
-            "email": "email2@email.com",
-            "password1": "edmsedms1",
-            "password2": "edmsedms1",
-        }
-        response = self.client.post(reverse("register"), data=form_data)
+        response = self.client.post(reverse("register"), data=self.valid_form)
         self.assertEqual(len(mail.outbox), 1)
         self.assertTemplateUsed(response, "email_templates/account_activation_email.html")
 
@@ -78,15 +83,7 @@ class TestCaseUserRegisterView(TestCase):
         number_users_in_database = User.objects.count()
         self.assertEqual(number_users_in_database, 1)
 
-        invalid_form_data = {
-            "first_name": "First",
-            "last_name": "Last",
-            "email": "email2@email.com",
-            "password1": "edmsedms1",
-            "password2": "edmsedms2",
-        }
-
-        response = self.client.post(reverse("register"), data=invalid_form_data)
+        response = self.client.post(reverse("register"), data=self.invalid_form_different_passwords)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/register/register.html")
 
@@ -97,15 +94,7 @@ class TestCaseUserRegisterView(TestCase):
         number_users_in_database = User.objects.count()
         self.assertEqual(number_users_in_database, 1)
 
-        form_data = {
-            "first_name": "First",
-            "last_name": "Last",
-            "email": "email@email.com",
-            "password1": "edmsedms1",
-            "password2": "edmsedms1",
-        }
-
-        response = self.client.post(reverse("register"), data=form_data)
+        response = self.client.post(reverse("register"), data=self.invalid_form_existing_user)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/register/register.html")
         self.assertRaises(forms.ValidationError)
@@ -120,12 +109,7 @@ class TestCaseSuccessRegisterView(TestCase):
 
 class TestCaseActivateAccountView(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            first_name="First",
-            last_name="Last",
-            email="email@email.com",
-            password="edmsedms1",
-        )
+        self.user = UserFactory(is_active=False)
         self.uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
         self.token = account_activation_token.make_token(self.user)
 

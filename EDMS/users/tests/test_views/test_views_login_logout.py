@@ -1,19 +1,20 @@
 from http import HTTPStatus
 
+from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
-from users.models import User
+from users.factories import UserFactory
+
+User = get_user_model()
 
 
 class TestCaseCustomLoginView(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            first_name="First",
-            last_name="Last",
-            email="email@email.com",
-            password="edmsedms1",
-        )
+        self.password = User.objects.make_random_password()
+        self.user = UserFactory.create(password=self.password)
+        self.not_active_user = UserFactory.create(password=self.password, is_active=False)
+        self.not_existed_user = UserFactory.build(password=self.password)
 
     def test_render_if_user_not_logged_in(self):
         response = self.client.get(reverse("login"))
@@ -21,7 +22,7 @@ class TestCaseCustomLoginView(TestCase):
         self.assertTemplateUsed(response, "users/login_logout/login.html")
 
     def test_redirect_if_user_is_logged_in(self):
-        login = self.client.login(email="email@email.com", password="edmsedms1")
+        login = self.client.login(email=self.user.email, password=self.password)
         self.assertTrue(login)
 
         response = self.client.get(reverse("login"))
@@ -29,7 +30,7 @@ class TestCaseCustomLoginView(TestCase):
         self.assertRedirects(response, reverse("dashboard"))
 
     def test_unsuccessfully_login_unactivated_user(self):
-        form_data = {"username": "email@email.com", "password": "edmsedms1"}
+        form_data = {"username": self.not_active_user.email, "password": self.password}
         response = self.client.post(reverse("login"), data=form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/login_logout/login.html")
@@ -41,8 +42,7 @@ class TestCaseCustomLoginView(TestCase):
         )
 
     def test_successfully_login_activated_user(self):
-        form_data = {"username": "email@email.com", "password": "edmsedms1"}
-        self.user.is_active = True
+        form_data = {"username": self.user.email, "password": self.password}
         self.user.save()
         response = self.client.post(reverse("login"), data=form_data)
         self.assertRedirects(response, reverse("dashboard"))
@@ -50,8 +50,7 @@ class TestCaseCustomLoginView(TestCase):
         self.assertTrue(self.user.is_authenticated)
 
     def test_unsuccessfully_login_if_wrong_password(self):
-        form_data = {"username": "email@email.com", "password": "edmsedms2"}
-        self.user.is_active = True
+        form_data = {"username": self.user.email, "password": "whatever"}
         self.user.save()
         self.assertTrue(User.objects.get(email=self.user.email).is_active)
         response = self.client.post(reverse("login"), data=form_data)
@@ -62,8 +61,8 @@ class TestCaseCustomLoginView(TestCase):
 
     def test_unsuccessfully_login_because_user_does_not_exist(self):
         form_data = {
-            "username": "email_does_not_exist@email.com",
-            "password": "edmsedms2",
+            "username": self.not_existed_user.email,
+            "password": self.password,
         }
         response = self.client.post(reverse("login"), data=form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -75,16 +74,11 @@ class TestCaseCustomLoginView(TestCase):
 
 class TestCaseCustomLogoutView(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            first_name="First",
-            last_name="Last",
-            email="email@email.com",
-            password="edmsedms1",
-            is_active=True,
-        )
+        self.password = User.objects.make_random_password()
+        self.user = UserFactory.create(password=self.password)
 
     def test_logout_user_successfully(self):
-        login = self.client.login(email="email@email.com", password="edmsedms1")
+        login = self.client.login(email=self.user.email, password=self.password)
         self.assertTrue(login)
         self.assertTrue("_auth_user_id" in self.client.session)
 
