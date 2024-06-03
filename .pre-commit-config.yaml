@@ -25,7 +25,7 @@ repos:
     rev: 1.7.5
     hooks:
       - id: bandit
-        args: ["--exclude", "*/test_*.py,*/factory_utils.py"]
+        args: ["--exclude", "*/test_*.py"]
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.0
     hooks:
