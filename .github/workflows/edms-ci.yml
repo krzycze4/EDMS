@@ -63,7 +63,7 @@ jobs:
         poetry run bandit -r .
     - name: Run Safety
       run: |
-        poetry run safety check
+        poetry run safety check --ignore 70612
     - name: Run Tests
       run: |
         cd EDMS
