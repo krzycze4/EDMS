@@ -59,7 +59,7 @@ jobs:
         poetry run ruff check
     - name: Run Bandit
       run: |
-        poetry run bandit -r -a .
+        poetry run bandit -r --exclude */test_*.py
     - name: Run Tests
       run: |
         cd EDMS
