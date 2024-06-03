@@ -53,13 +53,13 @@ jobs:
       run: |
         poetry install
         poetry add ruff
-        poetry add bandit -r .
+        poetry add bandit
     - name: Run Ruff
       run: |
         poetry run ruff check
     - name: Run Bandit
       run: |
-        poetry run bandit
+        poetry run bandit -r .
     - name: Run Tests
       run: |
         cd EDMS
