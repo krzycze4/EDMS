@@ -54,6 +54,7 @@ jobs:
         poetry install
         poetry add ruff
         poetry add bandit
+        poetry add safety
     - name: Run Ruff
       run: |
         poetry run ruff check
@@ -61,11 +62,8 @@ jobs:
       run: |
         poetry run bandit -r .
     - name: Run Safety
-      uses: pyupio/safety-3-beta/safety-3@main
-      with:
-        postgres-password: ${{ secrets.POSTGRES_PASSWORD }}
-        redis-host: ${{ secrets.REDIS_HOST }}
-        postgres-host: ${{ secrets.POSTGRES_HOST }}
+      run: |
+        poetry run safety check
     - name: Run Tests
       run: |
         cd EDMS
