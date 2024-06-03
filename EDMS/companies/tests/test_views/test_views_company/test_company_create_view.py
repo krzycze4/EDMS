@@ -32,7 +32,7 @@ class TestCaseCompanyCreateView(TestCase):
         for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
             create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
 
-        cls.password = "default_password"
+        cls.password = User.objects.make_random_password()
         cls.accountant = cls.create_user_with_group(group_name="accountants")
         cls.ceo = cls.create_user_with_group(group_name="ceos")
         cls.hr = cls.create_user_with_group(group_name="hrs")

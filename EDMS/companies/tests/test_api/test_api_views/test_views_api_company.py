@@ -33,7 +33,7 @@ class TestCaseCompanyModelViewSet(TestCase):
         for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
             create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
 
-        cls.password = "testPassword123!"
+        cls.password = User.objects.make_random_password()
         cls.user_address = AddressFactory.create()
 
     @classmethod

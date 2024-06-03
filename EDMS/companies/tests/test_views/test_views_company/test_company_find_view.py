@@ -33,7 +33,7 @@ class TestCaseCompanyFindView(TestCase):
         for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
             create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
 
-        cls.password = "default_password"
+        cls.password = User.objects.make_random_password()
         cls.company = CompanyFactory.stub()
         cls.api_response_json = {
             "odpis": {
