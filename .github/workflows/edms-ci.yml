@@ -59,7 +59,7 @@ jobs:
         poetry run ruff check
     - name: Run Bandit
       run: |
-        poetry run bandit -r
+        poetry run bandit -r -a .
     - name: Run Tests
       run: |
         cd EDMS
