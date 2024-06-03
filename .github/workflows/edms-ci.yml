@@ -52,6 +52,10 @@ jobs:
     - name: Install Dependencies
       run: |
         poetry install
+        poetry add ruff
+    - name: Run Ruff
+      run: |
+        poetry run ruff .
     - name: Run Tests
       run: |
         cd EDMS
@@ -64,3 +68,8 @@ jobs:
         POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
         POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
+
+# ruff
+# safety
+# bandit
