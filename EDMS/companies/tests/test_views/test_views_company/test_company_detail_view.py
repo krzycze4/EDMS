@@ -40,7 +40,6 @@ class TestCaseCompanyDetailView(TestCase):
         cls.not_auth_user_url = (
             f"{reverse_lazy('login')}?next={reverse_lazy('detail-company', kwargs={'pk': cls.company.pk})}"
         )
-        cls.auth_user_url = f"{reverse_lazy('detail-company', kwargs={'pk': cls.company.pk})}"
 
         cls.template_name = "companies/companies/detail_company.html"
 
