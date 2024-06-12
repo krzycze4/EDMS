@@ -54,7 +54,7 @@
                                 {% if request.user|has_group:'ceos' or request.user|has_group:'accountants' %}
                                     <a class="btn btn-warning mr-2"
                                        type="button"
-                                       href="{% url 'update-address' company.pk %}">Edit Address</a>
+                                       href="{% url 'update-address' company.pk company.address.pk %}">Edit Address</a>
                                 {% endif %}
                             </div>
                         </div>

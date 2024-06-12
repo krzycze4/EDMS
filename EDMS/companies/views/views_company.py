@@ -192,15 +192,19 @@ class CompanyIdentifiersUpdateView(LoginRequiredMixin, PermissionRequiredMixin, 
 
 class CompanyAddressUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "companies.change_company"
-    model = Address
+    model = Company
     form_class = UpdateAddressForm
     template_name = "companies/companies/update_address_company.html"
 
+    def get_object(self, **kwargs):
+        address = Address.objects.get(id=self.kwargs["address_pk"])
+        return address
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        company = Company.objects.get(pk=self.kwargs["pk"])
+        company = Company.objects.get(pk=self.kwargs["company_pk"])
         context["company"] = company
         return context
 
     def get_success_url(self):
-        return reverse_lazy("detail-company", kwargs={"pk": self.kwargs["pk"]})
+        return reverse_lazy("detail-company", kwargs={"pk": self.kwargs["company_pk"]})

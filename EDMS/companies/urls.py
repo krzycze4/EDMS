@@ -37,7 +37,7 @@ urlpatterns = [
         name="update-identifiers",
     ),
     path(
-        "companies/<int:pk>/update-address/",
+        "companies/<int:company_pk>/update-address/<int:address_pk>/",
         CompanyAddressUpdateView.as_view(),
         name="update-address",
     ),
