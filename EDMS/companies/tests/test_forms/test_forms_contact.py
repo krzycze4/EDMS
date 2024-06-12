@@ -5,8 +5,9 @@ from django.test import TestCase
 
 class TestCaseCreateContactForm(TestCase):
     def setUp(self) -> None:
-        self.contact = ContactFactory.build()
         self.company = CompanyFactory.create()
+        self.contact = ContactFactory.build(company=self.company)
+        self.existing_contact = ContactFactory.create(company=self.company)
 
     def test_form_valid(self):
         form = CreateContactForm(
@@ -14,6 +15,18 @@ class TestCaseCreateContactForm(TestCase):
                 "name": self.contact.name,
                 "email": self.contact.email,
                 "phone": self.contact.phone,
+                "description": self.contact.description,
+                "company": self.company,
+            }
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_form_invalid(self):
+        form = CreateContactForm(
+            data={
+                "name": self.existing_contact.name,
+                "email": self.existing_contact.email,
+                "phone": self.existing_contact.phone,
                 "description": self.contact.description,
                 "company": self.company,
             }
@@ -37,5 +50,4 @@ class TestCaseUpdateContactForm(TestCase):
                 "company": self.contact.company,
             },
         )
-        print(form.errors)
         self.assertTrue(form.is_valid())
