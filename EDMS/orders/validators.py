@@ -33,7 +33,7 @@ def validate_no_repetition(cleaned_data: Dict[str, Any]) -> None:
 def validate_no_future_create_date(cleaned_data: Dict[str, Any]) -> None:
     create_date = cleaned_data["create_date"]
     if timezone.now().date() < create_date:
-        raise ValidationError({"create_date": "The create end_date can't be future end_date."})
+        raise ValidationError({"create_date": "The create date can't be future end_date."})
 
 
 def validate_max_size_file(cleaned_data: Dict[str, Any]) -> None:
