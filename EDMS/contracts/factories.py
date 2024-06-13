@@ -2,7 +2,6 @@ import factory
 from _decimal import Decimal
 from companies.factories import CompanyFactory
 from contracts.models import Contract
-from django.utils import timezone
 from factory import Sequence
 from factory.django import DjangoModelFactory
 from users.factories import UserFactory
@@ -17,9 +16,7 @@ class ContractFactory(DjangoModelFactory):
         model = Contract
 
     name = Sequence(lambda n: f"contract{n}")
-    create_date = factory.LazyFunction(
-        lambda: create_string_format_valid_date(timezone.now().date().strftime("%Y-%m-%d"))
-    )
+    create_date = factory.Faker("date_between", start_date="-1y", end_date="today")
     start_date = factory.LazyAttribute(lambda obj: create_string_format_valid_date(obj.create_date))
     end_date = factory.LazyAttribute(lambda obj: create_string_format_valid_date(obj.start_date))
     company = factory.SubFactory(CompanyFactory)
