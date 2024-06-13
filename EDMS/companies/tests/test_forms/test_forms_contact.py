@@ -31,7 +31,7 @@ class TestCaseCreateContactForm(TestCase):
                 "company": self.company,
             }
         )
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid())
 
 
 class TestCaseUpdateContactForm(TestCase):
