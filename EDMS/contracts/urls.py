@@ -6,8 +6,6 @@ from contracts.views import (
     ContractListView,
     ContractUpdateView,
 )
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework import routers
 
@@ -30,6 +28,3 @@ urlpatterns = [
     path("contracts/", ContractListView.as_view(), name="list-contract"),
     path("", include(router.urls)),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

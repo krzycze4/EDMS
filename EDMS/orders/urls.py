@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import include, path
 from orders.api.views.views_api_orders import OrderModelViewSet
 from orders.api.views.views_api_protocols import ProtocolModelViewSet
@@ -41,6 +39,3 @@ urlpatterns = [
     ),
     path("", include(router.urls)),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
