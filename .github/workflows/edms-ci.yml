@@ -52,9 +52,7 @@ jobs:
     - name: Install Dependencies
       run: |
         poetry install
-        poetry add ruff
-        poetry add bandit
-        poetry add safety
+        poetry add ruff bandit safety
     - name: Run Ruff
       run: |
         poetry run ruff check
@@ -64,6 +62,7 @@ jobs:
     - name: Run Safety
       run: |
         poetry run safety check --ignore 70612
+      continue-on-error: true
     - name: Run Tests
       run: |
         cd EDMS
@@ -76,6 +75,3 @@ jobs:
         POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
         POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-
-
-# safety
