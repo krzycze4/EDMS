@@ -17,5 +17,5 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns.append(path("silk/", include("silk.urls", namespace="silk")))
-    urlpatterns.append(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
-    urlpatterns.append(static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
