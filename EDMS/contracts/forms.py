@@ -1,16 +1,16 @@
-from typing import Any, Dict
+from datetime import date
+from decimal import Decimal
+from typing import Dict, List, Union
 
 from companies.models import Company
+from contracts.validators import ContractValidator
 from django import forms
-from orders.validators import (
-    validate_end_date_after_start_date,
-    validate_file_extension,
-    validate_max_size_file,
-    validate_no_future_create_date,
-)
+from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import UploadedFile
 
 from .models import Contract
-from .validators import validate_create_date_before_start_date
+
+User = get_user_model()
 
 
 class ContractForm(forms.ModelForm):
@@ -28,15 +28,13 @@ class ContractForm(forms.ModelForm):
             "scan": forms.FileInput(attrs={"class": "form-input"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields["company"].queryset = Company.objects.exclude(is_mine=True)
 
-    def clean(self) -> Dict[str, Any]:
-        cleaned_data = super().clean()
-        validate_end_date_after_start_date(cleaned_data=cleaned_data)
-        validate_max_size_file(cleaned_data=cleaned_data)
-        validate_file_extension(cleaned_data=cleaned_data)
-        validate_no_future_create_date(cleaned_data=cleaned_data)
-        validate_create_date_before_start_date(cleaned_data=cleaned_data)
+    def clean(self) -> Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]:
+        cleaned_data: Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]] = super().clean()
+        validators: List[callable] = ContractValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data
