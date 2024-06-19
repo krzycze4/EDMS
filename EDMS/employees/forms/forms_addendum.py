@@ -1,7 +1,12 @@
+from datetime import date
+from decimal import Decimal
+from typing import Dict, List, Union
+
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
 from employees.models.models_addendum import Addendum
 from employees.models.models_agreement import Agreement
-from employees.validators.validators_addendum import validate_addendum_dates
+from employees.validators.validators_addendum import AddendumValidator
 
 
 class AddendumForm(forms.ModelForm):
@@ -30,7 +35,9 @@ class AddendumForm(forms.ModelForm):
             self.fields["agreement"].disabled = True
         self.fields["agreement"].queryset = Agreement.objects.exclude(termination__isnull=False)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        validate_addendum_dates(cleaned_data=cleaned_data)
+    def clean(self) -> Dict[str, Union[str | date | Agreement | Decimal | UploadedFile]]:
+        cleaned_data: Dict[str, Union[str | date | Agreement | Decimal | UploadedFile]] = super().clean()
+        validators: List[callable] = AddendumValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data

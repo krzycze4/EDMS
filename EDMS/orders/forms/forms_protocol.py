@@ -1,12 +1,10 @@
-from typing import Any, Dict
+from datetime import date
+from typing import Dict, List, Union
 
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
 from orders.models import Protocol
-from orders.validators import (
-    validate_file_extension,
-    validate_max_size_file,
-    validate_no_future_create_date,
-)
+from orders.validators.validators_protocol import ProtocolValidator
 
 
 class ProtocolForm(forms.ModelForm):
@@ -18,9 +16,9 @@ class ProtocolForm(forms.ModelForm):
             "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
         }
 
-    def clean(self) -> Dict[str, Any]:
-        cleaned_data = super().clean()
-        validate_no_future_create_date(cleaned_data=cleaned_data)
-        validate_max_size_file(cleaned_data=cleaned_data)
-        validate_file_extension(cleaned_data=cleaned_data)
+    def clean(self) -> Dict[str, Union[date | UploadedFile]]:
+        cleaned_data: Dict[str, Union[date | UploadedFile]] = super().clean()
+        validators: List[callable] = ProtocolValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data

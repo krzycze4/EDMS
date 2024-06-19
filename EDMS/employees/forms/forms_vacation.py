@@ -1,17 +1,10 @@
-from typing import Any, Dict
+from datetime import date
+from typing import Dict, List, Union
 
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
 from employees.models.models_vacation import Vacation
-from employees.validators.validators_vacation import (
-    validate_enough_vacation_left,
-    validate_no_overlap_vacation_dates,
-    validate_user_can_take_vacation,
-)
-from orders.validators import (
-    validate_end_date_after_start_date,
-    validate_file_extension,
-    validate_max_size_file,
-)
+from employees.validators.validators_vacation import VacationValidator
 from users.models import User
 
 
@@ -54,14 +47,11 @@ class VacationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["substitute_users"].queryset = User.objects.exclude(pk=kwargs["initial"]["leave_user"])
 
-    def clean(self) -> Dict[str, Any]:
-        cleaned_data: Dict[str, Any] = super().clean()
-        validate_user_can_take_vacation(cleaned_data=cleaned_data)  # OK
+    def clean(self) -> Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]:
+        cleaned_data: Dict[str, Union[str | date | User | List[User] | UploadedFile | int]] = super().clean()
         if self.instance.pk:
             cleaned_data["id"] = self.instance.pk
-        validate_end_date_after_start_date(cleaned_data=cleaned_data)  # OK
-        validate_no_overlap_vacation_dates(cleaned_data=cleaned_data)  # OK
-        validate_file_extension(cleaned_data=cleaned_data)
-        validate_max_size_file(cleaned_data=cleaned_data)
-        validate_enough_vacation_left(cleaned_data=cleaned_data)
+        validators: List[callable] = VacationValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data

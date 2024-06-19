@@ -1,16 +1,15 @@
 from collections import OrderedDict
+from datetime import date
+from decimal import Decimal
+from typing import Dict, List, Union
 
 from django import forms
+from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import UploadedFile
 from employees.models.models_agreement import Agreement
-from employees.validators.validators_agreement import (
-    validate_create_date_not_after_start_date,
-)
-from orders.validators import (
-    validate_end_date_after_start_date,
-    validate_file_extension,
-    validate_max_size_file,
-    validate_no_future_create_date,
-)
+from employees.validators.validators_agreement import AgreementValidator
+
+User = get_user_model()
 
 
 class AgreementForm(forms.ModelForm):
@@ -49,8 +48,8 @@ class AgreementForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs) -> None:
-        instance = kwargs.get("instance", None)
-        user = kwargs.pop("user", None)
+        instance: Agreement = kwargs.get("instance", None)
+        user: User = kwargs.pop("user", None)
         if instance:
             initial_user_display = f"{instance.user.first_name} {instance.user.last_name}"
         else:
@@ -59,11 +58,9 @@ class AgreementForm(forms.ModelForm):
         self.fields["user"].initial = user
         self.fields["user_display"].initial = initial_user_display
 
-    def clean(self):
-        cleaned_data = super().clean()
-        validate_end_date_after_start_date(cleaned_data=cleaned_data)
-        validate_no_future_create_date(cleaned_data=cleaned_data)
-        validate_create_date_not_after_start_date(cleaned_data=cleaned_data)
-        validate_file_extension(cleaned_data=cleaned_data)
-        validate_max_size_file(cleaned_data=cleaned_data)
+    def clean(self) -> Dict[str, Union[str | Decimal | date | User | UploadedFile]]:
+        cleaned_data: Dict[str, Union[str | Decimal | date | User | UploadedFile]] = super().clean()
+        validators: List[callable] = AgreementValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data

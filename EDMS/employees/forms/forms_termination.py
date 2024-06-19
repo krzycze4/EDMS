@@ -1,7 +1,11 @@
+from datetime import date
+from typing import Dict, List, Union
+
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
 from employees.models.models_agreement import Agreement
 from employees.models.models_termination import Termination
-from employees.validators.validators_termination import validate_termination_dates
+from employees.validators.validators_termination import TerminationValidator
 
 
 class TerminationForm(forms.ModelForm):
@@ -23,7 +27,9 @@ class TerminationForm(forms.ModelForm):
         else:
             self.fields["agreement"].queryset = Agreement.objects.filter(termination=None)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        validate_termination_dates(cleaned_data=cleaned_data)
+    def clean(self) -> Dict[str, Union[str | date | Agreement | UploadedFile]]:
+        cleaned_data: Dict[str, Union[str | date | Agreement | UploadedFile]] = super().clean()
+        validators: List[callable] = TerminationValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data

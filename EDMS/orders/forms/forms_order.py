@@ -1,14 +1,12 @@
-from datetime import datetime
-from typing import Any, Dict
+from datetime import date, datetime
+from decimal import Decimal
+from typing import Any, Dict, List, Union
 
+from companies.models import Company
 from contracts.models import Contract
-from contracts.validators import validate_same_company_in_order_and_contract
 from django import forms
 from orders.models import Order, Protocol
-from orders.validators import (
-    validate_end_date_after_start_date,
-    validate_start_date_in_contract_period,
-)
+from orders.validators import OrderCreateValidator, OrderUpdateValidator
 
 
 class OrderCreateForm(forms.ModelForm):
@@ -37,11 +35,10 @@ class OrderCreateForm(forms.ModelForm):
             self.fields["contract"].queryset = Contract.objects.filter(company=self.instance.company)
 
     def clean(self) -> Dict[str, Any]:
-        cleaned_data = super().clean()
-        validate_end_date_after_start_date(cleaned_data=cleaned_data)
-        # validate_no_repetition(cleaned_data=cleaned_data)
-        validate_same_company_in_order_and_contract(cleaned_data=cleaned_data)
-        validate_start_date_in_contract_period(cleaned_data=cleaned_data)
+        cleaned_data: Dict[str, Union[Decimal | Company | str | date | Contract]] = super().clean()
+        validators: List[callable] = OrderCreateValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data
 
 
@@ -66,9 +63,10 @@ class OrderUpdateForm(forms.ModelForm):
         }
 
     def clean(self) -> Dict[str, Any]:
-        cleaned_data: Dict[str, Any] = super().clean()
-        validate_end_date_after_start_date(cleaned_data=cleaned_data)
-        # validate_start_date_in_contract_period(cleaned_data=cleaned_data)
+        cleaned_data: Dict[str, Union[Decimal | Company | str | date | Contract]] = super().clean()
+        validators: List[callable] = OrderUpdateValidator.all_validators()
+        for validator in validators:
+            validator(cleaned_data=cleaned_data)
         return cleaned_data
 
     def __init__(self, *args, **kwargs) -> None:
