@@ -5,6 +5,7 @@ import factory
 from _decimal import Decimal
 from companies.factories import CompanyFactory
 from contracts.models import Contract
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
 from factory import Sequence
 from factory.django import DjangoModelFactory
@@ -22,7 +23,9 @@ class ContractFactory(DjangoModelFactory):
     end_date = factory.LazyAttribute(lambda obj: create_string_format_valid_date(obj.start_date))
     company = factory.SubFactory(CompanyFactory)
     price = Decimal(1000)
-    scan = factory.django.FileField(filename="the_file.pdf")
+    scan = factory.LazyAttribute(
+        lambda _: SimpleUploadedFile("the_file.pdf", b"file_content", content_type="application/pdf")
+    )
 
     @factory.lazy_attribute
     def create_date(self):
