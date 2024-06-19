@@ -6,7 +6,10 @@ from companies.models import Company
 from contracts.models import Contract
 from django import forms
 from orders.models import Order, Protocol
-from orders.validators import OrderCreateValidator, OrderUpdateValidator
+from orders.validators.validators_order import (
+    OrderCreateValidator,
+    OrderUpdateValidator,
+)
 
 
 class OrderCreateForm(forms.ModelForm):
