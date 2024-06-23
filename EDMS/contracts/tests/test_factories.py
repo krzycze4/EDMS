@@ -3,7 +3,7 @@ from contracts.models import Contract
 from django.test import TestCase
 
 
-class TestContractFactory(TestCase):
+class ContractFactoryTests(TestCase):
     def test_create_correct_contract(self):
         ContractFactory.create()
         self.assertEqual(Contract.objects.count(), 1)

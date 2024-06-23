@@ -9,7 +9,7 @@ from django.utils import timezone
 from users.factories import UserFactory
 
 
-class TestCaseContractForm(TestCase):
+class ContractFormTests(TestCase):
     def setUp(self) -> None:
         self.employee = UserFactory()
         self.company = CompanyFactory()
@@ -34,7 +34,7 @@ class TestCaseContractForm(TestCase):
         )
         self.assertTrue(form.is_valid())
 
-    def test_form_invalid_start_date_after_end_date(self):
+    def test_form_invalid_when_start_date_after_end_date(self):
         self.contract.start_date = timezone.now().date()
         self.contract.end_date = self.contract.start_date - timedelta(days=1)
 
@@ -53,7 +53,7 @@ class TestCaseContractForm(TestCase):
         )
         self.assertFalse(form.is_valid())
 
-    def test_form_invalid_too_big_file(self):
+    def test_form_invalid_when_file_is_too_big(self):
         big_file = SimpleUploadedFile("big_file.pdf", b"x" * (10**8), content_type="application/pdf")
         form = ContractForm(
             data={
@@ -70,7 +70,7 @@ class TestCaseContractForm(TestCase):
         )
         self.assertFalse(form.is_valid())
 
-    def test_form_invalid_wrong_file_extension(self):
+    def test_form_invalid_when_file_extension_is_wrong(self):
         invalid_file = SimpleUploadedFile("invalid_file.txt", b"file_content", content_type="text/plain")
         form = ContractForm(
             data={
@@ -87,7 +87,7 @@ class TestCaseContractForm(TestCase):
         )
         self.assertFalse(form.is_valid())
 
-    def test_form_invalid_create_date(self):
+    def test_form_invalid_when_create_date_is_in_future(self):
         self.contract.create_date = timezone.now().date() + timedelta(days=1)
 
         form = ContractForm(
@@ -105,7 +105,7 @@ class TestCaseContractForm(TestCase):
         )
         self.assertFalse(form.is_valid())
 
-    def test_form_invalid_create_date_after_start_date(self):
+    def test_form_invalid_when_create_date_after_start_date(self):
         self.contract.create_date = timezone.now().date()
         self.contract.start_date = self.contract.create_date - timedelta(days=1)
 
