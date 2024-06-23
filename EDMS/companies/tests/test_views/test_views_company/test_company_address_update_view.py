@@ -1,53 +1,24 @@
 from http import HTTPStatus
 
+from common_tests.EDMSTestCase import EDMSTestCase
 from companies.factories import AddressFactory, CompanyFactory
-from companies.models import Address
+from companies.models import Address, Company
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404
-from django.test import TestCase
 from django.urls import reverse_lazy
-from users.factories import UserFactory
-
-from EDMS.group_utils import create_group_with_permissions
 
 User = get_user_model()
 
 
-class TestCaseCompanyAddressUpdateView(TestCase):
+class BaseAddressTestCase(EDMSTestCase):
     @classmethod
-    def setUpTestData(cls):
-        group_names_with_permission_codenames = {
-            "ceos": [
-                "add_company",
-                "change_company",
-                "delete_company",
-                "view_company",
-            ],
-            "accountants": ["add_company", "change_company", "delete_company", "view_company"],
-            "managers": ["view_company"],
-            "hrs": ["view_company"],
-        }
-        for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
-            create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
-
-        cls.password = User.objects.make_random_password()
-        cls.accountant = cls.create_user_with_group(group_name="accountants")
-        cls.ceo = cls.create_user_with_group(group_name="ceos")
-        cls.hr = cls.create_user_with_group(group_name="hrs")
-        cls.manager = cls.create_user_with_group(group_name="managers")
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
         cls.template_name = "companies/companies/update_address_company.html"
 
-    @classmethod
-    def create_user_with_group(cls, group_name: str) -> User:
-        group = get_object_or_404(Group, name=group_name)
-        user = UserFactory(is_active=True, password=cls.password)
-        user.groups.add(group)
-        return user
-
     def setUp(self) -> None:
-        self.company = CompanyFactory.create()
-        address_stub = AddressFactory.stub()
+        super().setUp()
+        self.company: Company = CompanyFactory.create()
+        address_stub: Address = AddressFactory.stub()
         self.address_data = {
             "street_name": address_stub.street_name,
             "street_number": address_stub.street_number,
@@ -59,8 +30,8 @@ class TestCaseCompanyAddressUpdateView(TestCase):
         self.redirect_url = f"{reverse_lazy('detail-company', kwargs={'pk': self.company.pk})}"
 
 
-class TestCaseCompanyAddressUpdateViewUserNotAuthenticated(TestCaseCompanyAddressUpdateView):
-    def test_get_user_not_authenticated(self):
+class UnauthenticatedUserAddressUpdateTests(BaseAddressTestCase):
+    def test_redirect_to_login_on_get_when_not_authenticated(self):
         response = self.client.get(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -69,7 +40,7 @@ class TestCaseCompanyAddressUpdateViewUserNotAuthenticated(TestCaseCompanyAddres
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.not_auth_user_url)
 
-    def test_post_user_not_authenticated(self):
+    def test_redirect_to_login_when_not_authenticated_user_post(self):
         response = self.client.post(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -80,12 +51,12 @@ class TestCaseCompanyAddressUpdateViewUserNotAuthenticated(TestCaseCompanyAddres
         self.assertRedirects(response, self.not_auth_user_url)
 
 
-class TestCaseCompanyAddressUpdateViewUserGroupAccountants(TestCaseCompanyAddressUpdateView):
+class AccountantAddressUpdateTests(BaseAddressTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.accountant.email, password=self.password)
 
-    def test_get_user_accountants_ok(self):
+    def test_get_address_update_page_for_accountant(self):
         self.assertTrue(self.login)
         response = self.client.get(
             reverse_lazy(
@@ -95,12 +66,12 @@ class TestCaseCompanyAddressUpdateViewUserGroupAccountants(TestCaseCompanyAddres
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
-    def test_get_user_accountants_not_ok(self):
+    def test_get_not_existing_address_for_accountant(self):
         self.assertTrue(self.login)
         with self.assertRaises(Address.DoesNotExist):
             self.client.get(reverse_lazy("update-address", kwargs={"company_pk": self.company.pk, "address_pk": 100}))
 
-    def test_post_user_accountants_ok(self):
+    def test_post_correct_address_update_for_accountant(self):
         self.assertTrue(self.login)
         response = self.client.post(
             reverse_lazy(
@@ -112,7 +83,7 @@ class TestCaseCompanyAddressUpdateViewUserGroupAccountants(TestCaseCompanyAddres
         self.assertRedirects(response, self.redirect_url)
         self.assertEqual(Address.objects.get(pk=self.company.address.pk).street_name, self.address_data["street_name"])
 
-    def test_post_user_accountants_not_ok(self):
+    def test_post_invalid_address_update_for_accountant(self):
         self.assertTrue(self.login)
         response = self.client.post(
             reverse_lazy(
@@ -125,12 +96,12 @@ class TestCaseCompanyAddressUpdateViewUserGroupAccountants(TestCaseCompanyAddres
         self.assertTrue(response.context["form"].errors)
 
 
-class TestCaseCompanyAddressUpdateViewUserGroupCeos(TestCaseCompanyAddressUpdateView):
+class CeoAddressUpdateTests(BaseAddressTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.ceo.email, password=self.password)
 
-    def test_get_user_ceos_ok(self):
+    def test_get_address_update_page_for_ceo(self):
         self.assertTrue(self.login)
         response = self.client.get(
             reverse_lazy(
@@ -140,12 +111,12 @@ class TestCaseCompanyAddressUpdateViewUserGroupCeos(TestCaseCompanyAddressUpdate
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
-    def test_get_user_ceos_not_ok(self):
+    def test_get_not_existing_address_for_ceo(self):
         self.assertTrue(self.login)
         with self.assertRaises(Address.DoesNotExist):
             self.client.get(reverse_lazy("update-address", kwargs={"company_pk": self.company.pk, "address_pk": 100}))
 
-    def test_post_user_ceos_ok(self):
+    def test_post_correct_address_update_for_ceo(self):
         self.assertTrue(self.login)
         response = self.client.post(
             reverse_lazy(
@@ -157,7 +128,7 @@ class TestCaseCompanyAddressUpdateViewUserGroupCeos(TestCaseCompanyAddressUpdate
         self.assertRedirects(response, self.redirect_url)
         self.assertEqual(Address.objects.get(pk=self.company.address.pk).street_name, self.address_data["street_name"])
 
-    def test_post_user_ceos_not_ok(self):
+    def test_post_invalid_address_update_for_ceo(self):
         self.assertTrue(self.login)
         response = self.client.post(
             reverse_lazy(
@@ -170,12 +141,12 @@ class TestCaseCompanyAddressUpdateViewUserGroupCeos(TestCaseCompanyAddressUpdate
         self.assertTrue(response.context["form"].errors)
 
 
-class TestCaseCompanyAddressUpdateViewUserGroupHrs(TestCaseCompanyAddressUpdateView):
+class HrAddressUpdateTests(BaseAddressTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.hr.email, password=self.password)
 
-    def test_get_user_managers_forbidden(self):
+    def test_get_address_update_forbidden_for_hr(self):
         self.assertTrue(self.login)
         response = self.client.get(
             reverse_lazy(
@@ -184,7 +155,7 @@ class TestCaseCompanyAddressUpdateViewUserGroupHrs(TestCaseCompanyAddressUpdateV
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_user_managers_forbidden(self):
+    def test_post_address_update_forbidden_for_hr(self):
         self.assertTrue(self.login)
         response = self.client.post(
             reverse_lazy(
@@ -195,12 +166,12 @@ class TestCaseCompanyAddressUpdateViewUserGroupHrs(TestCaseCompanyAddressUpdateV
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseCompanyAddressUpdateViewUserGroupManagers(TestCaseCompanyAddressUpdateView):
+class ManagerAddressUpdateTests(BaseAddressTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.manager.email, password=self.password)
 
-    def test_get_user_managers_forbidden(self):
+    def test_get_address_update_forbidden_for_manager(self):
         self.assertTrue(self.login)
         response = self.client.get(
             reverse_lazy(
@@ -209,7 +180,7 @@ class TestCaseCompanyAddressUpdateViewUserGroupManagers(TestCaseCompanyAddressUp
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_user_managers_forbidden(self):
+    def test_post_address_update_forbidden_for_manager(self):
         self.assertTrue(self.login)
         response = self.client.post(
             reverse_lazy(

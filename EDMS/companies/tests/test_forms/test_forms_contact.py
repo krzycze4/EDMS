@@ -3,7 +3,7 @@ from companies.forms.forms_contact import CreateContactForm, UpdateContactForm
 from django.test import TestCase
 
 
-class TestCaseCreateContactForm(TestCase):
+class CreateContactFormTests(TestCase):
     def setUp(self) -> None:
         self.company = CompanyFactory.create()
         self.contact = ContactFactory.build(company=self.company)
@@ -21,7 +21,7 @@ class TestCaseCreateContactForm(TestCase):
         )
         self.assertTrue(form.is_valid())
 
-    def test_form_invalid(self):
+    def test_form_invalid_when_the_same_contact_exists_in_db(self):
         form = CreateContactForm(
             data={
                 "name": self.existing_contact.name,
@@ -34,7 +34,7 @@ class TestCaseCreateContactForm(TestCase):
         self.assertFalse(form.is_valid())
 
 
-class TestCaseUpdateContactForm(TestCase):
+class UpdateContactFormTests(TestCase):
     def setUp(self) -> None:
         self.contact = ContactFactory.create()
         self.new_contact = ContactFactory.build()

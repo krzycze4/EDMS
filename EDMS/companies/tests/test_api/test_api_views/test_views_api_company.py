@@ -1,48 +1,17 @@
 from http import HTTPStatus
 
+from common_tests.EDMSTestCase import EDMSTestCase
 from companies.factories import AddressFactory, CompanyFactory
 from companies.models import Company
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404
-from django.test import TestCase
 from django.urls import reverse_lazy
 from rest_framework import serializers
 from rest_framework.test import APIClient
-from users.factories import UserFactory
-
-from EDMS.group_utils import create_group_with_permissions
 
 User = get_user_model()
 
 
-class TestCaseCompanyModelViewSet(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        group_names_with_permission_codenames = {
-            "ceos": [
-                "add_company",
-                "change_company",
-                "delete_company",
-                "view_company",
-            ],
-            "accountants": ["add_company", "change_company", "delete_company", "view_company"],
-            "managers": ["view_company"],
-            "hrs": ["view_company"],
-        }
-        for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
-            create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
-
-        cls.password = User.objects.make_random_password()
-        cls.user_address = AddressFactory.create()
-
-    @classmethod
-    def create_user_with_group(cls, group_name: str) -> User:
-        group = get_object_or_404(Group, name=group_name)
-        user = UserFactory(is_active=True, password=cls.password, address=cls.user_address)
-        user.groups.add(group)
-        return user
-
+class BaseCompanyApiTestCase(EDMSTestCase):
     def setUp(self) -> None:
         self.client = APIClient()
         self.address = AddressFactory.create()
@@ -59,194 +28,204 @@ class TestCaseCompanyModelViewSet(TestCase):
         self.company_list = CompanyFactory.create_batch(10, address=self.address)
 
 
-class TestCaseUserNotAuthenticatedCompanyModelViewSet(TestCaseCompanyModelViewSet):
-    def test_get_list_company_if_user_not_authenticated(self):
+class UnauthenticatedUserApiCompanyTests(BaseCompanyApiTestCase):
+    def test_unauthenticated_user_cannot_view_address_list(self):
         response = self.client.get(reverse_lazy("company-list"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_get_detail_company_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_view_address_detail(self):
         response = self.client.get(reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_create_company_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_create_address(self):
         response = self.client.post(reverse_lazy("company-list"), self.company_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_put_update_company_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_update_address(self):
         response = self.client.put(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_delete_company_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_delete_address(self):
         response = self.client.delete(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseUserAccountantCompanyModelViewSet(TestCaseCompanyModelViewSet):
+class AccountantApiCompanyTests(BaseCompanyApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.accountant = self.create_user_with_group(group_name="accountants")
         self.login = self.client.login(email=self.accountant.email, password=self.password)
 
-    def test_get_list_company_if_user_group_accountant(self):
+    def test_accountant_can_view_company_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_company_if_user_group_accountant(self):
+    def test_accountant_can_view_company_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_company_if_user_group_accountant(self):
+    def test_accountant_can_create_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.post(reverse_lazy("company-list"), self.company_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        self.assertEqual(Company.objects.count(), 11)
+        self.assertEqual(Company.objects.count(), count_company_before_response + 1)
 
-    def test_put_update_company_if_user_group_accountant(self):
+    def test_accountant_can_update_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.put(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(Company.objects.count(), 10)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
-    def test_delete_company_if_user_group_accountant(self):
+    def test_accountant_can_delete_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.delete(reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-        self.assertEqual(Company.objects.count(), 9)
+        self.assertEqual(Company.objects.count(), count_company_before_response - 1)
 
 
-class TestCaseUserCeoCompanyModelViewSet(TestCaseCompanyModelViewSet):
+class CeoApiCompanyTests(BaseCompanyApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.ceo = self.create_user_with_group(group_name="ceos")
         self.login = self.client.login(email=self.ceo.email, password=self.password)
 
-    def test_get_list_company_if_user_group_ceo(self):
+    def test_ceo_can_view_company_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_company_if_user_group_ceo(self):
+    def test_ceo_can_view_company_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_company_if_user_group_ceo(self):
+    def test_ceo_can_create_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.post(reverse_lazy("company-list"), self.company_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        self.assertEqual(Company.objects.count(), 11)
+        self.assertEqual(Company.objects.count(), count_company_before_response + 1)
 
-    # TU SIĘ ZATRZYMUJE
-    def test_put_update_company_if_user_group_ceo(self):
+    def test_ceo_can_update_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.put(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(Company.objects.count(), 10)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
-    def test_delete_company_if_user_group_ceo(self):
+    def test_ceo_can_delete_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.delete(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-        self.assertEqual(Company.objects.count(), 9)
+        self.assertEqual(Company.objects.count(), count_company_before_response - 1)
 
 
-class TestCaseUserHrCompanyModelViewSet(TestCaseCompanyModelViewSet):
+class HrApiCompanyTests(BaseCompanyApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.hr = self.create_user_with_group(group_name="hrs")
         self.login = self.client.login(email=self.hr.email, password=self.password)
 
-    def test_get_list_company_if_user_group_hr(self):
+    def test_hr_can_view_company_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_company_if_user_group_hr(self):
+    def test_hr_can_view_company_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_company_if_user_group_hr(self):
+    def test_hr_cannot_create_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.post(reverse_lazy("company-list"), self.company_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
-        self.assertEqual(Company.objects.count(), 10)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
-    def test_put_update_company_if_user_group_hr(self):
+    def test_hr_cannot_update_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.put(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
-    def test_delete_company_if_user_group_hr(self):
+    def test_hr_cannot_delete_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.delete(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
-        self.assertEqual(Company.objects.count(), 10)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
 
-class TestCaseUserManagerCompanyModelViewSet(TestCaseCompanyModelViewSet):
+class ManagerApiCompanyTests(BaseCompanyApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.manager = self.create_user_with_group(group_name="managers")
         self.login = self.client.login(email=self.manager.email, password=self.password)
 
-    def test_get_list_company_if_user_group_manager(self):
+    def test_manager_can_view_company_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_company_if_user_group_manager(self):
+    def test_manager_can_view_company_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_company_if_user_group_manager(self):
+    def test_manager_cannot_create_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.post(reverse_lazy("company-list"), self.company_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
-        self.assertEqual(Company.objects.count(), 10)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
-    def test_put_update_company_if_user_group_manager(self):
+    def test_manager_cannot_update_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.put(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
-    def test_delete_company_if_user_group_manager(self):
+    def test_manager_cannot_delete_company(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         response = self.client.delete(
             reverse_lazy("company-detail", kwargs={"pk": self.company_list[0].id}), self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
-        self.assertEqual(Company.objects.count(), 10)
+        self.assertEqual(Company.objects.count(), count_company_before_response)
 
 
-class TestCaseCreateInstanceCompanyModelViewSet(TestCaseCompanyModelViewSet):
+class CreateInstanceApiCompanyTests(BaseCompanyApiTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.ceo = self.create_user_with_group(group_name="ceos")
         self.login = self.client.login(email=self.ceo.email, password=self.password)
 
-    def test_not_create_same_company(self):
+    def test_prevent_duplicate_company_creation(self):
         self.assertTrue(self.login)
+        count_company_before_response = Company.objects.count()
         self.client.post(reverse_lazy("company-list"), self.company_data)
         self.client.post(reverse_lazy("company-list"), self.company_data)
-        self.assertEqual(Company.objects.count(), 11)
+        self.assertEqual(Company.objects.count(), count_company_before_response + 1)
         self.assertRaises(serializers.ValidationError)

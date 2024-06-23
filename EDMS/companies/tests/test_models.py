@@ -3,7 +3,7 @@ from companies.models import Address, Company, Contact
 from django.test import TestCase
 
 
-class TestCaseAddress(TestCase):
+class ModelAddressTests(TestCase):
     def setUp(self) -> None:
         self.address = AddressFactory.build()
 
@@ -19,7 +19,7 @@ class TestCaseAddress(TestCase):
         self.assertEqual(Address._meta.verbose_name_plural, "Addresses")
 
 
-class TestCaseCompany(TestCase):
+class ModelCompanyTests(TestCase):
     def setUp(self) -> None:
         self.company = CompanyFactory.build()
         self.company.address.save()
@@ -35,7 +35,7 @@ class TestCaseCompany(TestCase):
         self.assertEqual(Company._meta.verbose_name_plural, "Companies")
 
 
-class TestCaseContact(TestCase):
+class ModelContactTests(TestCase):
     def setUp(self) -> None:
         self.contact = ContactFactory.build()
         self.contact.company.address.save()

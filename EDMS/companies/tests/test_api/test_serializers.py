@@ -8,7 +8,7 @@ from companies.models import Address, Company, Contact
 from django.test import TestCase
 
 
-class TestCaseAddressSerializer(TestCase):
+class AddressSerializerTestCase(TestCase):
     def setUp(self) -> None:
         self.address = AddressFactory.build()
         self.address_data = {
@@ -31,7 +31,7 @@ class TestCaseAddressSerializer(TestCase):
         self.assertTrue(Address.objects.count(), 1)
 
 
-class TestCaseCompanySerializer(TestCase):
+class CompanySerializerTestCase(TestCase):
     def setUp(self) -> None:
         self.address = AddressFactory.create()
         self.company = CompanyFactory.build(address=self.address)
@@ -57,7 +57,7 @@ class TestCaseCompanySerializer(TestCase):
         self.assertEqual(Company.objects.count(), 1)
 
 
-class TestCaseContactSerializer(TestCase):
+class ContactSerializerTestCase(TestCase):
     def setUp(self) -> None:
         self.company = CompanyFactory.create()
         self.contact = ContactFactory.build(company=self.company)

@@ -1,52 +1,23 @@
 from http import HTTPStatus
+from typing import List
 
+from common_tests.EDMSTestCase import EDMSTestCase
 from companies.factories import AddressFactory
 from companies.models import Address
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404
-from django.test import TestCase
 from django.urls import reverse_lazy
 from rest_framework import serializers
 from rest_framework.test import APIClient
-from users.factories import UserFactory
-
-from EDMS.group_utils import create_group_with_permissions
 
 User = get_user_model()
 
 
-class TestCaseAddressModelViewSet(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        group_names_with_permission_codenames = {
-            "ceos": [
-                "add_address",
-                "change_address",
-                "delete_address",
-                "view_address",
-            ],
-            "accountants": [
-                "add_address",
-                "change_address",
-                "delete_address",
-                "view_address",
-            ],
-            "managers": ["view_address"],
-            "hrs": ["view_address"],
-        }
-        for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
-            create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
-
-        cls.password = User.objects.make_random_password()
-        cls.user_address = AddressFactory.create()
-
+class BaseAddressApiTestCase(EDMSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.client = APIClient()
-        self.address_list = AddressFactory.create_batch(9)
-        self.address = AddressFactory.build()
+        self.address_list: List[Address] = AddressFactory.create_batch(9)
+        self.address: Address = AddressFactory.build()
         self.address_data = {
             "street_name": self.address.street_name,
             "street_number": str(self.address.street_number),
@@ -55,147 +26,147 @@ class TestCaseAddressModelViewSet(TestCase):
             "country": self.address.country,
         }
 
-    @classmethod
-    def create_user_with_group(cls, group_name: str) -> User:
-        group = get_object_or_404(Group, name=group_name)
-        user = UserFactory(is_active=True, password=cls.password, address=cls.user_address)
-        user.groups.add(group)
-        return user
 
-
-class TestCaseUserNotAuthenticatedAddressModelViewSet(TestCaseAddressModelViewSet):
-    def test_get_list_address_if_user_not_authenticated(self):
+class UnauthenticatedUserApiAddressTests(BaseAddressApiTestCase):
+    def test_unauthenticated_user_cannot_view_address_list(self):
         response = self.client.get(reverse_lazy("address-list"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_get_detail_address_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_view_address_detail(self):
         response = self.client.get(reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_create_address_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_create_address(self):
         response = self.client.post(reverse_lazy("address-list"), self.address_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_put_update_address_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_update_address(self):
         response = self.client.put(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_delete_address_if_user_not_authenticated(self):
+    def test_unauthenticated_user_cannot_delete_address(self):
         response = self.client.delete(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseUserAccountantAddressModelViewSet(TestCaseAddressModelViewSet):
+class AccountantApiAddressTests(BaseAddressApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.accountant = self.create_user_with_group(group_name="accountants")
         self.login = self.client.login(email=self.accountant.email, password=self.password)
 
-    def test_get_list_address_if_user_group_accountant(self):
+    def test_accountant_can_view_address_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_address_if_user_group_accountant(self):
+    def test_accountant_can_view_address_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_address_if_user_group_accountant(self):
+    def test_accountant_can_create_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.post(reverse_lazy("address-list"), self.address_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        self.assertEqual(Address.objects.count(), 11)
+        self.assertEqual(Address.objects.count(), count_address_before_response + 1)
 
-    def test_put_update_address_if_user_group_accountant(self):
+    def test_accountant_can_update_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.put(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(Address.objects.count(), 10)
+        self.assertEqual(Address.objects.count(), count_address_before_response)
 
-    def test_delete_address_if_user_group_accountant(self):
+    def test_accountant_can_delete_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.delete(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-        self.assertEqual(Address.objects.count(), 9)
+        self.assertEqual(Address.objects.count(), count_address_before_response - 1)
 
 
-class TestCaseUserCeoAddressModelViewSet(TestCaseAddressModelViewSet):
+class CeoApiAddressTests(BaseAddressApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.ceo = self.create_user_with_group(group_name="ceos")
         self.login = self.client.login(email=self.ceo.email, password=self.password)
 
-    def test_get_list_address_if_user_group_ceo(self):
+    def test_ceo_can_view_address_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_address_if_user_group_ceo(self):
+    def test_ceo_can_view_address_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_address_if_user_group_ceo(self):
+    def test_ceo_can_create_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.post(reverse_lazy("address-list"), self.address_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        self.assertEqual(Address.objects.count(), 11)
+        self.assertEqual(Address.objects.count(), count_address_before_response + 1)
 
-    def test_put_update_address_if_user_group_ceo(self):
+    def test_ceo_can_update_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.put(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(Address.objects.count(), 10)
+        self.assertEqual(Address.objects.count(), count_address_before_response)
 
-    def test_delete_address_if_user_group_ceo(self):
+    def test_ceo_can_delete_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.delete(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-        self.assertEqual(Address.objects.count(), 9)
+        self.assertEqual(Address.objects.count(), count_address_before_response - 1)
 
 
-class TestCaseUserHrAddressModelViewSet(TestCaseAddressModelViewSet):
+class HrApiAddressTests(BaseAddressApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.hr = self.create_user_with_group(group_name="hrs")
         self.login = self.client.login(email=self.hr.email, password=self.password)
 
-    def test_get_list_address_if_user_group_hr(self):
+    def test_hr_can_view_address_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_address_if_user_group_hr(self):
+    def test_hr_can_view_address_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_address_if_user_group_hr(self):
+    def test_hr_can_create_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.post(reverse_lazy("address-list"), self.address_data)
-        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(Address.objects.count(), count_address_before_response + 1)
 
-    def test_put_update_address_if_user_group_hr(self):
+    def test_hr_can_update_address(self):
         self.assertTrue(self.login)
+        count_address_before_response = Address.objects.count()
         response = self.client.put(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
-        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(Address.objects.count(), count_address_before_response)
 
-    def test_delete_address_if_user_group_hr(self):
+    def test_hr_cannot_delete_address(self):
         self.assertTrue(self.login)
         response = self.client.delete(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
@@ -203,35 +174,34 @@ class TestCaseUserHrAddressModelViewSet(TestCaseAddressModelViewSet):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseUserManagerAddressModelViewSet(TestCaseAddressModelViewSet):
+class ManagerApiAddressTests(BaseAddressApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.manager = self.create_user_with_group(group_name="managers")
         self.login = self.client.login(email=self.manager.email, password=self.password)
 
-    def test_get_list_address_if_user_group_manager(self):
+    def test_manager_can_view_address_list(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_get_detail_address_if_user_group_manager(self):
+    def test_manager_can_view_address_detail(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_create_address_if_user_group_manager(self):
+    def test_manager_cannot_create_address(self):
         self.assertTrue(self.login)
         response = self.client.post(reverse_lazy("address-list"), self.address_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_put_update_address_if_user_group_manager(self):
+    def test_manager_cannot_update_address(self):
         self.assertTrue(self.login)
         response = self.client.put(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_delete_address_if_user_group_manager(self):
+    def test_manager_cannot_delete_address(self):
         self.assertTrue(self.login)
         response = self.client.delete(
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
@@ -239,13 +209,12 @@ class TestCaseUserManagerAddressModelViewSet(TestCaseAddressModelViewSet):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseCreateInstanceAddressModelViewSet(TestCaseAddressModelViewSet):
+class CreateInstanceApiAddressTests(BaseAddressApiTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.ceo = self.create_user_with_group(group_name="ceos")
         self.login = self.client.login(email=self.ceo.email, password=self.password)
 
-    def test_not_create_same_address(self):
+    def test_prevent_duplicate_address_creation(self):
         self.assertTrue(self.login)
         self.client.post(reverse_lazy("address-list"), self.address_data)
         self.client.post(reverse_lazy("address-list"), self.address_data)

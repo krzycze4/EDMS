@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 
-class TestCaseKRSForm(TestCase):
+class KRSFormTests(TestCase):
     def test_form_valid(self):
         form = KRSForm(data={"krs_id": 10**13})  # 14 digits
         self.assertTrue(form.is_valid())
@@ -20,7 +20,7 @@ class TestCaseKRSForm(TestCase):
         self.assertRaises(ValidationError)
 
 
-class TestCaseCompanyAndAddressForm(TestCase):
+class CompanyAndAddressFormTests(TestCase):
     def setUp(self) -> None:
         self.company = CompanyFactory(is_mine=False)
 
@@ -42,17 +42,17 @@ class TestCaseCompanyAndAddressForm(TestCase):
         )
         self.assertTrue(form.is_valid())
 
-    def test_is_mine_field_exists_if_my_company_not_in_db(self):
+    def test_is_mine_field_exists_when_my_company_is_not_in_db(self):
         form = CompanyAndAddressForm()
         self.assertTrue("is_mine" in form.fields)
 
-    def test_is_mine_field_exists_if_my_company_in_db(self):
+    def test_is_mine_field_exists_when_my_company_is_in_db(self):
         self.my_company = CompanyFactory(is_mine=True)
         form = CompanyAndAddressForm()
         self.assertFalse("is_mine" in form.fields)
 
 
-class TestCaseUpdateCompanyIdentifiersForm(TestCase):
+class UpdateCompanyIdentifiersFormTests(TestCase):
     def setUp(self) -> None:
         self.company1 = CompanyFactory()
         self.company2 = CompanyFactory()
@@ -71,7 +71,7 @@ class TestCaseUpdateCompanyIdentifiersForm(TestCase):
         )
         self.assertTrue(form.is_valid())
 
-    def test_form_invalid_existing_shortcut(self):
+    def test_form_invalid_when_shortcut_exists_in_db(self):
         form = UpdateCompanyIdentifiersForm(
             instance=self.company1,
             data={
@@ -86,7 +86,7 @@ class TestCaseUpdateCompanyIdentifiersForm(TestCase):
         self.assertFalse(form.is_valid())
 
 
-class TestCaseUpdateAddressForm(TestCase):
+class UpdateAddressFormTests(TestCase):
     def setUp(self) -> None:
         self.address = AddressFactory()
 

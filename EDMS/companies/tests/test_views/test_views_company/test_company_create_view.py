@@ -1,43 +1,19 @@
 from http import HTTPStatus
 
+from common_tests.EDMSTestCase import EDMSTestCase
 from companies.factories import CompanyFactory
 from companies.models import Address, Company
 from companies.views.views_company import CompanyCreateView
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404
-from django.test import TestCase
 from django.urls import reverse_lazy
-from users.factories import UserFactory
-
-from EDMS.group_utils import create_group_with_permissions
 
 User = get_user_model()
 
 
-class TestCaseCompanyCreateView(TestCase):
+class BaseCompanyCreateTestCase(EDMSTestCase):
     @classmethod
-    def setUpTestData(cls):
-        group_names_with_permission_codenames = {
-            "ceos": [
-                "add_company",
-                "change_company",
-                "delete_company",
-                "view_company",
-            ],
-            "accountants": ["add_company", "change_company", "delete_company", "view_company"],
-            "managers": ["view_company"],
-            "hrs": ["view_company"],
-        }
-        for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
-            create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
-
-        cls.password = User.objects.make_random_password()
-        cls.accountant = cls.create_user_with_group(group_name="accountants")
-        cls.ceo = cls.create_user_with_group(group_name="ceos")
-        cls.hr = cls.create_user_with_group(group_name="hrs")
-        cls.manager = cls.create_user_with_group(group_name="managers")
-
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
         company = CompanyFactory.build()
         cls.company_session_data = {
             "name": company.name,
@@ -52,13 +28,6 @@ class TestCaseCompanyCreateView(TestCase):
             "shortcut": company.shortcut,
         }
 
-    @classmethod
-    def create_user_with_group(cls, group_name: str) -> User:
-        group = get_object_or_404(Group, name=group_name)
-        user = UserFactory(is_active=True, password=cls.password)
-        user.groups.add(group)
-        return user
-
     def setUp(self) -> None:
         self.company = CompanyFactory.build()
         session = self.client.session
@@ -66,24 +35,24 @@ class TestCaseCompanyCreateView(TestCase):
         session.save()
 
 
-class TestCaseCompanyCreateViewUserNotAuthenticated(TestCaseCompanyCreateView):
-    def test_get_method_when_user_not_authenticated(self):
+class CompanyCreateViewTestsUserNotAuthenticated(BaseCompanyCreateTestCase):
+    def test_redirect_to_login_on_get(self):
         response = self.client.get(reverse_lazy("create-company"))
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, f"{reverse_lazy('login')}?next={reverse_lazy('create-company')}")
 
-    def test_post_method_when_user_not_authenticated(self):
+    def test_redirect_to_login_on_post(self):
         response = self.client.post(reverse_lazy("create-company"), data={})
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, f"{reverse_lazy('login')}?next={reverse_lazy('create-company')}")
 
 
-class TestCaseCompanyCreateViewUserGroupAccountants(TestCaseCompanyCreateView):
+class CompanyCreateViewTestsUserGroupAccountants(BaseCompanyCreateTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.accountant.email, password=self.password)
 
-    def test_correct_initials(self):
+    def test_initial_data_for_accountants(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("create-company"))
         view = CompanyCreateView()
@@ -91,12 +60,12 @@ class TestCaseCompanyCreateViewUserGroupAccountants(TestCaseCompanyCreateView):
         initial = view.get_initial()
         self.assertEqual(initial, self.company_session_data)
 
-    def test_get_method_when_user_group_is_accountants(self):
+    def test_get_access_for_accountants(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("create-company"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_method_when_user_group_is_accountants(self):
+    def test_post_creates_company_for_accountants(self):
         self.assertTrue(self.login)
         company_counter = Company.objects.count()
         address_counter = Address.objects.count()
@@ -107,12 +76,12 @@ class TestCaseCompanyCreateViewUserGroupAccountants(TestCaseCompanyCreateView):
         self.assertRedirects(response, reverse_lazy("create-company-done"))
 
 
-class TestCaseCompanyCreateViewUserGroupCeos(TestCaseCompanyCreateView):
+class CompanyCreateViewTestsUserGroupCeos(BaseCompanyCreateTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.ceo.email, password=self.password)
 
-    def test_correct_initials(self):
+    def test_initial_data_for_ceos(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("create-company"))
         view = CompanyCreateView()
@@ -120,12 +89,12 @@ class TestCaseCompanyCreateViewUserGroupCeos(TestCaseCompanyCreateView):
         initial = view.get_initial()
         self.assertEqual(initial, self.company_session_data)
 
-    def test_get_method_when_user_group_is_ceos(self):
+    def test_get_access_for_ceos(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("create-company"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_post_method_when_user_group_is_ceos(self):
+    def test_post_creates_company_for_ceos(self):
         self.assertTrue(self.login)
         company_counter = Company.objects.count()
         address_counter = Address.objects.count()
@@ -136,33 +105,33 @@ class TestCaseCompanyCreateViewUserGroupCeos(TestCaseCompanyCreateView):
         self.assertRedirects(response, reverse_lazy("create-company-done"))
 
 
-class TestCaseCompanyCreateViewUserGroupHrs(TestCaseCompanyCreateView):
+class CompanyCreateViewTestsUserGroupHrs(BaseCompanyCreateTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.hr.email, password=self.password)
 
-    def test_get_method_when_user_group_is_hrs(self):
+    def test_get_access_denied_for_hrs(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("create-company"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_method_when_user_group_is_hrs(self):
+    def test_post_access_denied_for_hrs(self):
         self.assertTrue(self.login)
         response = self.client.post(reverse_lazy("create-company"), data=self.company_session_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
 
-class TestCaseCompanyCreateViewUserGroupManagers(TestCaseCompanyCreateView):
+class CompanyCreateViewTestsUserGroupManagers(BaseCompanyCreateTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.manager.email, password=self.password)
 
-    def test_get_method_when_user_group_is_managers(self):
+    def test_get_access_denied_for_managers(self):
         self.assertTrue(self.login)
         response = self.client.get(reverse_lazy("create-company"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_method_when_user_group_is_managers(self):
+    def test_post_access_denied_for_managers(self):
         self.assertTrue(self.login)
         response = self.client.post(reverse_lazy("create-company"), data=self.company_session_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
