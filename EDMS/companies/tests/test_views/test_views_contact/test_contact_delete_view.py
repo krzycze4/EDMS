@@ -34,7 +34,7 @@ class UserNotAuthenticatedContactDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertRedirects(response, self.not_logged_user_url)
 
 
-class AccountantsCompanyDeleteViewTests(BaseContactDeleteViewTestCase):
+class AccountantsContactDeleteViewTests(BaseContactDeleteViewTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.accountant.email, password=self.password)
@@ -57,7 +57,7 @@ class AccountantsCompanyDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertRedirects(response, reverse_lazy("detail-company", kwargs={"pk": self.company.pk}))
 
 
-class CeosCompanyDeleteViewTests(BaseContactDeleteViewTestCase):
+class CeosContactDeleteViewTests(BaseContactDeleteViewTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.ceo.email, password=self.password)
@@ -80,7 +80,7 @@ class CeosCompanyDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertRedirects(response, reverse_lazy("detail-company", kwargs={"pk": self.company.pk}))
 
 
-class HrsCompanyDeleteViewTests(BaseContactDeleteViewTestCase):
+class HrsContactDeleteViewTests(BaseContactDeleteViewTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.hr.email, password=self.password)
@@ -103,7 +103,7 @@ class HrsCompanyDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertRedirects(response, reverse_lazy("detail-company", kwargs={"pk": self.company.pk}))
 
 
-class ManagersCompanyDeleteViewTests(BaseContactDeleteViewTestCase):
+class ManagersContactDeleteViewTests(BaseContactDeleteViewTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.login = self.client.login(email=self.manager.email, password=self.password)
