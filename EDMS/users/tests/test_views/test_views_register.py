@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from common_tests.EDMSTestCase import EDMSTestCase
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -14,10 +15,10 @@ from users.tokens import account_activation_token
 User = get_user_model()
 
 
-class TestCaseUserRegisterView(TestCase):
+class TestCaseUserRegisterView(EDMSTestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.password = User.objects.make_random_password()
+        super().setUpTestData()
         cls.stub_user = UserFactory.stub(password=cls.password)
         cls.valid_form = {
             "first_name": cls.stub_user.first_name,
@@ -33,17 +34,16 @@ class TestCaseUserRegisterView(TestCase):
             "password1": cls.password,
             "password2": "whatever",
         }
-        cls.user = UserFactory.create(password=cls.password)
         cls.invalid_form_existing_user = {
-            "first_name": cls.user.first_name,
-            "last_name": cls.user.last_name,
-            "email": cls.user.email,
+            "first_name": cls.ceo.first_name,
+            "last_name": cls.ceo.last_name,
+            "email": cls.ceo.email,
             "password1": cls.password,
             "password2": cls.password,
         }
 
     def test_redirect_to_dashboard_for_authenticated_user(self):
-        login = self.client.login(username=self.user.email, password=self.password)
+        login = self.client.login(username=self.ceo.email, password=self.password)
         self.assertTrue(login)
 
         response = self.client.get(reverse("register"))
@@ -81,18 +81,18 @@ class TestCaseUserRegisterView(TestCase):
 
     def test_not_create_user_if_form_is_invalid(self):
         number_users_in_database = User.objects.count()
-        self.assertEqual(number_users_in_database, 1)
+        self.assertEqual(number_users_in_database, 4)
 
         response = self.client.post(reverse("register"), data=self.invalid_form_different_passwords)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/register/register.html")
 
         number_users_in_database = User.objects.count()
-        self.assertEqual(number_users_in_database, 1)
+        self.assertEqual(number_users_in_database, 4)
 
     def test_not_create_user_if_user_exists_in_database(self):
         number_users_in_database = User.objects.count()
-        self.assertEqual(number_users_in_database, 1)
+        self.assertEqual(number_users_in_database, 4)
 
         response = self.client.post(reverse("register"), data=self.invalid_form_existing_user)
         self.assertEqual(response.status_code, HTTPStatus.OK)
