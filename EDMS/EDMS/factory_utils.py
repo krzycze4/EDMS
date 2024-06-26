@@ -1,8 +1,15 @@
 import secrets
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 
 
-def create_string_format_valid_date(first_date: str) -> str:
-    first_date = datetime.strptime(first_date, "%Y-%m-%d").date()
-    second_date = first_date + timedelta(days=secrets.randbelow(366))
-    return second_date.strftime("%Y-%m-%d")
+def create_string_format_valid_date(first_date: date) -> date:
+    """
+    Generates a random valid date within a year from the given start date.
+
+    Args:
+        first_date (date): The initial date from which the new date is calculated.
+
+    Returns:
+        date: A new date within a range 0-365 days from the given start date.
+    """
+    return first_date + timedelta(days=secrets.randbelow(366))

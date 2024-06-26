@@ -12,9 +12,9 @@ class ContractSerializerTests(TestCase):
         self.contract_data = {
             "id": self.contract.id,
             "name": self.contract.name,
-            "create_date": self.contract.create_date,
-            "start_date": self.contract.start_date,
-            "end_date": self.contract.end_date,
+            "create_date": self.contract.create_date.strftime("%Y-%m-%d"),
+            "start_date": self.contract.start_date.strftime("%Y-%m-%d"),
+            "end_date": self.contract.end_date.strftime("%Y-%m-%d"),
             "price": int(self.contract.price),
             "scan": self.contract.scan.url,
             "company": self.contract.company.id,
