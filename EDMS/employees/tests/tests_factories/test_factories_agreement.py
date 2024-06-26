@@ -4,10 +4,10 @@ from employees.models.models_agreement import Agreement
 
 
 class AgreementFactoryTests(TestCase):
-    def test_create_correct_contract(self):
+    def test_create_correct_agreement(self):
         AgreementFactory.create()
         self.assertEqual(Agreement.objects.count(), 1)
 
-    def test_create_correct_contract_bulk(self):
+    def test_create_correct_agreement_bulk(self):
         AgreementFactory.create_batch(10)
         self.assertEqual(Agreement.objects.count(), 10)
