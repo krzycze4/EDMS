@@ -1,5 +1,5 @@
 import secrets
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 import factory
@@ -28,5 +28,5 @@ class AgreementFactory(DjangoModelFactory):
     is_current = True
 
     @factory.lazy_attribute
-    def create_date(self):
+    def create_date(self) -> date:
         return timezone.now().date() - timedelta(days=secrets.randbelow(366))
