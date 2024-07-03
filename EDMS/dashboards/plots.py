@@ -1,8 +1,8 @@
+from decimal import Decimal
 from types import NoneType
 from typing import Dict, List, Tuple, Union
 
 import plotly.graph_objs as go
-from _decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from employees.models.models_salaries import Salary
