@@ -41,12 +41,15 @@ class Vacation(models.Model):
         self.count_vacation_left()
 
     def count_vacation_left(self) -> None:
-        from employees.models.models_agreement import (  # Because of Circular Import
-            Agreement,
-        )
+        from employees.models.models_agreement import Agreement
 
         agreement = self.leave_user.agreements.filter(type=Agreement.EMPLOYMENT).order_by("-create_date").first()
-        self.leave_user.vacation_left = agreement.count_granted_vacation_from_agreement() - self.count_used_vacation()
+        if agreement:
+            self.leave_user.vacation_left = (
+                agreement.count_granted_vacation_from_agreement() - self.count_used_vacation()
+            )
+        else:
+            self.leave_user.vacation_left = 0
         self.leave_user.save()
 
     @staticmethod
