@@ -10,6 +10,11 @@ User = get_user_model()
 
 
 class ContactDeleteViewTestCase(EDMSTestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.template_name = "companies/contacts/delete_contact.html"
+
     def setUp(self) -> None:
         super().setUp()
         self.company = CompanyFactory.create()
@@ -38,6 +43,7 @@ class ContactDeleteViewTestCase(EDMSTestCase):
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_delete_contact_and_redirect_for_accountants_when_execute_post_method(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
@@ -57,6 +63,7 @@ class ContactDeleteViewTestCase(EDMSTestCase):
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_delete_contact_and_redirect_for_ceos_when_execute_post_method(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
@@ -76,6 +83,7 @@ class ContactDeleteViewTestCase(EDMSTestCase):
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_delete_contact_and_redirect_for_hrs_when_execute_post_method(self):
         login = self.client.login(email=self.hr.email, password=self.password)
@@ -95,6 +103,7 @@ class ContactDeleteViewTestCase(EDMSTestCase):
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_delete_contact_and_redirect_for_managers_when_execute_post_method(self):
         login = self.client.login(email=self.manager.email, password=self.password)

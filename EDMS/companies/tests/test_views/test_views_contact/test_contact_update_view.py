@@ -10,6 +10,11 @@ User = get_user_model()
 
 
 class ContactUpdateViewTestCase(EDMSTestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.template_name = "companies/contacts/update_contact.html"
+
     def setUp(self) -> None:
         super().setUp()
         self.company = CompanyFactory.create()
@@ -53,6 +58,7 @@ class ContactUpdateViewTestCase(EDMSTestCase):
             reverse_lazy("update-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_update_contact_and_redirect_for_accountants_when_execute_post_method(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
@@ -75,6 +81,7 @@ class ContactUpdateViewTestCase(EDMSTestCase):
             reverse_lazy("update-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_update_contact_and_redirect_for_ceos_when_execute_post_method(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
@@ -119,6 +126,7 @@ class ContactUpdateViewTestCase(EDMSTestCase):
             reverse_lazy("update-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_update_contact_and_redirect_for_managers_when_execute_post_method(self):
         login = self.client.login(email=self.manager.email, password=self.password)

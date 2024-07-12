@@ -12,6 +12,11 @@ User = get_user_model()
 
 
 class ContractCreateTestCase(EDMSTestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.template_name = "contracts/contract_create.html"
+
     def setUp(self) -> None:
         super().setUp()
         self.contract = ContractFactory.create()
@@ -59,6 +64,7 @@ class ContractCreateTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contract"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_create_contract_and_redirect_for_ceos_when_execute_post_method(self):
         login = self.client.login(email=self.ceo.email, password=self.password)

@@ -27,6 +27,7 @@ class CompanyCreateTestCase(EDMSTestCase):
             "country": company.address.country,
             "shortcut": company.shortcut,
         }
+        cls.template_name = "companies/companies/create_company.html"
 
     def setUp(self) -> None:
         self.company = CompanyFactory.build()
@@ -52,12 +53,14 @@ class CompanyCreateTestCase(EDMSTestCase):
         view.request = response.wsgi_request
         initial = view.get_initial()
         self.assertEqual(initial, self.company_session_data)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_get_access_for_accountants(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-company"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_post_creates_company_for_accountants(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
@@ -78,12 +81,14 @@ class CompanyCreateTestCase(EDMSTestCase):
         view.request = response.wsgi_request
         initial = view.get_initial()
         self.assertEqual(initial, self.company_session_data)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_get_access_for_ceos(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-company"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_post_creates_company_for_ceos(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
@@ -95,8 +100,6 @@ class CompanyCreateTestCase(EDMSTestCase):
         self.assertEqual(Company.objects.count(), company_counter + 1)
         self.assertEqual(Address.objects.count(), address_counter + 1)
         self.assertRedirects(response, reverse_lazy("create-company-done"))
-
-        login = self.client.login(email=self.hr.email, password=self.password)
 
     def test_get_access_denied_for_hrs(self):
         login = self.client.login(email=self.hr.email, password=self.password)

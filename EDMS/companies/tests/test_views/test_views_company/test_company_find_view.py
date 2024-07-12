@@ -48,6 +48,7 @@ class CompanyFindTestCase(EDMSTestCase):
             "postcode": cls.company.address.postcode,
             "country": cls.company.address.country,
         }
+        cls.template_name = "companies/companies/find_company.html"
 
     def setUp(self) -> None:
         super().setUp()
@@ -68,6 +69,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.get(reverse("find-company"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     @patch("requests.get")
     def test_post_company_exists_in_db_for_accountants(self, mock_requests_get):
@@ -78,6 +80,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Company has already existed in the system!")
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_post_invalid_form_for_accountants(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
@@ -86,6 +89,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Company doesn't exist! Insert correct KRS number.")
+        self.assertTemplateUsed(response, self.template_name)
 
     @patch("requests.get")
     def test_post_timeout_api_for_accountants(self, mock_get):
@@ -96,6 +100,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Time limit for KRS request expired!")
+        self.assertTemplateUsed(response, self.template_name)
 
     @patch("requests.get")
     def test_post_api_success_for_accountants(self, mock_get):
@@ -113,6 +118,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.get(reverse("find-company"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     @patch("requests.get")
     def test_post_company_exists_in_db_for_ceos(self, mock_requests_get):
@@ -123,6 +129,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Company has already existed in the system!")
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_post_invalid_form_for_ceos(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
@@ -131,6 +138,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Company doesn't exist! Insert correct KRS number.")
+        self.assertTemplateUsed(response, self.template_name)
 
     @patch("requests.get")
     def test_post_timeout_api_for_ceos(self, mock_get):
@@ -141,6 +149,7 @@ class CompanyFindTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Time limit for KRS request expired!")
+        self.assertTemplateUsed(response, self.template_name)
 
     @patch("requests.get")
     def test_post_api_success_for_ceos(self, mock_get):

@@ -10,6 +10,11 @@ User = get_user_model()
 
 
 class ContactCreateTestCase(EDMSTestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.template_name = "companies/contacts/create_contact.html"
+
     def setUp(self) -> None:
         super().setUp()
         self.company = CompanyFactory.create()
@@ -41,6 +46,7 @@ class ContactCreateTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contact", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_create_contact_and_redirect_for_accountants_when_execute_post_method(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
@@ -58,6 +64,7 @@ class ContactCreateTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contact", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_create_contact_and_redirect_for_ceos_when_execute_post_method(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
@@ -75,6 +82,7 @@ class ContactCreateTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contact", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_create_contact_and_redirect_for_hrs_when_execute_post_method(self):
         login = self.client.login(email=self.hr.email, password=self.password)
@@ -92,6 +100,7 @@ class ContactCreateTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contact", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
 
     def test_create_contact_and_redirect_for_managers_when_execute_post_method(self):
         login = self.client.login(email=self.manager.email, password=self.password)

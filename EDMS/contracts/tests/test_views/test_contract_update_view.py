@@ -102,6 +102,7 @@ class ContractUpdateViewTestCase(EDMSTestCase):
             reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}), data=self.invalid_contract_data
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, self.template_name)
         self.assertTrue(response.context["form"].errors)
 
     def test_get_hrs_access_forbidden(self):
