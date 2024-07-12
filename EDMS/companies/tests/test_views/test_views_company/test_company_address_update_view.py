@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 User = get_user_model()
 
 
-class BaseAddressTestCase(EDMSTestCase):
+class AddressTestCase(EDMSTestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
@@ -29,8 +29,6 @@ class BaseAddressTestCase(EDMSTestCase):
         self.not_auth_user_url = f"{reverse_lazy('login')}?next={reverse_lazy('update-address', kwargs={'company_pk': self.company.pk, 'address_pk': self.company.address.pk})}"
         self.redirect_url = f"{reverse_lazy('detail-company', kwargs={'pk': self.company.pk})}"
 
-
-class UnauthenticatedUserAddressUpdateTests(BaseAddressTestCase):
     def test_redirect_to_login_on_get_when_not_authenticated(self):
         response = self.client.get(
             reverse_lazy(
@@ -50,14 +48,9 @@ class UnauthenticatedUserAddressUpdateTests(BaseAddressTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.not_auth_user_url)
 
-
-class AccountantAddressUpdateTests(BaseAddressTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.accountant.email, password=self.password)
-
     def test_get_address_update_page_for_accountant(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -67,12 +60,14 @@ class AccountantAddressUpdateTests(BaseAddressTestCase):
         self.assertTemplateUsed(response, self.template_name)
 
     def test_get_not_existing_address_for_accountant(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         with self.assertRaises(Address.DoesNotExist):
             self.client.get(reverse_lazy("update-address", kwargs={"company_pk": self.company.pk, "address_pk": 100}))
 
     def test_post_correct_address_update_for_accountant(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -84,7 +79,8 @@ class AccountantAddressUpdateTests(BaseAddressTestCase):
         self.assertEqual(Address.objects.get(pk=self.company.address.pk).street_name, self.address_data["street_name"])
 
     def test_post_invalid_address_update_for_accountant(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -95,14 +91,9 @@ class AccountantAddressUpdateTests(BaseAddressTestCase):
         self.assertTemplateUsed(response, self.template_name)
         self.assertTrue(response.context["form"].errors)
 
-
-class CeoAddressUpdateTests(BaseAddressTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.ceo.email, password=self.password)
-
     def test_get_address_update_page_for_ceo(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -112,12 +103,14 @@ class CeoAddressUpdateTests(BaseAddressTestCase):
         self.assertTemplateUsed(response, self.template_name)
 
     def test_get_not_existing_address_for_ceo(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         with self.assertRaises(Address.DoesNotExist):
             self.client.get(reverse_lazy("update-address", kwargs={"company_pk": self.company.pk, "address_pk": 100}))
 
     def test_post_correct_address_update_for_ceo(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -129,7 +122,8 @@ class CeoAddressUpdateTests(BaseAddressTestCase):
         self.assertEqual(Address.objects.get(pk=self.company.address.pk).street_name, self.address_data["street_name"])
 
     def test_post_invalid_address_update_for_ceo(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -140,14 +134,9 @@ class CeoAddressUpdateTests(BaseAddressTestCase):
         self.assertTemplateUsed(response, self.template_name)
         self.assertTrue(response.context["form"].errors)
 
-
-class HrAddressUpdateTests(BaseAddressTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.hr.email, password=self.password)
-
     def test_get_address_update_forbidden_for_hr(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -156,7 +145,8 @@ class HrAddressUpdateTests(BaseAddressTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_post_address_update_forbidden_for_hr(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -165,14 +155,9 @@ class HrAddressUpdateTests(BaseAddressTestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-
-class ManagerAddressUpdateTests(BaseAddressTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.manager.email, password=self.password)
-
     def test_get_address_update_forbidden_for_manager(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}
@@ -181,7 +166,8 @@ class ManagerAddressUpdateTests(BaseAddressTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_post_address_update_forbidden_for_manager(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy(
                 "update-address", kwargs={"company_pk": self.company.pk, "address_pk": self.company.address.pk}

@@ -9,15 +9,13 @@ from django.urls import reverse_lazy
 User = get_user_model()
 
 
-class BaseContactDeleteViewTestCase(EDMSTestCase):
+class ContactDeleteViewTestCase(EDMSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.company = CompanyFactory.create()
         self.contact = ContactFactory.create(company=self.company)
         self.not_logged_user_url = f"{reverse_lazy('login')}?next={reverse_lazy('delete-contact', kwargs={'company_pk': self.company.pk, 'contact_pk': self.contact.pk})}"
 
-
-class UserNotAuthenticatedContactDeleteViewTests(BaseContactDeleteViewTestCase):
     def test_redirect_to_login_on_get_when_user_not_authenticated(self):
         response = self.client.get(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
@@ -33,21 +31,17 @@ class UserNotAuthenticatedContactDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.not_logged_user_url)
 
-
-class AccountantsContactDeleteViewTests(BaseContactDeleteViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.accountant.email, password=self.password)
-
     def test_render_delete_contact_view_for_accountants_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_delete_contact_and_redirect_for_accountants_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         contact_counter = Contact.objects.count()
         response = self.client.post(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
@@ -56,21 +50,17 @@ class AccountantsContactDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertEqual(Contact.objects.count(), contact_counter - 1)
         self.assertRedirects(response, reverse_lazy("detail-company", kwargs={"pk": self.company.pk}))
 
-
-class CeosContactDeleteViewTests(BaseContactDeleteViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.ceo.email, password=self.password)
-
     def test_render_delete_contact_view_for_ceos_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_delete_contact_and_redirect_for_ceos_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         contact_counter = Contact.objects.count()
         response = self.client.post(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
@@ -79,21 +69,17 @@ class CeosContactDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertEqual(Contact.objects.count(), contact_counter - 1)
         self.assertRedirects(response, reverse_lazy("detail-company", kwargs={"pk": self.company.pk}))
 
-
-class HrsContactDeleteViewTests(BaseContactDeleteViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.hr.email, password=self.password)
-
     def test_render_delete_contact_view_for_hrs_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_delete_contact_and_redirect_for_hrs_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         contact_counter = Contact.objects.count()
         response = self.client.post(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
@@ -102,21 +88,17 @@ class HrsContactDeleteViewTests(BaseContactDeleteViewTestCase):
         self.assertEqual(Contact.objects.count(), contact_counter - 1)
         self.assertRedirects(response, reverse_lazy("detail-company", kwargs={"pk": self.company.pk}))
 
-
-class ManagersContactDeleteViewTests(BaseContactDeleteViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.manager.email, password=self.password)
-
     def test_render_delete_contact_view_for_managers_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_delete_contact_and_redirect_for_managers_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         contact_counter = Contact.objects.count()
         response = self.client.post(
             reverse_lazy("delete-contact", kwargs={"company_pk": self.company.pk, "contact_pk": self.contact.pk})

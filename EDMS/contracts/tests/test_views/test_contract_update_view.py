@@ -11,7 +11,7 @@ from users.factories import UserFactory
 User = get_user_model()
 
 
-class BaseContractUpdateViewTestCase(EDMSTestCase):
+class ContractUpdateViewTestCase(EDMSTestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
@@ -47,8 +47,6 @@ class BaseContractUpdateViewTestCase(EDMSTestCase):
         )
         self.success_redirect_url = f"{reverse_lazy('detail-contract', kwargs={'pk': self.contract.pk})}"
 
-
-class UnauthenticatedUserContractUpdateViewTests(BaseContractUpdateViewTestCase):
     def test_get_redirects_to_login(self):
         response = self.client.get(reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -59,43 +57,37 @@ class UnauthenticatedUserContractUpdateViewTests(BaseContractUpdateViewTestCase)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.not_logged_user_url)
 
-
-class AccountantsContractUpdateViewTests(BaseContractUpdateViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.accountant.email, password=self.password)
-
     def test_get_accountants_access_forbidden(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_post_accountants_updates_forbidden(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}), data=self.valid_contract_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-
-class CeosContractUpdateViewTests(BaseContractUpdateViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.ceo.email, password=self.password)
-
     def test_get_ceos_access_ok(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
     def test_get_ceos_access_not_found(self):
-        self.assertTrue(self.login)
-        response = self.client.get(reverse_lazy("update-contract", kwargs={"pk": 2}))
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
+        not_existing_pk = Contract.objects.last().pk + 1
+        response = self.client.get(reverse_lazy("update-contract", kwargs={"pk": not_existing_pk}))
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_post_ceos_updates_company_ok(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}), data=self.valid_contract_data
         )
@@ -104,44 +96,37 @@ class CeosContractUpdateViewTests(BaseContractUpdateViewTestCase):
         self.assertEqual(Contract.objects.get(pk=self.contract.pk).name, self.valid_contract_data["name"])
 
     def test_post_ceos_validation_errors(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}), data=self.invalid_contract_data
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTrue(response.context["form"].errors)
 
-
-class HrsContractUpdateViewTests(BaseContractUpdateViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.hr.email, password=self.password)
-
-    def test_get_accountants_access_forbidden(self):
-        self.assertTrue(self.login)
+    def test_get_hrs_access_forbidden(self):
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_accountants_updates_forbidden(self):
-        self.assertTrue(self.login)
+    def test_post_hrs_updates_forbidden(self):
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}), data=self.valid_contract_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-
-class ManagersContractUpdateViewTests(BaseContractUpdateViewTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.hr.email, password=self.password)
-
-    def test_get_accountants_access_forbidden(self):
-        self.assertTrue(self.login)
+    def test_get_managers_access_forbidden(self):
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_post_accountants_updates_forbidden(self):
-        self.assertTrue(self.login)
+    def test_post_managers_updates_forbidden(self):
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-contract", kwargs={"pk": self.contract.pk}), data=self.valid_contract_data
         )

@@ -11,7 +11,7 @@ from rest_framework.test import APIClient
 User = get_user_model()
 
 
-class BaseContactApiTestCase(EDMSTestCase):
+class ContactApiTestCase(EDMSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.client = APIClient()
@@ -26,8 +26,6 @@ class BaseContactApiTestCase(EDMSTestCase):
             "company": self.company.id,
         }
 
-
-class UnauthenticatedUserApiContactTests(BaseContactApiTestCase):
     def test_unauthenticated_user_cannot_view_contact_list(self):
         response = self.client.get(reverse_lazy("contact-list"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
@@ -52,31 +50,29 @@ class UnauthenticatedUserApiContactTests(BaseContactApiTestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-
-class AccountantApiContactTests(BaseContactApiTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.accountant.email, password=self.password)
-
     def test_accountant_can_view_contact_list(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_accountant_can_view_contact_detail(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_accountant_can_create_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.post(reverse_lazy("contact-list"), self.contact_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertEqual(Contact.objects.count(), count_company_before_response + 1)
 
     def test_accountant_can_update_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.put(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -85,7 +81,8 @@ class AccountantApiContactTests(BaseContactApiTestCase):
         self.assertEqual(Contact.objects.count(), count_company_before_response)
 
     def test_accountant_can_delete_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.delete(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -93,31 +90,29 @@ class AccountantApiContactTests(BaseContactApiTestCase):
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
         self.assertEqual(Contact.objects.count(), count_company_before_response - 1)
 
-
-class CeoApiContactTests(BaseContactApiTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.ceo.email, password=self.password)
-
     def test_ceo_can_view_contact_list(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_ceo_can_view_contact_detail(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_ceo_can_create_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.post(reverse_lazy("contact-list"), self.contact_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertEqual(Contact.objects.count(), count_company_before_response + 1)
 
     def test_ceo_can_update_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.put(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -126,7 +121,8 @@ class CeoApiContactTests(BaseContactApiTestCase):
         self.assertEqual(Contact.objects.count(), count_company_before_response)
 
     def test_ceo_can_delete_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.delete(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -134,31 +130,29 @@ class CeoApiContactTests(BaseContactApiTestCase):
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
         self.assertEqual(Contact.objects.count(), count_company_before_response - 1)
 
-
-class HrApiContactTests(BaseContactApiTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.hr.email, password=self.password)
-
     def test_hr_can_view_contact_list(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_hr_can_view_contact_detail(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_hr_can_create_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.post(reverse_lazy("contact-list"), self.contact_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertEqual(Contact.objects.count(), count_company_before_response + 1)
 
     def test_hr_can_update_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.put(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -167,7 +161,8 @@ class HrApiContactTests(BaseContactApiTestCase):
         self.assertEqual(Contact.objects.count(), count_company_before_response)
 
     def test_hr_can_delete_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.delete(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -175,31 +170,29 @@ class HrApiContactTests(BaseContactApiTestCase):
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
         self.assertEqual(Contact.objects.count(), count_company_before_response - 1)
 
-
-class ManagerApiContactTests(BaseContactApiTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.manager.email, password=self.password)
-
     def test_manager_can_view_contact_list(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_manager_can_view_contact_detail(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_manager_can_create_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.post(reverse_lazy("contact-list"), self.contact_data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertEqual(Contact.objects.count(), count_company_before_response + 1)
 
     def test_manager_can_update_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.put(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -208,7 +201,8 @@ class ManagerApiContactTests(BaseContactApiTestCase):
         self.assertEqual(Contact.objects.count(), count_company_before_response)
 
     def test_manager_can_delete_contact(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         response = self.client.delete(
             reverse_lazy("contact-detail", kwargs={"pk": self.contact_list[0].id}), self.contact_data
@@ -216,14 +210,9 @@ class ManagerApiContactTests(BaseContactApiTestCase):
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
         self.assertEqual(Contact.objects.count(), count_company_before_response - 1)
 
-
-class CreateInstanceApiContactTests(BaseContactApiTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.ceo.email, password=self.password)
-
     def test_prevent_duplicate_contact_creation(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         count_company_before_response = Contact.objects.count()
         self.client.post(reverse_lazy("contact-list"), self.contact_data)
         self.client.post(reverse_lazy("contact-list"), self.contact_data)

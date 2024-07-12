@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 User = get_user_model()
 
 
-class BaseCompanyIdentifiersUpdateTestCase(EDMSTestCase):
+class CompanyIdentifiersUpdateTestCase(EDMSTestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
@@ -32,8 +32,6 @@ class BaseCompanyIdentifiersUpdateTestCase(EDMSTestCase):
         )
         self.success_redirect_url = f"{reverse_lazy('detail-company', kwargs={'pk': self.company.pk})}"
 
-
-class CompanyIdentifiersUpdateViewUnauthenticatedTests(BaseCompanyIdentifiersUpdateTestCase):
     def test_get_redirects_to_login(self):
         response = self.client.get(reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -44,25 +42,22 @@ class CompanyIdentifiersUpdateViewUnauthenticatedTests(BaseCompanyIdentifiersUpd
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.not_authenticated_redirect_url)
 
-
-class CompanyIdentifiersUpdateViewAccountantsTests(BaseCompanyIdentifiersUpdateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.accountant.email, password=self.password)
-
     def test_get_accountants_access_ok(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
     def test_get_accountants_access_not_found(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-identifiers", kwargs={"pk": 2}))
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_post_accountants_updates_company_ok(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}), data=self.company_data
         )
@@ -71,31 +66,29 @@ class CompanyIdentifiersUpdateViewAccountantsTests(BaseCompanyIdentifiersUpdateT
         self.assertEqual(Company.objects.get(pk=self.company.pk).name, self.company_data["name"])
 
     def test_post_accountants_validation_errors(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}), data={})
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
         self.assertTrue(response.context["form"].errors)
 
-
-class CompanyIdentifiersUpdateViewCEOsTests(BaseCompanyIdentifiersUpdateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.ceo.email, password=self.password)
-
     def test_get_ceos_access_ok(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
     def test_get_ceos_access_not_found(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-identifiers", kwargs={"pk": 2}))
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_post_ceos_updates_company_ok(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}), data=self.company_data
         )
@@ -104,43 +97,36 @@ class CompanyIdentifiersUpdateViewCEOsTests(BaseCompanyIdentifiersUpdateTestCase
         self.assertEqual(Company.objects.get(pk=self.company.pk).name, self.company_data["name"])
 
     def test_post_ceos_validation_errors(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}), data={})
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
         self.assertTrue(response.context["form"].errors)
 
-
-class CompanyIdentifiersUpdateViewHRsTests(BaseCompanyIdentifiersUpdateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.hr.email, password=self.password)
-
     def test_get_hrs_access_forbidden(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_post_hrs_access_forbidden(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}), data=self.company_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-
-class CompanyIdentifiersUpdateViewManagersTests(BaseCompanyIdentifiersUpdateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.manager.email, password=self.password)
-
     def test_get_managers_access_forbidden(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_post_managers_access_forbidden(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.post(
             reverse_lazy("update-identifiers", kwargs={"pk": self.company.pk}), data=self.company_data
         )

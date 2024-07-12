@@ -11,7 +11,7 @@ from users.factories import UserFactory
 User = get_user_model()
 
 
-class BaseContractCreateTestCase(EDMSTestCase):
+class ContractCreateTestCase(EDMSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.contract = ContractFactory.create()
@@ -30,8 +30,6 @@ class BaseContractCreateTestCase(EDMSTestCase):
         }
         self.not_logged_user_url = f"{reverse_lazy('login')}?next={reverse_lazy('create-contract')}"
 
-
-class UserNotAuthenticatedContractCreateViewTests(BaseContractCreateTestCase):
     def test_redirect_to_login_on_get_when_user_not_authenticated(self):
         response = self.client.get(reverse_lazy("create-contract"))
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -42,37 +40,29 @@ class UserNotAuthenticatedContractCreateViewTests(BaseContractCreateTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.not_logged_user_url)
 
-
-class AccountantsContractCreateViewTests(BaseContractCreateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.accountant.email, password=self.password)
-
     def test_deny_render_create_contract_for_accountants_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contract"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_deny_create_contract_for_accountants_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.accountant.email, password=self.password)
+        self.assertTrue(login)
         contract_counter = Contract.objects.count()
         response = self.client.post(reverse_lazy("create-contract"), data=self.contract_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
         self.assertEqual(Contract.objects.count(), contract_counter)
 
-
-class CeosContractCreateViewTests(BaseContractCreateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.ceo.email, password=self.password)
-
     def test_render_create_contract_for_ceos_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contract"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_create_contract_and_redirect_for_ceos_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
         contract_counter = Contract.objects.count()
         response = self.client.post(reverse_lazy("create-contract"), data=self.contract_data)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -80,37 +70,29 @@ class CeosContractCreateViewTests(BaseContractCreateTestCase):
         new_contact = Contract.objects.latest("pk")
         self.assertRedirects(response, reverse_lazy("detail-contract", kwargs={"pk": new_contact.pk}))
 
-
-class HrsContractCreateViewTests(BaseContractCreateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.hr.email, password=self.password)
-
     def test_deny_render_create_contract_for_hrs_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contract"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_deny_create_contract_for_hrs_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.hr.email, password=self.password)
+        self.assertTrue(login)
         contract_counter = Contract.objects.count()
         response = self.client.post(reverse_lazy("create-contract"), data=self.contract_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
         self.assertEqual(Contract.objects.count(), contract_counter)
 
-
-class ManagerContractCreateViewTests(BaseContractCreateTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.login = self.client.login(email=self.manager.email, password=self.password)
-
     def test_deny_render_create_contract_for_managers_when_execute_get_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-contract"))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_deny_create_contract_for_managers_when_execute_post_method(self):
-        self.assertTrue(self.login)
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
         contract_counter = Contract.objects.count()
         response = self.client.post(reverse_lazy("create-contract"), data=self.contract_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
