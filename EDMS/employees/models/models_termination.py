@@ -5,11 +5,15 @@ from employees.models.models_agreement import Agreement
 
 
 class Termination(models.Model):
-    name = models.CharField(max_length=25)
-    agreement = models.OneToOneField(Agreement, on_delete=models.CASCADE)
-    create_date = models.DateField()
-    end_date = models.DateField()
-    scan = models.FileField(upload_to="terminations/")
+    name = models.CharField(max_length=25, help_text="Name of the agreement, e.g. Termination #01-01-2024")
+    agreement = models.OneToOneField(
+        Agreement, on_delete=models.CASCADE, help_text="Agreement to which the termination relates."
+    )
+    create_date = models.DateField(help_text="Creation date.")
+    end_date = models.DateField(
+        help_text="End date of the termination is the new end date of the agreement (attribute Agreement.end_date_actual)."
+    )
+    scan = models.FileField(upload_to="terminations/", help_text="Physical version of the addendum.")
 
     def __str__(self) -> str:
         return f"Termination #{self.name}"

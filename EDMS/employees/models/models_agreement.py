@@ -19,18 +19,30 @@ class Agreement(models.Model):
         (MANDATE, MANDATE),
         (B2B, B2B),
     ]
-    name = models.CharField(max_length=25, unique=True)
-    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-    salary_gross = models.IntegerField()
-    create_date = models.DateField()
-    start_date = models.DateField()
-    end_date = models.DateField(help_text="Date in agreement scan.")
-    end_date_actual = models.DateField(
-        help_text="Calculated date after adding addenda or termination. Necessary to calculate vacations for employee."
+    name = models.CharField(max_length=25, unique=True, help_text="Name of the agreement, e.g. Agreement #01-01-2024")
+    type = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        help_text="Type of the agreement one of employment contract, comission agreement, contract of mandate, B2B",
     )
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="agreements")
-    scan = models.FileField(upload_to="agreements")
-    is_current = models.BooleanField(default=True)
+    salary_gross = models.IntegerField(help_text="Gross salary owed to the employee.")
+    create_date = models.DateField(help_text="Creation date.")
+    start_date = models.DateField(help_text="First day of the agreement.")
+    end_date = models.DateField(help_text="Last day of the agreement in physical version.")
+    end_date_actual = models.DateField(
+        help_text="Calculated last day of the agreement after adding addenda or termination. Necessary to calculate vacations for employee."
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="agreements",
+        help_text="The employee concerned by the agreement.",
+    )
+    scan = models.FileField(upload_to="agreements", help_text="Physical version of the addendum.")
+    is_current = models.BooleanField(
+        default=True, help_text="This attribute tells if the agreement is current or not (maybe the agreement expired)."
+    )
 
     def __str__(self) -> str:
         return f"{self.name}"

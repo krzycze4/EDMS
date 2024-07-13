@@ -4,12 +4,19 @@ from employees.models.models_agreement import Agreement
 
 
 class Addendum(models.Model):
-    name = models.CharField(max_length=25)
-    agreement = models.ForeignKey(Agreement, on_delete=models.CASCADE, related_name="addenda")
-    create_date = models.DateField()
-    end_date = models.DateField()
-    salary_gross = models.IntegerField()
-    scan = models.FileField(upload_to="addenda")
+    name = models.CharField(max_length=25, help_text="Addendum name, e.g. Addendum #01/01/2024.")
+    agreement = models.ForeignKey(
+        Agreement,
+        on_delete=models.CASCADE,
+        related_name="addenda",
+        help_text="Agreement to which the addendum relates.",
+    )
+    create_date = models.DateField(help_text="Creation date.")
+    end_date = models.DateField(
+        help_text="End date of the addendum is the new end date of the agreement (attribute Agreement.end_date_actual)."
+    )
+    salary_gross = models.IntegerField(help_text="Gross salary owed to the employee.")
+    scan = models.FileField(upload_to="addenda", help_text="Physical version of the addendum.")
 
     class Meta:
         verbose_name_plural = "Addenda"

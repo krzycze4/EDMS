@@ -55,9 +55,9 @@ class CustomUserManager(UserManager):
 class User(AbstractUser):
     username_validator = None
     username = None
-    first_name = models.CharField(_("first name"), max_length=150)
-    last_name = models.CharField(_("last name"), max_length=150)
-    email = models.EmailField(_("email address"), unique=True)
+    first_name = models.CharField(_("first name"), max_length=150, help_text="User's first name.")
+    last_name = models.CharField(_("last name"), max_length=150, help_text="User's last name.")
+    email = models.EmailField(_("email address"), unique=True, help_text="User's email.")
     is_active = models.BooleanField(
         _("active"),
         default=False,
@@ -65,12 +65,16 @@ class User(AbstractUser):
             "Designates whether this user should be treated as active. " "Unselect this instead of deleting accounts."
         ),
     )
-    phone_number = models.CharField(max_length=50, null=True)
-    position = models.CharField(max_length=30, null=True)
-    vacation_days_per_year = models.PositiveSmallIntegerField(default=26)
-    vacation_left = models.SmallIntegerField(default=0)
-    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
-    photo = models.ImageField(upload_to="photos", default="photos/undraw_profile.svg")
+    phone_number = models.CharField(max_length=50, null=True, help_text="User's phone number, e.g. 48123123123.")
+    position = models.CharField(max_length=30, null=True, help_text="User's position, e.g. accountant")
+    vacation_days_per_year = models.PositiveSmallIntegerField(
+        default=26, help_text="Number of vacation days which owed to the user per year."
+    )
+    vacation_left = models.SmallIntegerField(default=0, help_text="Number of vacation days which left for the user.")
+    address = models.ForeignKey(
+        Address, on_delete=models.SET_NULL, null=True, blank=True, help_text="Place of residence of the user."
+    )
+    photo = models.ImageField(upload_to="photos", default="photos/undraw_profile.svg", help_text="User's face.")
 
     objects = CustomUserManager()
 

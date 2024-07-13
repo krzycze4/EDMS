@@ -21,12 +21,20 @@ class Vacation(models.Model):
         (SICK, SICK),
         (UNPAID, UNPAID),
     ]
-    type = models.CharField(max_length=9, choices=TYPE_CHOICES)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    leave_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vacations")
-    substitute_users = models.ManyToManyField(User, related_name="vacation")
-    scan = models.FileField(upload_to="vacations")
+    type = models.CharField(
+        max_length=9,
+        choices=TYPE_CHOICES,
+        help_text="Type of the agreement one of annual, maternity, parental, childcare, special, sick, unpaid.",
+    )
+    start_date = models.DateField(help_text="First day of the vacation.")
+    end_date = models.DateField(help_text="Last day of the vacation.")
+    leave_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="vacations", help_text="Employee which is going on vacation."
+    )
+    substitute_users = models.ManyToManyField(
+        User, related_name="vacation", help_text="Employees which will substitute the employee on vacation."
+    )
+    scan = models.FileField(upload_to="vacations", help_text="Physical version of the addendum.")
     included_days_off = models.PositiveSmallIntegerField(
         help_text="If you take vacations and there are included days off (for example weekend) then you set "
         "included_days_off as 2 to count properly."
