@@ -41,7 +41,7 @@ class CompanyFindView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
             api_url: str = os.path.join(settings.BASE_KRS_API_URL, krs)
 
             try:
-                response: requests.Response = requests.get(url=api_url, timeout=settings.KRS_API_TIMEOUT)
+                response: requests.Response = requests.get(url=api_url, timeout=3)
             except requests.Timeout:
                 messages.error(
                     self.request,
