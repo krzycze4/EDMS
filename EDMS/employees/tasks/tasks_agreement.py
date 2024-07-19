@@ -40,5 +40,5 @@ def send_mail_to_user(agreement: Agreement) -> None:
     agreement.user.email_user(
         subject=subject_to_leave_user,
         message=message_to_leave_user,
-        from_email=settings.COMPANY_EMAIL,
+        from_email=settings.EMAIL_HOST_USER,
     )

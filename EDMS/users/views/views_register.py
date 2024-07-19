@@ -33,7 +33,7 @@ class UserRegisterView(FormView):
         domain: str = get_current_site(self.request).domain
         uidb64: str = urlsafe_base64_encode(force_bytes(user.pk))
         token: str = account_activation_token.make_token(user)
-        from_email: str = settings.COMPANY_EMAIL
+        from_email: str = settings.EMAIL_HOST_USER
         subject = "Account Activation"
         message: str = render_to_string(
             "email_templates/account_activation_email.html",

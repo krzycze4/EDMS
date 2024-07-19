@@ -71,7 +71,7 @@ def send_mails_to_substitute_users(vacation: Vacation) -> None:
         substitute_user.email_user(
             subject=subject_to_substitute_user,
             message=message_to_substitute_user,
-            from_email=settings.COMPANY_EMAIL,
+            from_email=settings.EMAIL_HOST_USER,
         )
 
 
@@ -89,5 +89,5 @@ def send_mail_to_leave_user(vacation: Vacation) -> None:
     vacation.leave_user.email_user(
         subject=subject_to_leave_user,
         message=message_to_leave_user,
-        from_email=settings.COMPANY_EMAIL,
+        from_email=settings.EMAIL_HOST_USER,
     )
