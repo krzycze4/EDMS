@@ -28,6 +28,7 @@ def define_groups(sender, **kwargs):
             "view_vacation",
             "add_address",
             "change_address",
+            "change_user",
         ],
         "accountants": [
             "view_addendum",
