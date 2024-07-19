@@ -1,0 +1,64 @@
+services:
+  edms-web:
+    container_name: edms-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/app/entrypoint.sh"]
+    ports:
+      - 8000:8000
+    volumes:
+      - ./EDMS:/app
+    env_file:
+      - EDMS/.env
+    depends_on:
+      - edms-db
+      - redis
+
+  edms-db:
+    container_name: edms-db
+    image: postgres:16.3
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - EDMS/.env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    container_name: redis
+    image: redis:7.4-rc2
+
+  celery-worker:
+    container_name: celery-worker
+    build: .
+    command: celery -A EDMS worker -l INFO
+    volumes:
+      - ./EDMS:/app
+    env_file:
+      - EDMS/.env
+    depends_on:
+      - edms-web
+      - edms-db
+      - redis
+
+  celery-beat:
+    container_name: celery-beat
+    build: .
+    command: celery -A EDMS beat -l INFO
+    volumes:
+      - ./EDMS:/app
+    env_file:
+      - EDMS/.env
+    depends_on:
+      - edms-web
+      - edms-db
+      - redis
+
+volumes:
+  postgres_data:
