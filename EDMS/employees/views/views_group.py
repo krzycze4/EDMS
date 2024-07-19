@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class GroupUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
-    permission_required = "auth.change_group"
+    permission_required = "users.change_user"
     model = User
     form_class = GroupForm
     template_name = "employees/groups/group_update.html"
