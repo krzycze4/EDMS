@@ -30,7 +30,8 @@ class Agreement(models.Model):
     start_date = models.DateField(help_text="First day of the agreement.")
     end_date = models.DateField(help_text="Last day of the agreement in physical version.")
     end_date_actual = models.DateField(
-        help_text="Calculated last day of the agreement after adding addenda or termination. Necessary to calculate vacations for employee."
+        help_text="Calculated last day of the agreement after adding addenda or termination."
+        "Necessary to calculate vacations for employee."
     )
     user = models.ForeignKey(
         User,
