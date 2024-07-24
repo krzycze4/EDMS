@@ -3,7 +3,7 @@ from employees.api.views.views_api_agreement import AgreementModelViewSet
 from rest_framework import routers
 
 from .api.views.views_api_addendum import AddendumModelViewSet
-from .api.views.views_api_payment import SalaryModelViewSet
+from .api.views.views_api_salary import SalaryModelViewSet
 from .api.views.views_api_termination import TerminationModelViewSet
 from .api.views.views_api_vacation import VacationModelViewSet
 from .views.views_addendum import (
