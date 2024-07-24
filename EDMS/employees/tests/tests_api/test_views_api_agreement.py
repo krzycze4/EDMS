@@ -215,7 +215,7 @@ class AgreementApiTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
         self.assertEqual(Agreement.objects.count(), count_agreement_before_response)
 
-    def test_prevent_duplicate_addendum_creation(self):
+    def test_prevent_duplicate_agreement_creation(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
         self.assertTrue(login)
         self.client.post(reverse_lazy("agreement-list"), self.agreement_data)
