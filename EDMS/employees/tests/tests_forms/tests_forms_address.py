@@ -3,7 +3,7 @@ from django.test import TestCase
 from employees.forms.forms_address import AddressForm
 
 
-class AddendumFormTests(TestCase):
+class AddressFormTests(TestCase):
     def setUp(self) -> None:
         self.address = AddressFactory.build()
 
