@@ -23,6 +23,9 @@ class VacationFactory(DjangoModelFactory):
 
     @factory.post_generation
     def substitute_users(self, create, extracted, **kwargs):
+        if not create:
+            return
+
         if extracted:
             for user in extracted:
                 self.substitute_users.add(user)
