@@ -18,7 +18,7 @@ class AgreementSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class SerializerSerializer(serializers.ModelSerializer):
+class SalarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Salary
         fields = "__all__"
