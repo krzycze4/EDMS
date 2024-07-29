@@ -70,6 +70,7 @@ group_names_with_permission_codenames = {
         "delete_salary",
         "view_salary",
         "view_termination",
+        "view_vacation",
         "add_invoice",
         "change_invoice",
         "delete_invoice",
