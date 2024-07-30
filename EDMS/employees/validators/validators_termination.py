@@ -23,7 +23,7 @@ class TerminationValidator:
             raise ValidationError({"end_date": "End date can't be earlier than create date of the termination."})
         if create_date < agreement.start_date:
             raise ValidationError({"create_date": "Create date can't be earlier than start date of the agreement."})
-        if end_date > agreement.end_date_actual and not agreement.termination:
+        if end_date > agreement.end_date_actual and not hasattr(agreement, "termination"):
             raise ValidationError(
                 {"end_date": "End date termination can't be later than actual end date of the agreement."}
             )
