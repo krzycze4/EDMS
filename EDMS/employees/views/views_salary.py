@@ -11,14 +11,14 @@ from django.views.generic import (
     UpdateView,
 )
 from employees.filters import SalaryFilterSet
-from employees.forms.forms_payment import PaymentForm
+from employees.forms.forms_salary import SalaryForm
 from employees.models.models_salaries import Salary
 
 
 class SalaryCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
     permission_required = "employees.add_salary"
     model = Salary
-    form_class = PaymentForm
+    form_class = SalaryForm
     template_name = "employees/salaries/salary_create.html"
 
     def get_success_url(self) -> str:
@@ -34,7 +34,7 @@ class SalaryDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
 class SalaryUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin):
     permission_required = "employees.change_salary"
     model = Salary
-    form_class = PaymentForm
+    form_class = SalaryForm
     template_name = "employees/salaries/salary_update.html"
 
     def get_success_url(self) -> str:

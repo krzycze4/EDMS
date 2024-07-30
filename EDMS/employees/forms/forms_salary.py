@@ -2,7 +2,7 @@ from django import forms
 from employees.models.models_salaries import Salary
 
 
-class PaymentForm(forms.ModelForm):
+class SalaryForm(forms.ModelForm):
     class Meta:
         model = Salary
         fields = ["date", "user", "fee"]
