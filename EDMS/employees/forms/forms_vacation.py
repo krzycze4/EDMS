@@ -45,7 +45,9 @@ class VacationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["substitute_users"].queryset = User.objects.exclude(pk=kwargs["initial"]["leave_user"])
+        initial_leave_user = kwargs.get("initial", {}).get("leave_user", None)
+        if initial_leave_user is not None:
+            self.fields["substitute_users"].queryset = User.objects.exclude(pk=kwargs["initial"]["leave_user"])
 
     def clean(self) -> Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]:
         cleaned_data: Dict[str, Union[str | date | User | List[User] | UploadedFile | int]] = super().clean()
