@@ -4,7 +4,7 @@ from employees.forms.forms_group import GroupForm
 from users.factories import UserFactory
 
 
-class ContactFormTests(TestCase):
+class GroupFormTests(TestCase):
     def setUp(self) -> None:
         self.group1 = Group.objects.create(name="Group1")
         self.group2 = Group.objects.create(name="Group2")
