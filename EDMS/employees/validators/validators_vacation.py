@@ -26,7 +26,7 @@ class VacationValidator:
     ) -> None:
         start_date: date = cleaned_data["start_date"]
         end_date: date = cleaned_data["end_date"]
-        leave_user: date = cleaned_data["leave_user"]
+        leave_user: User = cleaned_data["leave_user"]
         if "id" in cleaned_data.keys():
             vacation_id: int = cleaned_data["id"]
             vacations: QuerySet = Vacation.objects.filter(leave_user=leave_user).exclude(pk=vacation_id)
