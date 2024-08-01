@@ -18,7 +18,7 @@ class Termination(models.Model):
     def __str__(self) -> str:
         return f"Termination #{self.name}"
 
-    def update_agreement_end_date(self):
+    def update_agreement_end_date_actual(self):
         last_addendum = Addendum.objects.filter(agreement=self.agreement).order_by("create_date").last()
         if self.agreement.termination:
             self.agreement.end_date_actual = self.agreement.termination.end_date
@@ -35,7 +35,7 @@ class Termination(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.update_agreement_end_date()
+        self.update_agreement_end_date_actual()
         self.update_agreement_is_current()
         self.agreement.save()
 
