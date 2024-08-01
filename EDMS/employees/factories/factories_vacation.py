@@ -12,7 +12,7 @@ class VacationFactory(DjangoModelFactory):
     class Meta:
         model = Vacation
 
-    type = "annual"
+    type = Vacation.ANNUAL
     start_date = factory.LazyFunction(lambda: timezone.now().date())
     end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(days=1))
     leave_user = factory.SubFactory(UserFactory)
