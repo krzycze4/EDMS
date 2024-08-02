@@ -39,19 +39,22 @@ class AddendumCreateViewTests(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.not_logged_user_url)
 
-    def test_render_create_view_when_logged_user_group_accountants_execute_get_method(self):
+    def test_deny_render_create_view_when_logged_user_group_accountants_execute_get_method(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-addendum", kwargs={"pk": self.employee.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_render_create_view_when_logged_user_group_accountants_execute_post_method(self):
+    def test_deny_create_addendum_when_logged_user_group_accountants_execute_post_method(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
         self.assertTrue(login)
+        expected_value = 0
+        self.assertEqual(Addendum.objects.count(), expected_value)
         response = self.client.post(
             reverse_lazy("create-addendum", kwargs={"pk": self.employee.pk}), data=self.addendum_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+        self.assertEqual(Addendum.objects.count(), expected_value)
 
     def test_render_create_view_when_logged_user_group_ceos_execute_get_method(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
@@ -60,13 +63,17 @@ class AddendumCreateViewTests(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
-    def test_render_create_view_when_logged_user_group_ceos_execute_post_method(self):
+    def test_create_addendum_and_redirect_to_detail_view_when_logged_user_group_ceos_execute_post_method(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
         self.assertTrue(login)
+        expected_value = 0
+        self.assertEqual(Addendum.objects.count(), expected_value)
         response = self.client.post(
             reverse_lazy("create-addendum", kwargs={"pk": self.employee.pk}), data=self.addendum_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        expected_value = 1
+        self.assertEqual(Addendum.objects.count(), expected_value)
         created_addendum_pk = Addendum.objects.last().pk
         self.assertRedirects(response, reverse_lazy("detail-addendum", kwargs={"pk": created_addendum_pk}))
 
@@ -77,26 +84,33 @@ class AddendumCreateViewTests(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
-    def test_render_create_view_when_logged_user_group_hrs_execute_post_method(self):
+    def test_create_addendum_and_redirect_to_detail_view_when_logged_user_group_hrs_execute_post_method(self):
         login = self.client.login(email=self.hr.email, password=self.password)
         self.assertTrue(login)
+        expected_value = 0
+        self.assertEqual(Addendum.objects.count(), expected_value)
         response = self.client.post(
             reverse_lazy("create-addendum", kwargs={"pk": self.employee.pk}), data=self.addendum_data
         )
+        expected_value = 1
+        self.assertEqual(Addendum.objects.count(), expected_value)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         created_addendum_pk = Addendum.objects.last().pk
         self.assertRedirects(response, reverse_lazy("detail-addendum", kwargs={"pk": created_addendum_pk}))
 
-    def test_render_create_view_when_logged_user_group_managers_execute_get_method(self):
+    def test_deny_render_create_view_when_logged_user_group_managers_execute_get_method(self):
         login = self.client.login(email=self.manager.email, password=self.password)
         self.assertTrue(login)
         response = self.client.get(reverse_lazy("create-addendum", kwargs={"pk": self.employee.pk}))
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
-    def test_render_create_view_when_logged_user_group_managers_execute_post_method(self):
+    def test_deny_create_addendum_when_logged_user_group_managers_execute_post_method(self):
         login = self.client.login(email=self.manager.email, password=self.password)
         self.assertTrue(login)
+        expected_value = 0
+        self.assertEqual(Addendum.objects.count(), expected_value)
         response = self.client.post(
             reverse_lazy("create-addendum", kwargs={"pk": self.employee.pk}), data=self.addendum_data
         )
+        self.assertEqual(Addendum.objects.count(), expected_value)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
