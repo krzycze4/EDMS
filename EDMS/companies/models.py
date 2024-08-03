@@ -13,7 +13,6 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = "Addresses"
-        unique_together = [["street_name", "street_number", "city", "postcode", "country"]]
 
 
 class Company(models.Model):
