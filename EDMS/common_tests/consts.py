@@ -36,8 +36,6 @@ group_names_with_permission_codenames = {
         "change_vacation",
         "delete_vacation",
         "view_vacation",
-        "add_address",
-        "change_address",
         "add_invoice",
         "change_invoice",
         "delete_invoice",
