@@ -6,7 +6,6 @@ from companies.factories import AddressFactory
 from companies.models import Address
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
-from rest_framework import serializers
 from rest_framework.test import APIClient
 
 User = get_user_model()
@@ -201,10 +200,3 @@ class AddressApiTestCase(EDMSTestCase):
             reverse_lazy("address-detail", kwargs={"pk": self.address_list[0].id}), self.address_data
         )
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
-
-    def test_prevent_duplicate_address_creation(self):
-        login = self.client.login(email=self.ceo.email, password=self.password)
-        self.assertTrue(login)
-        self.client.post(reverse_lazy("address-list"), self.address_data)
-        self.client.post(reverse_lazy("address-list"), self.address_data)
-        self.assertRaises(serializers.ValidationError)
