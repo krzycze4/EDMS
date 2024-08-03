@@ -1,5 +1,4 @@
 import factory
-from companies.factories import AddressFactory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from factory import post_generation
@@ -20,7 +19,7 @@ class UserFactory(DjangoModelFactory):
     position = "position"
     vacation_days_per_year = 26
     vacation_left = 0
-    address = factory.SubFactory(AddressFactory)
+    address = None
 
     @post_generation
     def password(self, create, extracted, **kwargs):
