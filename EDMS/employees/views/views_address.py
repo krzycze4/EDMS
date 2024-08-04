@@ -42,9 +42,7 @@ class AddressUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
 
     def form_valid(self, form):
         user = get_object_or_404(User, pk=self.kwargs["pk"])
-        address = Address.objects.filter(**form.cleaned_data).exists()
-        if not address:
-            address, created = Address.objects.get_or_create(**form.cleaned_data)
-            user.address = address
+        form.save()
+        user.address = form.instance
         user.save()
         return HttpResponseRedirect(self.get_success_url())
