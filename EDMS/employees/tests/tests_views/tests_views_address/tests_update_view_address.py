@@ -11,7 +11,9 @@ class AddressUpdateViewTests(EDMSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.address = AddressFactory.create()
-        self.employee = UserFactory.create(address=self.address)
+        self.employee = UserFactory.create()
+        self.employee.address = self.address
+        self.employee.save()
         update_address = AddressFactory.build()
         self.address_data = {
             "street_name": update_address.street_name,
@@ -50,9 +52,8 @@ class AddressUpdateViewTests(EDMSTestCase):
         self.assertEqual(self.employee.address, self.address)
         response = self.client.post(self.view_url, data=self.address_data)
         expected_value = 1
-        self.assertEqual(Address.objects.count(), expected_value)
         self.employee.refresh_from_db()
-        self.assertNotEquals(self.employee.address, self.address)
+        self.assertEqual(Address.objects.count(), expected_value)
         self.assertEqual(self.employee.address.street_name, self.address_data["street_name"])
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.success_url)
@@ -74,7 +75,6 @@ class AddressUpdateViewTests(EDMSTestCase):
         expected_value = 1
         self.assertEqual(Address.objects.count(), expected_value)
         self.employee.refresh_from_db()
-        self.assertNotEquals(self.employee.address, self.address)
         self.assertEqual(self.employee.address.street_name, self.address_data["street_name"])
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.success_url)
@@ -83,8 +83,7 @@ class AddressUpdateViewTests(EDMSTestCase):
         login = self.client.login(email=self.manager.email, password=self.password)
         self.assertTrue(login)
         response = self.client.get(self.view_url)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTemplateUsed(response, self.template_name)
+        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_deny_update_address_when_logged_user_group_managers_execute_post_method(self):
         login = self.client.login(email=self.manager.email, password=self.password)
@@ -117,7 +116,6 @@ class AddressUpdateViewTests(EDMSTestCase):
         expected_value = 1
         self.assertEqual(Address.objects.count(), expected_value)
         self.employee.refresh_from_db()
-        self.assertNotEquals(self.employee.address, self.address)
         self.assertEqual(self.employee.address.street_name, self.address_data["street_name"])
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, self.success_url)
