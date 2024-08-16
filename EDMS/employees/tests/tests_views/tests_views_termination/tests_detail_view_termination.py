@@ -8,7 +8,6 @@ from employees.factories.factories_termination import TerminationFactory
 class TerminationDetailViewTests(EDMSTestCase):
     def setUp(self) -> None:
         super().setUp()
-        # self.employee = UserFactory.create()
         self.termination = TerminationFactory.create()
         self.view_url = reverse_lazy("detail-termination", kwargs={"pk": self.termination.pk})
         self.redirect_login_url = f"{reverse_lazy('login')}?next={self.view_url}"
