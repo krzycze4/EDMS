@@ -8,7 +8,7 @@ from users.factories import UserFactory
 User = get_user_model()
 
 
-class EmployeeListView(EDMSTestCase):
+class EmployeeListViewTests(EDMSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.employees = UserFactory.create_batch(11)
