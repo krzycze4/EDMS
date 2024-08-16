@@ -77,14 +77,14 @@ class GroupUpdateView(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
 
     def test_deny_render_update_view_when_logged_user_group_hrs_execute_get_method(self):
-        login = self.client.login(email=self.email, password=self.password)
+        login = self.client.login(email=self.hr.email, password=self.password)
         self.assertTrue(login)
         response = self.client.get(self.view_url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
     def test_deny_update_object_when_logged_user_group_hrs_execute_post_method(self):
-        login = self.client.login(email=self.ceo.email, password=self.password)
+        login = self.client.login(email=self.hr.email, password=self.password)
         self.assertTrue(login)
         self.assertNotEquals(self.employee.groups.first().pk, self.group_data["groups"])
         response = self.client.post(self.view_url, data=self.group_data)
