@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from companies.models import Company
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -22,13 +24,21 @@ class Invoice(models.Model):
         Company, on_delete=models.CASCADE, blank=False, related_name="buyer_invoices", help_text="Company buyer"
     )
     net_price = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], blank=False, help_text="Net value"
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.00"))],
+        blank=False,
+        help_text="Net value",
     )
     vat = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], blank=False, help_text="Vat value"
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.00"))],
+        blank=False,
+        help_text="Vat value",
     )
     gross = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], help_text="Gross value"
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal("0.00"))], help_text="Gross value"
     )
     create_date = models.DateField(blank=False, help_text="Creation date")
     service_date = models.DateField(blank=False, help_text="Service date")
