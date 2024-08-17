@@ -36,7 +36,7 @@ class AddendumFormTests(TestCase):
         form = AddendumForm(instance=self.addendum)
         self.assertTrue(form.fields["agreement"].disabled)
 
-    def test_if_field_agreement_queryset_excludes_teriminated_agreements(self):
+    def test_if_field_agreement_queryset_excludes_terminated_agreements(self):
         form = AddendumForm()
         terminated_agreement = AgreementFactory.create()
         TerminationFactory.create(agreement=terminated_agreement)
