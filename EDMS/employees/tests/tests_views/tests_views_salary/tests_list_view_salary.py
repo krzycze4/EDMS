@@ -72,7 +72,6 @@ class SalaryListViewTests(EDMSTestCase):
         self.assertEqual(str(response.context["page_obj"]), "<Page 2 of 2>")
 
     def test_filter(self):
-        # 11x Salary
         login = self.client.login(email=self.ceo.email, password=self.password)
         self.assertTrue(login)
 
