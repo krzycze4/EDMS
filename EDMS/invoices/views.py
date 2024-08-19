@@ -80,7 +80,7 @@ class InvoiceUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
         if self.object.seller.is_mine:
             order = Order.objects.filter(income_invoice=self.object).first()
         else:
-            order = Order.objects.filter(cost_invoices=self.object).first()
+            order = Order.objects.filter(cost_invoice=self.object).first()
         return order
 
     def get_form(self, form_class=None) -> InvoiceForm:
