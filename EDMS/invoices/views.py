@@ -55,12 +55,10 @@ class InvoiceListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     filter = None
     ordering = ["create_date"]
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> QuerySet[Invoice]:
         queryset: QuerySet = super().get_queryset()
         self.filter = InvoiceFilter(self.request.GET, queryset=queryset)
-        queryset = self.filter.qs
-        queryset = queryset.select_related("seller")
-        queryset = queryset.select_related("buyer")
+        queryset = self.filter.qs.select_related("seller", "buyer")
         return queryset
 
     def get_context_data(self, **kwargs):
