@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional
 
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -39,7 +39,7 @@ class InvoiceDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin)
         context["order_from_cost_invoice"] = self.object.order_from_cost_invoice.all()
         return context
 
-    def get_child_invoices(self) -> Union[List[Invoice] | str]:
+    def get_child_invoices(self) -> Optional[List[Invoice]]:
         child_invoices = None
         if self.object.type in [Invoice.ORIGINAL, Invoice.DUPLICATE]:
             child_invoices = Invoice.objects.filter(linked_invoice=self.object)
