@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal
 
 from companies.models import Company
 from contracts.models import Contract
@@ -22,7 +23,7 @@ class Order(models.Model):
         verbose_name="Payment net price",
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(1.00)],
+        validators=[MinValueValidator(Decimal(1.00))],
         help_text="Net price will be earned if order will be completed.",
     )
     status = models.CharField(
@@ -53,7 +54,7 @@ class Order(models.Model):
         related_name="orders",
         help_text="The contract to which the order is attached.",
     )
-    create_date = models.DateField(default=timezone.now, help_text="Creation order date.")
+    create_date = models.DateField(default=timezone.now().date, help_text="Creation order date.")
     start_date = models.DateField(help_text="Start order date")
     end_date = models.DateField(help_text="End order date")
     description = models.TextField(
