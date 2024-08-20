@@ -17,7 +17,7 @@ class OrderFactory(DjangoModelFactory):
         model = Order
 
     name = Sequence(lambda n: f"Order #{n + 1}")
-    payment = Decimal(100000)
+    payment = Decimal(100000.00)
     status = Order.OPEN
     company = factory.SubFactory(CompanyFactory)
     user = factory.SubFactory(UserFactory)
