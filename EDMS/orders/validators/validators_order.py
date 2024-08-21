@@ -33,7 +33,7 @@ class OrderCreateValidator:
         if Order.objects.filter(payment=payment, company=company, start_date=start_date, end_date=end_date):
             raise ValidationError(
                 {
-                    "name": "Order with this data already exists!",
+                    "description": "Order with this data already exists!",
                 }
             )
 
