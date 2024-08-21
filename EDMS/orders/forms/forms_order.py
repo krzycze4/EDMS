@@ -19,6 +19,7 @@ class OrderCreateForm(forms.ModelForm):
             "payment",
             "company",
             "start_date",
+            "create_date",
             "end_date",
             "contract",
             "description",
@@ -28,6 +29,7 @@ class OrderCreateForm(forms.ModelForm):
             "company": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
             "start_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "contract": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
         }
@@ -53,16 +55,20 @@ class OrderUpdateForm(forms.ModelForm):
             "payment",
             "status",
             "start_date",
+            "create_date",
             "end_date",
             "description",
+            "contract",
         ]
         widgets = {
             "company": forms.HiddenInput(),
             "payment": forms.NumberInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-control"}),
             "start_date": forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+            "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "end_date": forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
+            "contract": forms.HiddenInput(),
         }
 
     def clean(self) -> Dict[str, Any]:
