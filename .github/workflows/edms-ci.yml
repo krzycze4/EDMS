@@ -69,7 +69,7 @@ jobs:
     - name: Run Tests
       run: |
         cd EDMS
-        poetry run coverage manage.py test --exclude-tag=celery
+        poetry run coverage run manage.py test --exclude-tag=celery
         poetry run coverage xml
       env:
         REDIS_HOST: ${{ secrets.REDIS_HOST }}
