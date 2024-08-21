@@ -46,6 +46,10 @@ group_names_with_permission_codenames = {
         "view_order",
         "change_user",
         "view_user",
+        "add_protocol",
+        "change_protocol",
+        "delete_protocol",
+        "view_protocol",
     ],
     "accountants": [
         "add_company",
@@ -75,6 +79,7 @@ group_names_with_permission_codenames = {
         "view_invoice",
         "view_order",
         "view_user",
+        "view_protocol",
     ],
     "managers": [
         "view_company",
@@ -94,6 +99,10 @@ group_names_with_permission_codenames = {
         "delete_order",
         "view_order",
         "view_user",
+        "add_protocol",
+        "change_protocol",
+        "delete_protocol",
+        "view_protocol",
     ],
     "hrs": [
         "view_company",
