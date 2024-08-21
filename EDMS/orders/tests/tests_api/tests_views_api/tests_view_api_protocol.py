@@ -21,7 +21,7 @@ class ProtocolApiTestCase(EDMSTestCase):
         user = UserFactory.create()
         self.protocol = ProtocolFactory.create()
         self.protocol_data = {
-            "name": self.protocol.name,  # protocol
+            "name": self.protocol.name,
             "scan": self.protocol.scan,
             "create_date": self.protocol.create_date,
             "user": user.pk,
