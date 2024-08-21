@@ -32,8 +32,7 @@ class ProtocolFactory(DjangoModelFactory):
     class Meta:
         model = Protocol
 
-    id = factory.Sequence(lambda n: n + 1)
-    name = factory.Sequence(lambda n: f"protocol_{n + 1}")
+    name = "protocol"
     scan = factory.LazyAttribute(
         lambda _: SimpleUploadedFile("the_file.pdf", b"file_content", content_type="application/pdf")
     )
