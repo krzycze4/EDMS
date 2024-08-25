@@ -10,10 +10,10 @@ from users.factories import UserFactory
 
 class OrderCreateViewTests(EDMSTestCase):
     def setUp(self) -> None:
-        user = UserFactory.create()
+        self.user = UserFactory.create()
         contract = ContractFactory.create()
         self.order = OrderFactory.build(
-            company=contract.company, user=user, contract=contract, start_date=contract.start_date
+            company=contract.company, user=self.user, contract=contract, start_date=contract.start_date
         )
         self.view_url = reverse_lazy("create-order")
         self.redirect_login_url = f"{reverse_lazy('login')}?next={self.view_url}"
@@ -103,3 +103,9 @@ class OrderCreateViewTests(EDMSTestCase):
         expected_value += 1
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(Order.objects.count(), expected_value)
+
+    def test_form_valid_method(self):
+        login = self.client.login(email=self.manager.email, password=self.password)
+        self.assertTrue(login)
+        self.client.post(self.view_url, data=self.order_data)
+        self.assertEqual(self.order.user.pk, self.user.pk)
