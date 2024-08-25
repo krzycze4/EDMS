@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from common_tests.EDMSTestCase import EDMSTestCase
 from contracts.factories import ContractFactory
-from django.test import tag
 from django.urls import reverse_lazy
 from orders.factories import OrderFactory
 from orders.models import Order
@@ -95,20 +94,12 @@ class OrderCreateViewTests(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
-    @tag("x")
     def test_create_object_when_logged_user_group_managers_execute_post_method(self):
         login = self.client.login(email=self.manager.email, password=self.password)
         self.assertTrue(login)
         expected_value = 0
         self.assertEqual(Order.objects.count(), expected_value)
         response = self.client.post(self.view_url, data=self.order_data)
-        if response.context and "form" in response.context:
-            form = response.context["form"]
-            if not form.is_valid():
-                # Print all errors related to fields
-                print("Form errors (by field):", form.errors)
-                # Print non-field errors (general errors not tied to a specific field)
-                print("Form non-field errors:", form.non_field_errors())
         expected_value += 1
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(Order.objects.count(), expected_value)
