@@ -8,7 +8,7 @@ from orders.models import Order
 from users.factories import UserFactory
 
 
-class InvoiceUpdateViewTests(EDMSTestCase):
+class OrderUpdateViewTests(EDMSTestCase):
     def setUp(self) -> None:
         self.user = UserFactory.create()
         contract = ContractFactory.create()
