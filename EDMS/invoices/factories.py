@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 import factory
 from _decimal import ROUND_HALF_UP, Decimal
 from companies.factories import CompanyFactory
@@ -21,8 +19,8 @@ class InvoiceFactory(DjangoModelFactory):
     vat = (net_price * Decimal(0.23)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     gross = (net_price + vat).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     create_date = factory.LazyAttribute(lambda _: timezone.now().date())
-    service_date = factory.LazyAttribute(lambda obj: obj.create_date - timedelta(days=1))
-    payment_date = factory.LazyAttribute(lambda obj: obj.create_date + timedelta(days=30))
+    service_date = factory.LazyAttribute(lambda obj: obj.create_date - timezone.timedelta(days=1))
+    payment_date = factory.LazyAttribute(lambda obj: obj.create_date + timezone.timedelta(days=30))
     type = Invoice.ORIGINAL
     linked_invoice = None
     scan = factory.LazyAttribute(

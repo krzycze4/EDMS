@@ -1,4 +1,3 @@
-from datetime import timedelta
 from decimal import Decimal
 
 import factory
@@ -16,9 +15,9 @@ class AgreementFactory(DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Agreement #{n + 1}")
     type = "employment contract"
     salary_gross = Decimal(5000)
-    create_date = factory.LazyFunction(lambda: timezone.now().date() - timedelta(days=1))
+    create_date = factory.LazyFunction(lambda: timezone.now().date() - timezone.timedelta(days=1))
     start_date = factory.LazyFunction(lambda: timezone.now().date())
-    end_date = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=365))
+    end_date = factory.LazyFunction(lambda: timezone.now().date() + timezone.timedelta(days=365))
     end_date_actual = factory.LazyAttribute(lambda obj: obj.end_date)
     user = factory.SubFactory(UserFactory)
     scan = factory.LazyAttribute(

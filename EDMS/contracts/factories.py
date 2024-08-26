@@ -1,5 +1,4 @@
 import secrets
-from datetime import timedelta
 
 import factory
 from _decimal import Decimal
@@ -29,7 +28,7 @@ class ContractFactory(DjangoModelFactory):
 
     @factory.lazy_attribute
     def create_date(self):
-        return timezone.now().date() - timedelta(days=secrets.randbelow(366))
+        return timezone.now().date() - timezone.timedelta(days=secrets.randbelow(366))
 
     @factory.post_generation
     def employee(self, create, employees, **kwargs):

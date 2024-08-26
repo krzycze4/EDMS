@@ -1,4 +1,3 @@
-from datetime import timedelta
 from decimal import Decimal
 
 import factory
@@ -23,8 +22,8 @@ class OrderFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     contract = factory.SubFactory(ContractFactory)
     create_date = factory.LazyAttribute(lambda _: timezone.now().date())
-    start_date = factory.LazyAttribute(lambda obj: obj.create_date - timedelta(days=1))
-    end_date = factory.LazyAttribute(lambda obj: obj.create_date + timedelta(days=365))
+    start_date = factory.LazyAttribute(lambda obj: obj.create_date - timezone.timedelta(days=1))
+    end_date = factory.LazyAttribute(lambda obj: obj.create_date + timezone.timedelta(days=365))
     description = "XYZ"
 
 

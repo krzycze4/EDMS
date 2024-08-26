@@ -54,7 +54,7 @@ class Order(models.Model):
         related_name="orders",
         help_text="The contract to which the order is attached.",
     )
-    create_date = models.DateField(default=timezone.now().date, help_text="Creation order date.")
+    create_date = models.DateField(default=timezone.now().date(), help_text="Creation order date.")
     start_date = models.DateField(help_text="Start order date")
     end_date = models.DateField(help_text="End order date")
     description = models.TextField(
