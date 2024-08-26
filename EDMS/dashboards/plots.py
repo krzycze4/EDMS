@@ -39,20 +39,47 @@ class Plot:
 
     def set_plot_data(self, orders: List[Order], salaries: List[Salary]) -> Dict[Tuple[int, int], Decimal]:
         plot_data = {}
-        if len(orders) > 0 or len(salaries) > 0:
-            start_month: int = orders[0].end_date.month
-            start_year: int = orders[0].end_date.year
-            end_month: int = timezone.now().month
-            end_year: int = timezone.now().year
+        if not orders and not salaries:
+            return plot_data
+        month = 0
+        year = 1
+        start_date = self.set_start_date(orders=orders, salaries=salaries)
+        start_month: int = start_date[month]
+        start_year: int = start_date[year]
+        end_month: int = timezone.now().month
+        end_year: int = timezone.now().year
+        month_balance = Decimal(0)
+        while start_month <= end_month and start_year <= end_year:
+            month_balance = self.count_month_balance(month_balance, orders, salaries, start_month, start_year)
+            plot_data[(start_month, start_year)] = month_balance
+            start_month, start_year = self.set_start_month_and_start_year(
+                start_month=start_month, start_year=start_year
+            )
             month_balance = Decimal(0)
-            while start_month <= end_month and start_year <= end_year:
-                month_balance = self.count_month_balance(month_balance, orders, salaries, start_month, start_year)
-                plot_data[(start_month, start_year)] = month_balance
-                start_month, start_year = self.set_start_month_and_start_year(
-                    start_month=start_month, start_year=start_year
-                )
-                month_balance = Decimal(0)
         return plot_data
+
+    @staticmethod
+    def set_start_date(orders: List[Order], salaries: List[Salary]) -> Tuple[int, int]:
+        start_month, start_year = None, None
+
+        if orders:
+            first_order_date = min(order.end_date for order in orders)
+            start_month = first_order_date.month
+            start_year = first_order_date.year
+
+        if salaries:
+            first_salary_date = min(salary.date for salary in salaries)
+            salary_month = first_salary_date.month
+            salary_year = first_salary_date.year
+
+            if (
+                start_month is None
+                or (salary_year < start_year)
+                or (salary_year == start_year and salary_month < start_month)
+            ):
+                start_month = salary_month
+                start_year = salary_year
+        return start_month, start_year
 
     def count_month_balance(
         self, month_balance: Decimal, orders: List[Order], salaries: List[Salary], start_month: int, start_year: int
