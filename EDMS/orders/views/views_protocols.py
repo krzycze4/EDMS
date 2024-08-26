@@ -10,7 +10,7 @@ from orders.models import Order, Protocol
 
 
 class ProtocolCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin):
-    permission_required = "orders.add_invoice"
+    permission_required = "orders.add_protocol"
     template_name = "orders/protocols/create_protocol.html"
     form_class = ProtocolForm
     model = Protocol
