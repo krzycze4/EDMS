@@ -15,9 +15,11 @@ User = get_user_model()
 @shared_task
 def set_user_vacation_left() -> None:
     for user in User.objects.filter(is_superuser=False, is_active=True):
-        current_employment_agreement = user.agreements.filter(type=Agreement.EMPLOYMENT, is_current=True)
-        if current_employment_agreement:
-            add_new_vacation_days(user=user, current_employment_agreement=current_employment_agreement)
+        try:
+            current_employment_agreement = user.agreements.get(type=Agreement.EMPLOYMENT, is_current=True)
+        except Agreement.DoesNotExist:
+            continue
+        add_new_vacation_days(user=user, current_employment_agreement=current_employment_agreement)
 
 
 def add_new_vacation_days(user: User, current_employment_agreement: Agreement) -> None:
