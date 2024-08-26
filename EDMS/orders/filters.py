@@ -41,23 +41,23 @@ class OrderFilter(django_filters.FilterSet):
         field_name="create_date",
         label="Create end_date from",
         lookup_expr="gte",
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
     create_date__lt = django_filters.DateFilter(
         field_name="create_date",
         label="Create end_date to",
         lookup_expr="lte",
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
     start_date = django_filters.DateFilter(
         label="Start service end_date",
         lookup_expr="gte",
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
     end_date = django_filters.DateFilter(
         label="End service end_date",
         lookup_expr="lte",
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
 
     class Meta:

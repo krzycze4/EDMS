@@ -64,9 +64,9 @@ class OrderUpdateForm(forms.ModelForm):
             "company": forms.HiddenInput(),
             "payment": forms.NumberInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-control"}),
-            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "create_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
-            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "end_date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
             "contract": forms.HiddenInput(),
         }
