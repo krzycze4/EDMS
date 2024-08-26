@@ -65,7 +65,7 @@ class ProtocolCreateViewTests(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         expected_value += 1
         self.assertEqual(Protocol.objects.count(), expected_value)
-        success_url = reverse_lazy("create-protocol", kwargs={"pk": Protocol.objects.last().pk})
+        success_url = reverse_lazy("create-protocol", kwargs={"pk": self.order.pk})
         self.assertRedirects(response, success_url)
 
     def test_deny_render_create_view_when_logged_user_group_hrs_execute_get_method(self):
@@ -99,7 +99,7 @@ class ProtocolCreateViewTests(EDMSTestCase):
         expected_value += 1
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(Protocol.objects.count(), expected_value)
-        success_url = reverse_lazy("create-protocol", kwargs={"pk": Protocol.objects.last().pk})
+        success_url = reverse_lazy("create-protocol", kwargs={"pk": self.order.pk})
         self.assertRedirects(response, success_url)
 
     def test_form_valid_method(self):
