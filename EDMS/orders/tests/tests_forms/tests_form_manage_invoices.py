@@ -68,12 +68,12 @@ class ManageInvoicesFormTests(TestCase):
             print(form.errors)
         order = form.save()
         self.assertEqual(
-            list(order.income_invoice.all()),
-            list(Invoice.objects.filter(buyer=self.company_in_order, seller=self.my_company)),
+            set(order.income_invoice.all()),
+            set(Invoice.objects.filter(buyer=self.company_in_order, seller=self.my_company)),
         )
         self.assertEqual(
-            list(order.cost_invoice.all()),
-            list(Invoice.objects.filter(buyer=self.my_company, seller=self.outside_company)),
+            set(order.cost_invoice.all()),
+            set(Invoice.objects.filter(buyer=self.my_company, seller=self.outside_company)),
         )
 
     def test_get_all_connected_invoices(self):
