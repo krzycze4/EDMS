@@ -5,6 +5,7 @@ from common_tests.EDMSTestCase import EDMSTestCase
 from companies.factories import CompanyFactory
 from contracts.factories import ContractFactory
 from django.contrib.auth import get_user_model
+from django.test import tag
 from django.urls import reverse_lazy
 from orders.factories import OrderFactory
 from orders.models import Order
@@ -28,6 +29,7 @@ class OrderApiTestCase(EDMSTestCase):
             "name": self.order.name,
             "payment": self.order.payment,
             "company": company.pk,
+            "create_date": self.order.create_date.strftime("%Y-%m-%d"),
             "start_date": self.order.start_date.strftime("%Y-%m-%d"),
             "end_date": self.order.end_date.strftime("%Y-%m-%d"),
             "contract": contract.pk,
@@ -38,6 +40,7 @@ class OrderApiTestCase(EDMSTestCase):
             "company": company.pk,
             "payment": 123123,
             "status": Order.CLOSED,
+            "create_date": self.order.create_date.strftime("%Y-%m-%d"),
             "start_date": self.order.start_date.strftime("%Y-%m-%d"),
             "end_date": self.order.start_date.strftime("%Y-%m-%d"),
             "description": self.order.description,
@@ -116,6 +119,7 @@ class OrderApiTestCase(EDMSTestCase):
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
+    @tag("x")
     def test_ceo_can_create_object(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
         self.assertTrue(login)
@@ -124,6 +128,7 @@ class OrderApiTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertEqual(Order.objects.count(), count_object_before_response + 1)
 
+    @tag("x")
     def test_ceo_can_update_object(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
         self.assertTrue(login)
@@ -197,6 +202,7 @@ class OrderApiTestCase(EDMSTestCase):
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
+    @tag("x")
     def test_manager_can_create_object(self):
         login = self.client.login(email=self.manager.email, password=self.password)
         self.assertTrue(login)
@@ -205,6 +211,7 @@ class OrderApiTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertEqual(Order.objects.count(), count_object_before_response + 1)
 
+    @tag("x")
     def test_manager_can_update_object(self):
         login = self.client.login(email=self.manager.email, password=self.password)
         self.assertTrue(login)
