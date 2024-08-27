@@ -16,9 +16,9 @@ class VacationTasksTest(TestCase):
         month_back = today - timezone.timedelta(days=30)
         ahead_date = today + timezone.timedelta(days=300)
         one_week_ahead = today + timezone.timedelta(days=7)
-        two_week_ahead = today + timezone.timedelta(days=14)  # Poprawka na 14 dni
+        two_week_ahead = today + timezone.timedelta(days=14)
 
-        self.user = UserFactory.create(vacation_days_per_year=20)  # Dodanie dni urlopu rocznego
+        self.user = UserFactory.create(vacation_days_per_year=20)
         self.agreement = AgreementFactory.create(
             create_date=today, start_date=month_back, end_date=ahead_date, end_date_actual=ahead_date, user=self.user
         )
