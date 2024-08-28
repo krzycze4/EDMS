@@ -49,3 +49,10 @@ class VacationTasksTest(TestCase):
         end_date_actual = timezone.datetime(2024, 12, 31).date()
         work_months = count_work_months_current_year(start_date=start_date, end_date_actual=end_date_actual)
         self.assertEqual(work_months, 12)
+
+    def test_start_date_in_previous_year(self):
+        current_year = timezone.now().year
+        start_date = timezone.datetime(current_year - 1, 11, 1)
+        end_date_actual = timezone.datetime(current_year, 5, 31)
+        result = count_work_months_current_year(start_date, end_date_actual)
+        self.assertEqual(result, 5)
