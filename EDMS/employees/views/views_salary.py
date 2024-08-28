@@ -51,14 +51,16 @@ class SalaryDeleteView(PermissionRequiredMixin, DeleteView, LoginRequiredMixin):
 class SalaryListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     permission_required = "employees.view_salary"
     model = Salary
-    ordering = "-date"
+    ordering = "id"
     paginate_by = 10
     template_name = "employees/salaries/salary_list.html"
     filter_set = None
     context_object_name = "salaries"
 
     def get_queryset(self) -> QuerySet[Salary]:
-        self.filter_set = SalaryFilterSet(self.request.GET, queryset=Salary.objects.select_related("user"))
+        self.filter_set = SalaryFilterSet(
+            self.request.GET, queryset=Salary.objects.select_related("user").order_by(self.ordering)
+        )
         return self.filter_set.qs
 
     def get_context_data(self, *args, **kwargs) -> Dict[str, Any]:
