@@ -124,3 +124,10 @@ class CompanyCreateTestCase(EDMSTestCase):
         self.assertTrue(login)
         response = self.client.post(reverse_lazy("create-company"), data=self.company_session_data)
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+
+    def test_form_valid_when_my_company_exists(self):
+        CompanyFactory.create(is_mine=True)
+        login = self.client.login(email=self.ceo.email, password=self.password)
+        self.assertTrue(login)
+        self.client.post(reverse_lazy("create-company"), data=self.company_session_data)
+        self.assertFalse(Company.objects.last().is_mine)
