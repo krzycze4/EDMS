@@ -313,3 +313,30 @@ class InvoiceFormTests(TestCase):
         form = InvoiceForm(instance=self.invoice)
         queryset = form.fields["linked_invoice"].queryset
         self.assertNotIn(self.invoice, queryset)
+
+    def test_form_invalid_when_correcting_invoice_linked_to_proforma_invoice(self):
+        proforma = InvoiceFactory.create(type=Invoice.PROFORMA)
+        form = InvoiceForm(
+            data={
+                "name": self.invoice.name,
+                "seller": self.buyer.pk,
+                "buyer": self.seller.pk,
+                "net_price": int(self.invoice.net_price),
+                "vat": int(self.invoice.vat),
+                "gross": int(self.invoice.gross),
+                "create_date": self.invoice.create_date,
+                "service_date": self.invoice.service_date,
+                "payment_date": self.invoice.payment_date,
+                "type": Invoice.CORRECTING,
+                "linked_invoice": proforma.pk,
+                "scan": self.invoice.scan,
+                "is_paid": self.invoice.is_paid,
+            },
+            files={"scan": self.invoice.scan},
+        )
+        self.assertFalse(form.is_valid())
+        self.assertRaises(ValidationError)
+        self.assertIn("linked_invoice", form.errors)
+        self.assertIn(
+            "Correcting invoice must be linked to duplicate or original invoice.", form.errors["linked_invoice"]
+        )
