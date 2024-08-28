@@ -3,7 +3,9 @@ from http import HTTPStatus
 from common_tests.EDMSTestCase import EDMSTestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
+from django.utils import timezone
 from invoices.factories import InvoiceFactory
+from invoices.filters import InvoiceFilter
 from invoices.models import Invoice
 
 User = get_user_model()
@@ -25,6 +27,12 @@ class InvoiceListViewTests(EDMSTestCase):
             "create_date__gt": "",
             "create_date__lt": "",
         }
+        today = timezone.now().date()
+        week_ago = today - timezone.timedelta(days=7)
+        week_ahead = today + timezone.timedelta(days=7)
+        self.invoice_paid = InvoiceFactory(is_paid=True, payment_date=timezone.now().date())
+        self.invoice_unpaid_future = InvoiceFactory(is_paid=False, payment_date=week_ahead)
+        self.invoice_unpaid_past = InvoiceFactory(is_paid=False, payment_date=week_ago)
 
     def test_redirect_to_login_page_when_not_authenticated_user_execute_get_method(self):
         response = self.client.get(self.view_url)
@@ -77,3 +85,19 @@ class InvoiceListViewTests(EDMSTestCase):
         expected_value = Invoice.objects.filter(name=self.invoice.name).count()
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.context["invoices"]), expected_value)
+
+    def test_filter_unpaid_postponed_invoices_true(self):
+        queryset = Invoice.objects.all()
+        filter = InvoiceFilter(data={"unpaid": True}, queryset=queryset)
+        filtered_qs = filter.qs
+        self.assertIn(self.invoice_unpaid_past, filtered_qs)
+        self.assertNotIn(self.invoice_paid, filtered_qs)
+        self.assertNotIn(self.invoice_unpaid_future, filtered_qs)
+
+    def test_filter_unpaid_postponed_invoices_false(self):
+        queryset = Invoice.objects.all()
+        filter = InvoiceFilter(data={"unpaid": False}, queryset=queryset)
+        filtered_qs = filter.qs
+        self.assertIn(self.invoice_paid, filtered_qs)
+        self.assertIn(self.invoice_unpaid_future, filtered_qs)
+        self.assertIn(self.invoice_unpaid_past, filtered_qs)
