@@ -123,3 +123,22 @@ class ContractFormTests(TestCase):
             files={"scan": self.contract.scan},
         )
         self.assertFalse(form.is_valid())
+
+    def test_form_invalid_when_create_date_in_future(self):
+        self.contract.create_date = timezone.now().date()
+        self.contract.start_date = self.contract.create_date - timedelta(days=1)
+
+        form = ContractForm(
+            data={
+                "name": self.contract.name,
+                "create_date": self.contract.create_date + timezone.timedelta(days=1),
+                "start_date": self.contract.start_date,
+                "end_date": self.contract.end_date,
+                "company": self.contract.company.id,
+                "employee": [self.employee.id],
+                "price": self.contract.price,
+                "scan": self.contract.scan,
+            },
+            files={"scan": self.contract.scan},
+        )
+        self.assertFalse(form.is_valid())
