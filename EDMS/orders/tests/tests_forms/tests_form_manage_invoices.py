@@ -44,8 +44,6 @@ class ManageInvoicesFormTests(TestCase):
             instance=self.order,
             data={"cost_invoice": [self.cost_invoice_original.pk], "income_invoice": [self.income_invoice_original.pk]},
         )
-        if not form.is_valid():
-            print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_queryset(self):
@@ -64,8 +62,6 @@ class ManageInvoicesFormTests(TestCase):
             instance=self.order,
             data={"cost_invoice": [self.cost_invoice_original.pk], "income_invoice": [self.income_invoice_original.pk]},
         )
-        if not form.is_valid():
-            print(form.errors)
         order = form.save()
         self.assertEqual(
             set(order.income_invoice.all()),
