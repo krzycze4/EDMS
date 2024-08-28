@@ -3,11 +3,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django_ratelimit.decorators import ratelimit
 from users.forms.forms_custom_authentication import CustomAuthenticationForm
 
 User = get_user_model()
 
 
+@method_decorator(ratelimit(key="ip", rate="10/m"), name="post")
 class CustomLoginView(LoginView):
     template_name = "users/login_logout/login.html"
     form_class = CustomAuthenticationForm

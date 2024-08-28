@@ -825,6 +825,17 @@ files = [
 Django = ">=3.2"
 
 [[package]]
+name = "django-ratelimit"
+version = "4.1.0"
+description = "Cache-based rate-limiting for Django."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-ratelimit-4.1.0.tar.gz", hash = "sha256:555943b283045b917ad59f196829530d63be2a39adb72788d985b90c81ba808b"},
+    {file = "django_ratelimit-4.1.0-py2.py3-none-any.whl", hash = "sha256:d047a31cf94d83ef1465d7543ca66c6fc16695559b5f8d814d1b51df15110b92"},
+]
+
+[[package]]
 name = "django-session-timeout"
 version = "0.1.0"
 description = "Middleware to expire sessions after specific amount of time"
@@ -2607,4 +2618,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "41afe6f73b37ee45fed225ff7d9424a738d67cae2482106d02e129b86825b4c9"
+content-hash = "dbb9dbcaa130a9d150cd4db0a1badc733ba638f131a58ad4c97480a35d3426e9"
