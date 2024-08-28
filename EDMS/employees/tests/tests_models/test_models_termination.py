@@ -44,6 +44,21 @@ class ModelTerminationTests(TestCase):
         self.agreement.save()
         self.assertFalse(self.agreement.is_current)
 
+    def test_update_agreement_is_current_when_agreement_end_date_actual_in_past(self):
+        today = timezone.now().date()
+        tomorrow = today + timezone.timedelta(days=1)
+        year_back = today - timezone.timedelta(days=365)
+        half_year_back = today - timezone.timedelta(days=365 // 2)
+        self.agreement.start_date = year_back
+        self.agreement.create_date = year_back
+        self.agreement.end_date = tomorrow
+        self.agreement.save()
+        self.termination.create_date = half_year_back
+        self.termination.end_date = half_year_back
+        self.assertTrue(self.agreement.is_current)
+        self.termination.save()
+        self.assertFalse(self.agreement.is_current)
+
     def test_save_termination(self):
         count_terminations_before_save = Termination.objects.count()
         self.assertEqual(count_terminations_before_save, 0)
