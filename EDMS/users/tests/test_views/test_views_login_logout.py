@@ -4,7 +4,7 @@ from common_tests.EDMSTestCase import EDMSTestCase
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from users.factories import UserFactory
 
 User = get_user_model()
@@ -13,7 +13,6 @@ User = get_user_model()
 class TestCaseCustomLoginView(EDMSTestCase):
     def setUp(self):
         super().setUp()
-        # self.user = UserFactory.create(password=self.password)
         self.not_active_user = UserFactory.create(password=self.password, is_active=False)
         self.not_existed_user = UserFactory.build(password=self.password)
 
@@ -71,6 +70,18 @@ class TestCaseCustomLoginView(EDMSTestCase):
 
         message = list(get_messages(response.wsgi_request))[0].message
         self.assertEqual(message, "Invalid email or password.")
+
+    def test_redirect_to_list_employee_view_when_user_group_hrs(self):
+        form_data = {"username": self.hr.email, "password": self.password}
+        response = self.client.post(reverse("login"), data=form_data)
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertRedirects(response, reverse_lazy("list-employee"))
+
+    def test_redirect_to_list_invoice_view_when_user_group_accountants(self):
+        form_data = {"username": self.accountant.email, "password": self.password}
+        response = self.client.post(reverse("login"), data=form_data)
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertRedirects(response, reverse_lazy("list-invoice"))
 
 
 class TestCaseCustomLogoutView(TestCase):
