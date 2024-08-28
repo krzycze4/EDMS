@@ -28,8 +28,6 @@ class Addendum(models.Model):
         last_addendum = Addendum.objects.filter(agreement=self.agreement).order_by("create_date").last()
         if last_addendum:
             self.agreement.end_date_actual = last_addendum.end_date
-        else:
-            self.agreement.end_date_actual = self.agreement.end_date
 
     def update_agreement_is_current(self):
         if self.agreement.end_date_actual < timezone.now().date():
