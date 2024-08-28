@@ -74,3 +74,10 @@ class ModelAgreementTests(TestCase):
         self.agreement.save()
         expected_vacation_left = self.agreement.end_date.month - self.agreement.start_date.month + 1
         self.assertEqual(self.agreement.count_work_months_current_year(), expected_vacation_left)
+
+    def test_start_date_in_previous_year(self):
+        current_year = timezone.now().year
+        self.agreement.start_date = timezone.datetime(current_year - 1, 11, 1).date()
+        self.agreement.end_date_actual = timezone.datetime(current_year, 5, 31).date()
+        result = self.agreement.count_work_months_current_year()
+        self.assertEqual(result, 5)
