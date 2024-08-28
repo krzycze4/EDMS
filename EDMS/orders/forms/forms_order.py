@@ -34,11 +34,6 @@ class OrderCreateForm(forms.ModelForm):
             "contract": forms.Select(attrs={"class": "form-control js-example-basic-single"}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.pk:
-            self.fields["contract"].queryset = Contract.objects.filter(company=self.instance.company)
-
     def clean(self) -> Dict[str, Any]:
         cleaned_data: Dict[str, Union[Decimal | Company | str | date | Contract]] = super().clean()
         validators: List[callable] = OrderCreateValidator.all_validators()
