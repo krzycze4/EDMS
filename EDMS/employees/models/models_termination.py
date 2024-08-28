@@ -19,13 +19,8 @@ class Termination(models.Model):
         return f"Termination #{self.name}"
 
     def update_agreement_end_date_actual(self):
-        last_addendum = Addendum.objects.filter(agreement=self.agreement).order_by("create_date").last()
         if self.agreement.termination:
             self.agreement.end_date_actual = self.agreement.termination.end_date
-        elif last_addendum:
-            self.agreement.end_date_actual = last_addendum.end_date
-        else:
-            self.agreement.end_date_actual = self.agreement.end_date
 
     def update_agreement_is_current(self):
         if self.agreement.end_date_actual < timezone.now().date():
