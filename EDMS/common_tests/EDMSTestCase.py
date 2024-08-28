@@ -11,8 +11,26 @@ User = get_user_model()
 
 
 class EDMSTestCase(TestCase):
+    """
+    TestCase class for EDMS.
+
+    This class sets up a test environment with predefined user groups and users. It is used to run tests.
+    """
+
     @classmethod
     def setUpTestData(cls) -> None:
+        """
+        Set up the initial test data for the entire TestCase.
+
+        This method creates the groups with permissions and sets up users with different group memberships.
+        The groups are:
+        - Accountants
+        - CEOs
+        - HRs
+        - Managers
+
+        It also generates a random password that is shared among all test users.
+        """
         super().setUpTestData()
         for (group_name, permission_codenames) in group_names_with_permission_codenames.items():
             create_group_with_permissions(group_name=group_name, permission_codenames=permission_codenames)
@@ -25,6 +43,15 @@ class EDMSTestCase(TestCase):
 
     @classmethod
     def create_user_with_group(cls, group_name: str) -> User:
+        """
+        Create a new user and assign them to a specified group.
+
+        Args:
+            group_name (str): The name of the group to which the user should be assigned.
+
+        Returns:
+            User: The created user who is assigned to the specified group.
+        """
         group: Group = get_object_or_404(Group, name=group_name)
         user: User = UserFactory(is_active=True, password=cls.password)
         user.groups.add(group)
