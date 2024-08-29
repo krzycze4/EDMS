@@ -74,6 +74,12 @@ class OrderUpdateForm(forms.ModelForm):
         return cleaned_data
 
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initializes the form.
+
+        This method also sets the 'status' field as read-only if the end date of the order is in the future
+        or if there is no protocol associated with the order.
+        """
         super().__init__(*args, **kwargs)
         if self.instance.end_date > datetime.today().date() or not Protocol.objects.filter(order=self.instance):
             self.fields["status"].widget = forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"})
