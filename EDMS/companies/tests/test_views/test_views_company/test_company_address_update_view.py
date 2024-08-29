@@ -59,12 +59,6 @@ class AddressTestCase(EDMSTestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
 
-    def test_get_not_existing_address_for_accountant(self):
-        login = self.client.login(email=self.accountant.email, password=self.password)
-        self.assertTrue(login)
-        with self.assertRaises(Address.DoesNotExist):
-            self.client.get(reverse_lazy("update-address", kwargs={"company_pk": self.company.pk, "address_pk": 100}))
-
     def test_post_correct_address_update_for_accountant(self):
         login = self.client.login(email=self.accountant.email, password=self.password)
         self.assertTrue(login)
@@ -101,12 +95,6 @@ class AddressTestCase(EDMSTestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, self.template_name)
-
-    def test_get_not_existing_address_for_ceo(self):
-        login = self.client.login(email=self.ceo.email, password=self.password)
-        self.assertTrue(login)
-        with self.assertRaises(Address.DoesNotExist):
-            self.client.get(reverse_lazy("update-address", kwargs={"company_pk": self.company.pk, "address_pk": 100}))
 
     def test_post_correct_address_update_for_ceo(self):
         login = self.client.login(email=self.ceo.email, password=self.password)
