@@ -47,6 +47,17 @@ class InvoiceFilter(django_filters.FilterSet):
 
     @staticmethod
     def filter_unpaid_postponed_invoices(queryset, name, value):
+        """
+        Filters the queryset to show only unpaid invoices that are past the payment date.
+
+        Args:
+            queryset (QuerySet): The initial queryset of invoices.
+            name (str): The name of the filter.
+            value (bool): If True, filters for unpaid invoices that are past due.
+
+        Returns:
+            QuerySet: A filtered queryset of invoices.
+        """
         if value:
             today = timezone.now().date()
             return queryset.filter(is_paid=False, payment_date__lt=today)
