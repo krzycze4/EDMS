@@ -18,6 +18,13 @@ class ManageInvoicesForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the form and sets the queryset for income and cost invoices.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         super().__init__(*args, **kwargs)
         self.fields["income_invoice"].queryset = Invoice.objects.filter(
             seller__is_mine=True, buyer=self.instance.company
@@ -25,6 +32,15 @@ class ManageInvoicesForm(forms.ModelForm):
         self.fields["cost_invoice"].queryset = Invoice.objects.filter(buyer__is_mine=True)
 
     def save(self, commit=True) -> Order:
+        """
+        Saves the form data and updates the order with selected invoices.
+
+        Args:
+            commit (bool): Whether to commit the changes to the database. Defaults to True.
+
+        Returns:
+            Order: The updated order object.
+        """
         order = super().save(commit=commit)
 
         income_invoices = self.cleaned_data["income_invoice"]
@@ -40,6 +56,15 @@ class ManageInvoicesForm(forms.ModelForm):
 
     @staticmethod
     def get_all_connected_invoices(invoices: QuerySet[Invoice]) -> List[Invoice]:
+        """
+        Retrieves all invoices linked to the given invoices.
+
+        Args:
+            invoices (QuerySet[Invoice]): The initial set of invoices.
+
+        Returns:
+            List[Invoice]: A list of all related invoices.
+        """
         linked_invoices = Invoice.objects.filter(linked_invoice__in=invoices)
         all_invoices = list(invoices) + list(linked_invoices)
         return all_invoices
