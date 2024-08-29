@@ -28,7 +28,8 @@ class TerminationValidator:
         Checks if the termination dates are valid.
 
         Args:
-            cleaned_data (Dict[str, Union[str | date | Agreement | UploadedFile]]): A dictionary containing termination data to be validated.
+            cleaned_data (Dict[str, Union[str | date | Agreement | UploadedFile]]): A dictionary containing termination
+            data to be validated.
 
         Raises:
             ValidationError: If any of the dates are invalid based on the agreement dates.
