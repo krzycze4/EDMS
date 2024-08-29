@@ -17,6 +17,12 @@ class CustomLoginView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
+        """
+        Determines the URL to redirect to after a successful login based on user groups.
+
+        Returns:
+            str: The URL to redirect to after login.
+        """
         if self.request.user.groups.filter(name="hrs").exists():
             return reverse_lazy("list-employee")
         elif self.request.user.groups.filter(name="accountants").exists():
@@ -25,6 +31,15 @@ class CustomLoginView(LoginView):
             return super().get_success_url()
 
     def form_invalid(self, form: CustomAuthenticationForm) -> HttpResponse:
+        """
+        Handles the case where the login form is invalid. Shows error messages based on the user status.
+
+        Args:
+            form (CustomAuthenticationForm): The form that was submitted.
+
+        Returns:
+            HttpResponse: The response object to be returned.
+        """
         response: HttpResponse = super().form_invalid(form)
         username: str = form.cleaned_data.get("username")
         try:
