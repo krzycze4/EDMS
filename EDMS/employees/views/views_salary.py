@@ -58,6 +58,15 @@ class SalaryListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     context_object_name = "salaries"
 
     def get_queryset(self) -> QuerySet[Salary]:
+        """
+        Get the list of salaries to display.
+
+        This method applies filtering based on the request parameters and orders
+        the salaries according to the specified ordering.
+
+        Returns:
+            QuerySet[Salary]: A queryset of filtered and ordered salaries.
+        """
         self.filter_set = SalaryFilterSet(
             self.request.GET, queryset=Salary.objects.select_related("user").order_by(self.ordering)
         )
