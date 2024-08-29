@@ -19,22 +19,46 @@ class Termination(models.Model):
         return f"Termination #{self.name}"
 
     def update_agreement_end_date_actual(self):
+        """
+        Updates the agreement's actual end date based on the termination.
+        """
         if self.agreement.termination:
             self.agreement.end_date_actual = self.agreement.termination.end_date
 
     def update_agreement_is_current(self):
+        """
+        Updates the agreement's current status based on the current date.
+        """
         if self.agreement.end_date_actual < timezone.now().date():
             self.agreement.is_current = False
         else:
             self.agreement.is_current = True
 
     def save(self, *args, **kwargs):
+        """
+        Saves the termination,
+        updates related agreement details
+        and saves agreement.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         super().save(*args, **kwargs)
         self.update_agreement_end_date_actual()
         self.update_agreement_is_current()
         self.agreement.save()
 
     def delete(self, *args, **kwargs):
+        """
+        Deletes the termination,
+        updates the agreement's end date and status
+        and saves the agreement.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         agreement = self.agreement
         super().delete(*args, **kwargs)
         last_addendum = Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
