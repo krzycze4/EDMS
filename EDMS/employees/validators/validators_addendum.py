@@ -9,14 +9,34 @@ from employees.models.models_agreement import Agreement
 
 
 class AddendumValidator:
+    """
+    Handles validation of addendum data.
+    """
+
     @classmethod
     def all_validators(cls) -> List[callable]:
+        """
+        Gets all validator functions in this class.
+
+        Returns:
+            List[callable]: A list of all validator functions in this class.
+        """
         return [func for _, func in inspect.getmembers(cls, predicate=inspect.isfunction)]
 
     @staticmethod
     def validate_addendum_dates(
         cleaned_data: Dict[str, Union[str | date | Agreement | Decimal | UploadedFile]]
     ) -> None:
+        """
+        Validates the dates in the addendum.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | Agreement | Decimal | UploadedFile]]):
+                A dictionary that has the data to validate.
+
+        Raises:
+            ValidationError: If any of the dates are not valid.
+        """
         agreement: Agreement = cleaned_data["agreement"]
         create_date: date = cleaned_data["create_date"]
         end_date: date = cleaned_data["end_date"]
