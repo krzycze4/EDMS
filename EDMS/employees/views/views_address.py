@@ -20,6 +20,15 @@ class AddressCreateView(PermissionRequiredMixin, CreateView, LoginRequiredMixin)
         return reverse("detail-employee", kwargs={"pk": self.kwargs["pk"]})
 
     def form_valid(self, form: AddressForm):
+        """
+        Handles the form submission if the form is valid.
+
+        Args:
+            form (AddressForm): The form containing the address data.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the employee's detail page after saving the address.
+        """
         user = get_object_or_404(User, pk=self.kwargs["pk"])
         address, created = Address.objects.get_or_create(**form.cleaned_data)
         user.address = address
@@ -41,6 +50,15 @@ class AddressUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
         return Address.objects.get(pk=user.address.pk)
 
     def form_valid(self, form):
+        """
+        Handles the form submission if the form is valid.
+
+        Args:
+            form (AddressForm): The form containing the address data.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the employee's detail page after saving the address.
+        """
         user = get_object_or_404(User, pk=self.kwargs["pk"])
         form.save()
         user.address = form.instance
