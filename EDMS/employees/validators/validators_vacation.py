@@ -16,14 +16,34 @@ User = get_user_model()
 
 
 class VacationValidator:
+    """
+    Validator checks VacationFrom data.
+    """
+
     @classmethod
     def all_validators(cls) -> List[callable]:
+        """
+        Returns all the validator methods in the class.
+
+        Returns:
+            List[callable]: A list of validator methods.
+        """
         return [func for _, func in inspect.getmembers(cls, predicate=inspect.isfunction)]
 
     @staticmethod
     def validate_no_overlap_vacation_dates(
         cleaned_data: Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]
     ) -> None:
+        """
+        Validates that the vacation dates do not overlap with other vacations for the same user.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]):
+                The cleaned data from the form, containing vacation details.
+
+        Raises:
+            ValidationError: If the vacation dates overlap with another vacation.
+        """
         start_date: date = cleaned_data["start_date"]
         end_date: date = cleaned_data["end_date"]
         leave_user: User = cleaned_data["leave_user"]
@@ -50,6 +70,16 @@ class VacationValidator:
     def validate_user_can_take_vacation(
         cleaned_data: Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]
     ) -> None:
+        """
+        Validates that the user has a current employment agreement to take a vacation.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]):
+                The cleaned data from the form, containing vacation details.
+
+        Raises:
+            ValidationError: If the user does not have a current employment agreement.
+        """
         leave_user: User = cleaned_data["leave_user"]
         if not Agreement.objects.filter(user=leave_user, is_current=True, type=Agreement.EMPLOYMENT).exists():
             raise ValidationError(
@@ -60,6 +90,16 @@ class VacationValidator:
     def validate_enough_vacation_left(
         cleaned_data: Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]
     ) -> None:
+        """
+        Validates that the user has enough vacation days left to take the requested vacation.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | User | List[User] | UploadedFile | int]]):
+                The cleaned data from the form, containing vacation details.
+
+        Raises:
+            ValidationError: If the user does not have enough vacation days left.
+        """
         vacation_left: User = cleaned_data["leave_user"].vacation_left
         considered_vacation: int = (
             (cleaned_data["end_date"] - cleaned_data["start_date"]).days + cleaned_data["included_days_off"] + 1
@@ -71,6 +111,16 @@ class VacationValidator:
     def validate_end_date_after_start_date(
         cleaned_data: Dict[str, Union[str | Decimal | date | User | UploadedFile]]
     ) -> None:
+        """
+        Validates that the vacation end date is not before the start date.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | Decimal | date | User | UploadedFile]]):
+                The cleaned data from the form, containing vacation details.
+
+        Raises:
+            ValidationError: If the end date is before the start date.
+        """
         start_date: date = cleaned_data["start_date"]
         end_date: date = cleaned_data["end_date"]
         if start_date > end_date:
@@ -78,6 +128,16 @@ class VacationValidator:
 
     @staticmethod
     def validate_file_extension(cleaned_data: Dict[str, Union[str | Decimal | date | User | UploadedFile]]) -> None:
+        """
+        Validates that the uploaded file has a correct and allowed file extension.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | Decimal | date | User | UploadedFile]]):
+                The cleaned data from the form, including the uploaded file.
+
+        Raises:
+            ValidationError: If the file extension is not valid.
+        """
         scan: UploadedFile = cleaned_data["scan"]
         extension: str = os.path.splitext(scan.name)[1]
         valid_extensions = [
@@ -100,6 +160,16 @@ class VacationValidator:
 
     @staticmethod
     def validate_max_size_file(cleaned_data: Dict[str, Union[str | Decimal | date | User | UploadedFile]]) -> None:
+        """
+        Validates that the uploaded file does not exceed the maximum allowed size.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | Decimal | date | User | UploadedFile]]):
+                The cleaned data from the form, including the uploaded file.
+
+        Raises:
+            ValidationError: If the file size exceeds the maximum allowed size.
+        """
         scan: UploadedFile = cleaned_data["scan"]
         scan_size: int = scan.size
         max_scan_size: int = 10**7  # 10mB
