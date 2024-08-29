@@ -13,6 +13,18 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     permission_required = "dashboards.view_dashboard"
 
     def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests for the dashboard page.
+        If user group is not ceos or managers forbid to enter endpoint.
+
+        Args:
+            request (HttpRequest): The request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            HttpResponse | HttpResponseForbidden: The HTTP response with the dashboard or a forbidden response.
+        """
         user = request.user
         if user.groups.filter(name__in=["ceos", "managers"]).exists():
             return super().get(request, *args, **kwargs)
