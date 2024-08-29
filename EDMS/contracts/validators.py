@@ -17,12 +17,28 @@ User = get_user_model()
 class ContractValidator:
     @classmethod
     def all_validators(cls) -> List[callable]:
+        """
+        Gets all validation methods in this class.
+
+        Returns:
+            List[callable]: A list of validation functions.
+        """
         return [func for _, func in inspect.getmembers(cls, predicate=inspect.isfunction)]
 
     @staticmethod
     def validate_create_date_before_start_date(
         cleaned_data: Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]
     ) -> None:
+        """
+        Checks if the create_date is before the start date.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]): The cleaned data from
+             the form.
+
+        Raises:
+            ValidationError: If the start date is before the create_date.
+        """
         create_date: date = cleaned_data["create_date"]
         start_date: date = cleaned_data["start_date"]
         if start_date < create_date:
@@ -37,6 +53,16 @@ class ContractValidator:
     def validate_end_date_after_start_date(
         cleaned_data: Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]
     ) -> None:
+        """
+        Checks if the end_date is after the start_date.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]): The cleaned data from
+             the form.
+
+        Raises:
+            ValidationError: If the end date is before the start date.
+        """
         start_date: date = cleaned_data["start_date"]
         end_date: date = cleaned_data["end_date"]
         if start_date > end_date:
@@ -46,6 +72,16 @@ class ContractValidator:
     def validate_max_size_file(
         cleaned_data: Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]
     ) -> None:
+        """
+        Checks if the uploaded file size is within the maximum limit.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]): The cleaned data from
+             the form.
+
+        Raises:
+            ValidationError: If the file size is too large.
+        """
         scan: UploadedFile = cleaned_data["scan"]
         scan_size: int = scan.size
         max_scan_size: int = 10**7  # 10mB
@@ -56,6 +92,16 @@ class ContractValidator:
     def validate_file_extension(
         cleaned_data: Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]
     ) -> None:
+        """
+        Checks if the uploaded file has a valid extension.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]): The cleaned data from
+            the form.
+
+        Raises:
+            ValidationError: If the file extension is not allowed.
+        """
         scan: UploadedFile = cleaned_data["scan"]
         extension: str = os.path.splitext(scan.name)[1]
         valid_extensions = [
@@ -72,7 +118,8 @@ class ContractValidator:
             valid_extensions_str = ", ".join(valid_extensions)
             raise ValidationError(
                 {
-                    "scan": f"Incorrect extensions. Your file extension: {extension}. Valid extensions: {valid_extensions_str}"
+                    "scan": f"Incorrect extensions. Your file extension: {extension}."
+                    f"Valid extensions: {valid_extensions_str}"
                 }
             )
 
@@ -80,6 +127,16 @@ class ContractValidator:
     def validate_no_future_create_date(
         cleaned_data: Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]
     ) -> None:
+        """
+        Checks if the create_date is not in the future.
+
+        Args:
+            cleaned_data (Dict[str, Union[str | date | Company | User | Decimal | UploadedFile]]): The cleaned data from
+            the form.
+
+        Raises:
+            ValidationError: If the create_date is in the future.
+        """
         create_date: date = cleaned_data["create_date"]
         if timezone.now().date() < create_date:
             raise ValidationError({"create_date": "The create date can't be future end_date."})
