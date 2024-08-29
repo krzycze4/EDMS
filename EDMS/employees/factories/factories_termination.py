@@ -12,8 +12,8 @@ class TerminationFactory(DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Termination #{n + 1}")
     agreement = factory.SubFactory(AgreementFactory)
-    create_date = factory.LazyFunction(lambda: timezone.now().date() + timezone.timedelta(days=100))
-    end_date = factory.LazyFunction(lambda: timezone.now().date() + timezone.timedelta(days=130))
+    create_date = timezone.now().date() + timezone.timedelta(days=100)
+    end_date = timezone.now().date() + timezone.timedelta(days=130)
     scan = factory.LazyAttribute(
         lambda _: SimpleUploadedFile("the_file.pdf", b"file_content", content_type="application/pdf")
     )

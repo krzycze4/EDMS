@@ -10,6 +10,6 @@ class SalaryFactory(DjangoModelFactory):
     class Meta:
         model = Salary
 
-    date = factory.LazyFunction(lambda: timezone.now().date())
+    date = timezone.now().date()
     user = factory.SubFactory(UserFactory)
     fee = Decimal(7000)

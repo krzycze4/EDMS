@@ -11,8 +11,8 @@ class VacationFactory(DjangoModelFactory):
         model = Vacation
 
     type = Vacation.ANNUAL
-    start_date = factory.LazyFunction(lambda: timezone.now().date())
-    end_date = factory.LazyAttribute(lambda obj: obj.start_date + timezone.timedelta(days=1))
+    start_date = timezone.now().date()
+    end_date = start_date + timezone.timedelta(days=1)
     leave_user = factory.SubFactory(UserFactory)
     scan = factory.LazyAttribute(
         lambda _: SimpleUploadedFile("the_file.pdf", b"file_content", content_type="application/pdf")
