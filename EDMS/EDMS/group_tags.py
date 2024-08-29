@@ -8,6 +8,16 @@ User = get_user_model()
 
 @register.filter(name="has_group")
 def has_group(user: User, group_name: str) -> bool:
+    """
+    Jinja tag to check if a user is in a specific group.
+
+    Args:
+        user (User): The user to check.
+        group_name (str): The name of the group.
+
+    Returns:
+        bool: True if the user is in the group, False otherwise.
+    """
     cache_key = f"user_{user.pk}_groups"
     cached_groups = cache.get(cache_key)
 
