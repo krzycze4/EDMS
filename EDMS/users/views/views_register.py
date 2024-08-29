@@ -24,11 +24,30 @@ class UserRegisterView(FormView):
     redirect_authenticated_user = True
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseRedirect:
+        """
+        Redirects authenticated users to the dashboard.
+
+        Args:
+            request (HttpRequest): The incoming request.
+
+        Returns:
+            HttpResponseRedirect: Redirect to the dashboard if the user is authenticated,
+                                  otherwise proceeds with the normal dispatch process.
+        """
         if self.redirect_authenticated_user and self.request.user.is_authenticated:
             return redirect("dashboard")
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form: CustomUserCreationForm) -> HttpResponseRedirect:
+        """
+        Saves the user and sends an activation email after form is valid.
+
+        Args:
+            form (CustomUserCreationForm): The validated form containing user details.
+
+        Returns:
+            HttpResponseRedirect: Redirect to the success URL after sending the activation email.
+        """
         user = form.save()
         domain: str = get_current_site(self.request).domain
         uidb64: str = urlsafe_base64_encode(force_bytes(user.pk))
@@ -56,6 +75,12 @@ class ActivateAccountView(TemplateView):
         return context
 
     def _set_information(self) -> str:
+        """
+        Set the activation information based on the activation token and user ID.
+
+        Returns:
+            str: A string indicating if the activation was "successfully" or "failed".
+        """
         uidb64: str = self.kwargs.get("uidb64")
         token: str = self.kwargs.get("token")
         information = "failed"
