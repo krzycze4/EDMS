@@ -49,17 +49,30 @@ class Agreement(models.Model):
         return f"{self.name}"
 
     def save(self, *args, **kwargs):
+        """
+        Update agreement end date and current status before saving.
+        Count current user vacation left.
+        Save the agreement to the database.
+        """
         self.set_end_date_actual()
         self.set_is_current()
         self.count_vacation_left()
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        """
+        Set user vacation left as 0.
+        Delete agreement.
+        """
         self.user.vacation_left = 0
         self.user.save()
         super().delete(*args, **kwargs)
 
     def set_end_date_actual(self) -> None:
+        """
+        Set the actual end date of the agreement.
+        If there are no addenda or termination, use the agreement end date.
+        """
         if not self.pk:
             self.end_date_actual = self.end_date
         else:
@@ -67,6 +80,10 @@ class Agreement(models.Model):
                 self.end_date_actual = self.end_date
 
     def set_is_current(self) -> None:
+        """
+        Set if the agreement is current.
+        It is current if today is between start and end date.
+        """
         if timezone.now().date() < self.start_date or self.end_date_actual < timezone.now().date():
             self.is_current = False
         else:
@@ -77,6 +94,14 @@ class Agreement(models.Model):
         self.user.save()
 
     def count_granted_vacation_from_agreement(self) -> int:
+        """
+        Calculate and update the vacation left for the user.
+        If agreement is employment contract count vacation left,
+        if not set user vacation left as 0
+
+        Return:
+            int: counted user vacation left
+        """
         vacation_from_agreement = 0
         if self.is_current and self.type == self.EMPLOYMENT:
             months_in_year = 12
@@ -85,6 +110,12 @@ class Agreement(models.Model):
         return vacation_from_agreement
 
     def count_work_months_current_year(self) -> int:
+        """
+        Calculate the number of work months in the current year.
+        Adjust if the agreement starts before or ends after the current year.
+        Return:
+            int: amount of working months in current year.
+        """
         start_month = self.start_date.month
         end_month = self.end_date_actual.month
         if self.start_date.year < timezone.now().year:
