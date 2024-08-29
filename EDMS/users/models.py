@@ -15,6 +15,14 @@ class CustomUserManager(UserManager):
     def _create_user(self, email: str, password: str, **extra_fields) -> User:
         """
         Create and save a user with the given email and password.
+
+        Args:
+            email (str): The user's email address.
+            password (str): The user's password.
+            **extra_fields: Other user fields to set.
+
+        Returns:
+            User: The created user object.
         """
         if not email:
             raise ValueError("The given email must be set")
@@ -30,11 +38,36 @@ class CustomUserManager(UserManager):
         return user
 
     def create_user(self, email=None, password=None, **extra_fields) -> User:
+        """
+        Create a regular user with the given email and password.
+
+        Args:
+            email (str, optional): The user's email address.
+            password (str, optional): The user's password.
+            **extra_fields: Other user fields to set.
+
+        Returns:
+            User: The created user object.
+        """
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email=None, password=None, **extra_fields) -> User:
+        """
+        Create a superuser with the given email and password.
+
+        Args:
+            email (str, optional): The user's email address.
+            password (str, optional): The user's password.
+            **extra_fields: Other user fields to set.
+
+        Returns:
+            User: The created superuser object.
+
+        Raises:
+            ValueError: If is_staff, is_superuser, or is_active are not True.
+        """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
@@ -49,6 +82,15 @@ class CustomUserManager(UserManager):
         return self._create_user(email, password, **extra_fields)
 
     def get_by_natural_key(self, email: str) -> User:
+        """
+        Get a user by email.
+
+        Args:
+            email (str): The user's email address.
+
+        Returns:
+            User: The user object with the given email.
+        """
         return self.get(**{self.model.EMAIL_FIELD: email})
 
 
@@ -85,18 +127,44 @@ class User(AbstractUser):
         swappable = "AUTH_USER_MODEL"
 
     def get_username(self) -> str:
-        """Return the email for this User."""
+        """
+        Return the email for this user.
+
+        Returns:
+            str: The email address of the user.
+        """
         return getattr(self, self.EMAIL_FIELD)
 
     def clean(self) -> None:
+        """
+        Normalize the email address before saving.
+        """
         setattr(self, self.EMAIL_FIELD, self.normalize_username(self.get_username()))
 
     @classmethod
     def normalize_username(cls, email: str) -> str:
+        """
+        Normalize the email address.
+
+        Args:
+            email (str): The email address to normalize.
+
+        Returns:
+            str: The normalized email address.
+        """
         return unicodedata.normalize("NFKC", email) if isinstance(email, str) else email
 
     @classmethod
     def normalize_email(cls, email: str) -> str:
+        """
+        Normalize the email address.
+
+        Args:
+            email (str): The email address to normalize.
+
+        Returns:
+            str: The normalized email address.
+        """
         return unicodedata.normalize("NFKC", email) if isinstance(email, str) else email
 
     def __str__(self) -> str:
