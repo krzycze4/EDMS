@@ -48,6 +48,17 @@ class AgreementForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initializes the AgreementForm.
+
+        Args:
+            *args: Positional arguments for the form.
+            **kwargs: Keyword arguments for the form, including:
+                instance (Agreement): An instance of the Agreement model (optional).
+                user (User): The user to associate with the agreement (required).
+
+        Sets the initial values for user and user_display fields based on the provided user and instance.
+        """
         instance: Agreement = kwargs.get("instance", None)
         user: User = kwargs.pop("user", None)
         if instance:
