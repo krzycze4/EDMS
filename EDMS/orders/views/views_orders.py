@@ -63,6 +63,15 @@ class OrderDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin):
 
     @staticmethod
     def count_invoices_sum(invoices: List[Union[Invoice | None]]) -> int:
+        """
+        Calculates the total net price of a list of invoices.
+
+        Args:
+            invoices (List[Union[Invoice | None]]): A list of invoices to calculate the sum from.
+
+        Returns:
+            int: The total net price after considering invoice types and linked invoices.
+        """
         sum_net_price = 0
         for invoice in invoices:
             if invoice.type in [Invoice.ORIGINAL, Invoice.DUPLICATE] and invoice.linked_invoice is None:
@@ -93,6 +102,12 @@ class OrderListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     ordering = ["create_date"]
 
     def get_queryset(self) -> QuerySet:
+        """
+        Retrieves the list of orders from the database, filtered and ordered.
+
+        Returns:
+            QuerySet: The filtered and ordered list of orders.
+        """
         queryset = super().get_queryset()
         self.filter = OrderFilter(self.request.GET, queryset=self.queryset)
         queryset = self.filter.qs
