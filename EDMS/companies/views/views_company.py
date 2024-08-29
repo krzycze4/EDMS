@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (
     DetailView,
@@ -34,6 +34,17 @@ class CompanyFindView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     success_url = reverse_lazy("create-company")
 
     def post(self, request: HttpRequest, *args, **kwargs) -> Union[HttpResponse | Callable]:
+        """
+        Handles POST requests. Validates the KRS form and initiates an API call to check the KRS number.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Union[HttpResponse | Callable]: The HTTP response or a callable that returns one.
+        """
         form: KRSForm = self.get_form()
 
         if form.is_valid():
@@ -53,6 +64,17 @@ class CompanyFindView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     def handle_api_response(
         self, krs: str, form: KRSForm, response: requests.Response
     ) -> Union[HttpResponse | HttpResponseRedirect | Callable]:
+        """
+        Handles the API response after checking the KRS number.
+
+        Args:
+            krs (str): The KRS number.
+            form (KRSForm): The form object containing validated KRS data.
+            response (requests.Response): The HTTP response object from the API.
+
+        Returns:
+            Union[HttpResponse | HttpResponseRedirect | Callable]: An HTTP response based on the API response status.
+        """
         if Company.objects.filter(krs=krs).exists():
             messages.warning(
                 self.request,
@@ -70,6 +92,16 @@ class CompanyFindView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
         return render(self.request, self.template_name, {"form": form})
 
     def process_valid_response(self, response: requests.Response, krs: str) -> HttpResponseRedirect:
+        """
+        Processes a valid API response and saves company data to the session.
+
+        Args:
+           response (requests.Response): The successful HTTP response object from the API.
+           krs (str): The KRS number.
+
+        Returns:
+           HttpResponseRedirect: A redirect response to the next step in the company creation process.
+        """
         api_json = response.json()
 
         company_data: Dict[str, Union[str, Dict[str, str]]] = api_json["odpis"]["dane"]["dzial1"]["danePodmiotu"]
@@ -107,12 +139,27 @@ class CompanyCreateView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     success_url = reverse_lazy("create-company-done")
 
     def get_initial(self) -> Dict[str, str]:
+        """
+        Get the initial data for the form. This data comes from the session.
+
+        Returns:
+            Dict[str, str]: A dictionary with initial form data.
+        """
         initial = super().get_initial()
         company_data = self.request.session.get("company_data", {})
         initial.update(company_data)
         return initial
 
     def form_valid(self, form: CompanyAndAddressForm) -> HttpResponse:
+        """
+        Handle the form when it is valid. This creates a new company and address in the database.
+
+        Args:
+            form (CompanyAndAddressForm): The form with cleaned data.
+
+        Returns:
+            HttpResponse: A response to indicate the form was processed successfully.
+        """
         name: str = form.cleaned_data["name"]
         krs: int = form.cleaned_data["krs"]
         regon: int = form.cleaned_data["regon"]
@@ -164,6 +211,12 @@ class CompanyListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     ordering = "shortcut"
 
     def get_queryset(self) -> QuerySet[Company]:
+        """
+        Gets the list of companies using filters from the user's input.
+
+        Returns:
+            QuerySet[Company]: The filtered list of companies.
+        """
         queryset = super().get_queryset()
         self.filter_set = CompanyFilter(self.request.GET, queryset=queryset)
         return self.filter_set.qs
@@ -192,18 +245,16 @@ class CompanyIdentifiersUpdateView(LoginRequiredMixin, PermissionRequiredMixin, 
 
 class CompanyAddressUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "companies.change_company"
-    model = Company
+    model = Address
     form_class = UpdateAddressForm
     template_name = "companies/companies/update_address_company.html"
 
     def get_object(self, **kwargs):
-        address = Address.objects.get(id=self.kwargs["address_pk"])
-        return address
+        return get_object_or_404(Address, id=self.kwargs["address_pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        company = Company.objects.get(pk=self.kwargs["company_pk"])
-        context["company"] = company
+        context["company"] = get_object_or_404(Company, id=self.kwargs["company_pk"])
         return context
 
     def get_success_url(self):
