@@ -1,5 +1,3 @@
-import secrets
-
 import factory
 from _decimal import Decimal
 from companies.factories import CompanyFactory
@@ -10,25 +8,20 @@ from factory import Sequence
 from factory.django import DjangoModelFactory
 from users.factories import UserFactory
 
-from EDMS.factory_utils import create_string_format_valid_date
-
 
 class ContractFactory(DjangoModelFactory):
     class Meta:
         model = Contract
 
     name = Sequence(lambda n: f"contract{n}")
-    start_date = factory.LazyAttribute(lambda obj: create_string_format_valid_date(obj.create_date))
-    end_date = factory.LazyAttribute(lambda obj: create_string_format_valid_date(obj.start_date))
+    create_date = timezone.now().date()
+    start_date = timezone.now().date()
+    end_date = timezone.now().date() + timezone.timedelta(days=365)
     company = factory.SubFactory(CompanyFactory)
     price = Decimal(1000)
     scan = factory.LazyAttribute(
         lambda _: SimpleUploadedFile("the_file.pdf", b"file_content", content_type="application/pdf")
     )
-
-    @factory.lazy_attribute
-    def create_date(self):
-        return timezone.now().date() - timezone.timedelta(days=secrets.randbelow(366))
 
     @factory.post_generation
     def employee(self, create, employees, **kwargs):
