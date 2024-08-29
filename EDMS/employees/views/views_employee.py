@@ -20,6 +20,15 @@ class EmployeeDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin
     template_name = "employees/employees/employee_detail.html"
 
     def get_context_data(self, **kwargs):
+        """
+        Add extra context data for the employee detail view.
+
+        Args:
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            dict: Context data including plots, agreements, terminations, addenda, and vacations.
+        """
         context = super().get_context_data(**kwargs)
         context["plot"] = render_plot_for_user_group(user=self.object)
         context["agreements"] = self.object.agreements.all()
@@ -51,6 +60,12 @@ class EmployeeListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     filter_set = None
 
     def get_queryset(self) -> QuerySet[User]:
+        """
+        Get the list of users, applying any filters from the request.
+
+        Returns:
+            QuerySet[User]: Filtered list of users based on the request.
+        """
         queryset = super().get_queryset()
         self.filter_set = UserFilterSet(self.request.GET, queryset=queryset)
         return self.filter_set.qs
