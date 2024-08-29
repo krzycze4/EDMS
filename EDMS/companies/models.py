@@ -24,7 +24,8 @@ class Company(models.Model):
     krs = models.BigIntegerField(
         verbose_name="KRS Number",
         unique=True,
-        help_text="Identifier of company. It's 9 (if company is based in one voivodeship) or 14 (if more than one voivodeship) digits.",
+        help_text="Identifier of company. It's 9 (if company is based in one voivodeship) or 14 (if more than one"
+        "voivodeship) digits.",
     )
     regon = models.BigIntegerField(
         verbose_name="REGON Number", unique=True, help_text="Identifier of company. It's 9 digits."
@@ -53,7 +54,8 @@ class Contact(models.Model):
     phone = models.CharField(max_length=25, blank=True, help_text="Phone number, e.g. +48123456789")
     description = models.CharField(
         max_length=200,
-        help_text="Description of that person, e.g. position in the company, special signs - generally less or more important information.",
+        help_text="Description of that person, e.g. position in the company, special signs - generally less or more"
+        "important information.",
     )
     company = models.ForeignKey(
         Company,
