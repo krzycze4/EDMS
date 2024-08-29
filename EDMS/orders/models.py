@@ -65,6 +65,9 @@ class Order(models.Model):
         return f"{self.name}"
 
     def save(self, *args, **kwargs) -> None:
+        """
+        Saves the order instance. Sets the order name if it's a new order.
+        """
         if not self.pk:
             current_month = timezone.now().strftime("%m")
             current_year = timezone.now().strftime("%Y")
@@ -73,6 +76,16 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def declare_counter(self, current_month: int, current_year: int) -> int:
+        """
+        Calculates the counter for the order number based on existing orders.
+
+        Args:
+            current_month (int): The current month as a string.
+            current_year (int): The current year as a string.
+
+        Returns:
+            int: The new counter value.
+        """
         counter = 1
         last_order = Order.objects.filter(
             create_date__month=current_month,
