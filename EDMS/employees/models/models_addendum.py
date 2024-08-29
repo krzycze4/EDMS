@@ -25,23 +25,35 @@ class Addendum(models.Model):
         return f"Addendum #{self.name}"
 
     def update_agreement_end_date(self):
+        """
+        Updates the end date of the related agreement to the end date of the latest addendum if it exists.
+        """
         last_addendum = Addendum.objects.filter(agreement=self.agreement).order_by("create_date").last()
         if last_addendum:
             self.agreement.end_date_actual = last_addendum.end_date
 
     def update_agreement_is_current(self):
+        """
+        Updates the 'is_current' status of the related agreement based on the current date.
+        """
         if self.agreement.end_date_actual < timezone.now().date():
             self.agreement.is_current = False
         else:
             self.agreement.is_current = True
 
     def save(self, *args, **kwargs):
+        """
+        Saves the addendum and updates the related agreement's end date and current status.
+        """
         super().save(*args, **kwargs)
         self.update_agreement_end_date()
         self.update_agreement_is_current()
         self.agreement.save()
 
     def delete(self, *args, **kwargs):
+        """
+        Deletes the addendum and updates the related agreement's end date and current status.
+        """
         agreement = self.agreement
         super().delete(*args, **kwargs)
         last_addendum = Addendum.objects.filter(agreement=agreement).order_by("create_date").last()
