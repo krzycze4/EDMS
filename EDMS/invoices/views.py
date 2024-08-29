@@ -40,6 +40,12 @@ class InvoiceDetailView(PermissionRequiredMixin, DetailView, LoginRequiredMixin)
         return context
 
     def get_child_invoices(self) -> Optional[List[Invoice]]:
+        """
+        If invoice type is original or duplicate find and return all linked invoices to it.
+
+        Return:
+            List[Invoice]: family of invoices(main invoice and all linked invoices to it)
+        """
         child_invoices = None
         if self.object.type in [Invoice.ORIGINAL, Invoice.DUPLICATE]:
             child_invoices = Invoice.objects.filter(linked_invoice=self.object)
@@ -56,6 +62,15 @@ class InvoiceListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     ordering = ["create_date"]
 
     def get_queryset(self) -> QuerySet[Invoice]:
+        """
+        Gets the filtered and ordered list of invoices.
+
+        The method applies the filter based on the request's GET parameters and orders the
+        invoices by their creation date.
+
+        Returns:
+            QuerySet[Invoice]: The filtered and ordered set of invoices.
+        """
         queryset: QuerySet = super().get_queryset()
         self.filter = InvoiceFilter(self.request.GET, queryset=queryset)
         queryset = self.filter.qs.select_related("seller", "buyer")
@@ -77,6 +92,12 @@ class InvoiceUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
         return reverse("detail-invoice", kwargs={"pk": self.object.pk})
 
     def get_order(self) -> Order:
+        """
+        Retrieves the related order based on whether the invoice is an income or cost invoice.
+
+        Returns:
+            Order: The related order object, or None if no order is found.
+        """
         if self.object.seller.is_mine:
             order = Order.objects.filter(income_invoice=self.object).first()
         else:
@@ -84,6 +105,17 @@ class InvoiceUpdateView(PermissionRequiredMixin, UpdateView, LoginRequiredMixin)
         return order
 
     def get_form(self, form_class=None) -> InvoiceForm:
+        """
+        Customizes the form before displaying it to the user.
+
+        Hides and makes the seller and buyer fields read-only if an order is linked to the invoice.
+
+        Args:
+            form_class (type, optional): The form class to use. Defaults to None.
+
+        Returns:
+            InvoiceForm: The customized form.
+        """
         form = super().get_form(form_class)
         if self.get_order():
             form.fields["seller"].widget = forms.HiddenInput(attrs={"class": "form-control", "readonly": "readonly"})
