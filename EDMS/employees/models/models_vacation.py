@@ -41,14 +41,31 @@ class Vacation(models.Model):
     )
 
     def save(self, *args, **kwargs) -> None:
+        """
+        Saves the vacation record and updates the remaining vacation days for the employee.
+
+        Args:
+            *args: Additional arguments.
+            **kwargs: Additional keyword arguments.
+        """
         super().save(*args, **kwargs)
         self.count_vacation_left()
 
     def delete(self, *args, **kwargs) -> None:
+        """
+        Deletes the vacation record and updates the remaining vacation days for the employee.
+
+        Args:
+            *args: Additional arguments.
+            **kwargs: Additional keyword arguments.
+        """
         super().delete(*args, **kwargs)
         self.count_vacation_left()
 
     def count_vacation_left(self) -> None:
+        """
+        Calculates and updates the remaining vacation days for the employee.
+        """
         from employees.models.models_agreement import Agreement
 
         agreement = self.leave_user.agreements.filter(type=Agreement.EMPLOYMENT).order_by("-create_date").first()
@@ -62,6 +79,12 @@ class Vacation(models.Model):
 
     @staticmethod
     def count_used_vacation() -> int:
+        """
+        Counts the total number of vacation days used by all employees for annual vacations.
+
+        Returns:
+            int: The total number of used vacation days.
+        """
         used_vacation_days: int = 0
         vacations = list(Vacation.objects.filter(type=Vacation.ANNUAL))
         for vacation in vacations:
