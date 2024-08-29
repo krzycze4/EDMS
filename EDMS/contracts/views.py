@@ -60,6 +60,12 @@ class ContractListView(PermissionRequiredMixin, ListView, LoginRequiredMixin):
     context_object_name = "contracts"
 
     def get_queryset(self) -> QuerySet[Contract]:
+        """
+        Gets the queryset of contracts, and filtering by user input.
+
+        Returns:
+            QuerySet[Contract]: A queryset of filtered and related contract data.
+        """
         queryset = super().get_queryset()
         self.filter_set = ContractFilterSet(self.request.GET, queryset=queryset)
         queryset = self.filter_set.qs
