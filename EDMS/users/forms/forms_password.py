@@ -31,6 +31,20 @@ class CustomPasswordResetForm(PasswordResetForm):
         to_email,
         html_email_template_name=None,
     ):
+        """
+        Send a password reset email using the provided templates.
+
+        Args:
+            subject_template_name (str): The name of the email subject template.
+            email_template_name (str): The name of the email body template.
+            context (dict): Context data for rendering the templates.
+            from_email (str): The email address sending the reset email.
+            to_email (str): The recipient's email address.
+            html_email_template_name (str, optional): The name of the HTML email body template.
+
+        Returns:
+            None
+        """
         context["user"] = context["user"].id
         send_mail_reset_password.delay(
             subject_template_name=subject_template_name,
