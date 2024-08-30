@@ -21,9 +21,12 @@ class OrderFactory(DjangoModelFactory):
     company = factory.SubFactory(CompanyFactory)
     user = factory.SubFactory(UserFactory)
     contract = factory.SubFactory(ContractFactory)
-    create_date = factory.LazyAttribute(lambda _: timezone.now().date())
-    start_date = factory.LazyAttribute(lambda obj: obj.create_date - timezone.timedelta(days=1))
-    end_date = factory.LazyAttribute(lambda obj: obj.create_date + timezone.timedelta(days=365))
+    # create_date = factory.LazyAttribute(lambda _: timezone.now().date())
+    # start_date = factory.LazyAttribute(lambda obj: obj.create_date - timezone.timedelta(days=1))
+    # end_date = factory.LazyAttribute(lambda obj: obj.create_date + timezone.timedelta(days=365))
+    create_date = timezone.now().date()
+    start_date = create_date - timezone.timedelta(days=1)
+    end_date = create_date + timezone.timedelta(days=365)
     description = "XYZ"
 
 
