@@ -21,9 +21,6 @@ class OrderFactory(DjangoModelFactory):
     company = factory.SubFactory(CompanyFactory)
     user = factory.SubFactory(UserFactory)
     contract = factory.SubFactory(ContractFactory)
-    # create_date = factory.LazyAttribute(lambda _: timezone.now().date())
-    # start_date = factory.LazyAttribute(lambda obj: obj.create_date - timezone.timedelta(days=1))
-    # end_date = factory.LazyAttribute(lambda obj: obj.create_date + timezone.timedelta(days=365))
     create_date = timezone.now().date()
     start_date = create_date - timezone.timedelta(days=1)
     end_date = create_date + timezone.timedelta(days=365)
@@ -38,6 +35,6 @@ class ProtocolFactory(DjangoModelFactory):
     scan = factory.LazyAttribute(
         lambda _: SimpleUploadedFile("the_file.pdf", b"file_content", content_type="application/pdf")
     )
-    create_date = factory.LazyAttribute(lambda _: timezone.now().date())
+    create_date = timezone.now().date()
     user = factory.SubFactory(UserFactory)
     order = factory.SubFactory(OrderFactory)
