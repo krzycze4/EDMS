@@ -27,6 +27,7 @@ class Plot:
             str: HTML string of the plot.
         """
         plot_data = self.set_plot_data(orders=orders, salaries=salaries)
+        print(plot_data)
         x_data = self.set_x_values(plot_data=plot_data)
         y_data = list(plot_data.values())
         generated_date = timezone.now().strftime("%d/%m/%Y - %H:%M")
@@ -71,7 +72,9 @@ class Plot:
         end_month: int = timezone.now().month
         end_year: int = timezone.now().year
         month_balance = Decimal(0)
-        while start_month <= end_month and start_year <= end_year:
+        while timezone.datetime(day=1, month=start_month, year=start_year) <= timezone.datetime(
+            day=1, month=end_month, year=end_year
+        ):
             month_balance = self.count_month_balance(month_balance, orders, salaries, start_month, start_year)
             plot_data[(start_month, start_year)] = month_balance
             start_month, start_year = self.set_start_month_and_start_year(
