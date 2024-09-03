@@ -1,6 +1,5 @@
 from contracts.factories import ContractFactory
 from django.test import TestCase
-from django.utils import timezone
 from orders.factories import OrderFactory, ProtocolFactory
 from orders.models import Order
 from users.factories import UserFactory
@@ -24,8 +23,12 @@ class OrderTests(TestCase):
         self.assertEqual(str(self.order), self.order.name)
 
     def test_save_method(self):
-        current_month = timezone.now().strftime("%m")
-        current_year = timezone.now().strftime("%Y")
-        counter = Order.declare_counter(self.order, current_month=current_month, current_year=current_year)
+        counter = Order.declare_counter(
+            self.order, current_month=self.order.create_date.month, current_year=self.order.create_date.year
+        )
         self.order.save()
-        self.assertEqual(self.order.name, f"{self.contract.company.shortcut}-{counter}/{current_month}/{current_year}")
+        self.assertEqual(
+            self.order.name,
+            f"{self.contract.company.shortcut}-{counter}/{self.order.create_date.month}/"
+            f"{self.order.create_date.year}",
+        )
