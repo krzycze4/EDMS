@@ -6,7 +6,6 @@ from contracts.models import Contract
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils import timezone
 from invoices.models import Invoice
 
 User = get_user_model()
@@ -69,10 +68,10 @@ class Order(models.Model):
         Saves the order instance. Sets the order name if it's a new order.
         """
         if not self.pk:
-            current_month = timezone.now().strftime("%m")
-            current_year = timezone.now().strftime("%Y")
-            counter = self.declare_counter(current_month=current_month, current_year=current_year)
-            self.name = f"{self.company.shortcut}-{counter}/{current_month}/{current_year}"
+            # current_month = timezone.now().strftime("%m")
+            # current_year = timezone.now().strftime("%Y")
+            counter = self.declare_counter(current_month=self.create_date.month, current_year=self.create_date.year)
+            self.name = f"{self.company.shortcut}-{counter}/{self.create_date.month}/{self.create_date.year}"
         super().save(*args, **kwargs)
 
     def declare_counter(self, current_month: int, current_year: int) -> int:
