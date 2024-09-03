@@ -13,4 +13,5 @@ env = environ.Env(
     CELERY_BROKER_URL=(str, "redis://localhost:6379"),
     EMAIL_HOST_USER=(str, "user@email.com"),
     EMAIL_HOST_PASSWORD=(str, "password"),
+    EXAMPLE_PASSWORD=(str, "!example1"),
 )
