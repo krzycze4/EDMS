@@ -20,7 +20,7 @@ class UserApiTestCase(EDMSTestCase):
         self.user = UserFactory.build()
         password = User.objects.make_random_password()
         self.user_data = {
-            "first_name": self.user.first_name,
+            "first_name": "firstname",
             "last_name": self.user.last_name,
             "email": self.user.email,
             "password": password,
