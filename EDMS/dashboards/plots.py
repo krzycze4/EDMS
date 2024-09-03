@@ -27,7 +27,6 @@ class Plot:
             str: HTML string of the plot.
         """
         plot_data = self.set_plot_data(orders=orders, salaries=salaries)
-        print(plot_data)
         x_data = self.set_x_values(plot_data=plot_data)
         y_data = list(plot_data.values())
         generated_date = timezone.now().strftime("%d/%m/%Y - %H:%M")
