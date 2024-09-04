@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}
     Login
 {% endblock title %}
@@ -11,7 +12,13 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6">
+                                <img src="https://img.freepik.com/free-photo/high-angle-minimalistic-business-desk-concept_23-2149073016.jpg?t=st=1725381299~exp=1725384899~hmac=882a6e18bb44bd309f7afdb0d9e37a49d4a8fe7aa814b0d224cc2122586152b8&w=826"
+                                     alt="Login Image"
+                                     class="start-image"
+                                     height="100%"
+                                     width="100%">
+                            </div>
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
